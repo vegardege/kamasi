@@ -1,0 +1,26 @@
+{
+  "name": "kamasi",
+  "version": "0.1.0",
+  "description": "Music theory library",
+  "author": "Vegard Egeland",
+  "license": "MIT",
+  "main": "dist/kamasi.js",
+  "scripts": {
+    "build": "rollup -c",
+    "pretest": "rollup -c",
+    "lint": "eslint src test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vegardege/kamasi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vegardege/kamasi/issues"
+  },
+  "homepage": "https://github.com/vegardege/kamasi#readme",
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "rollup": "^2.36.1",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}
