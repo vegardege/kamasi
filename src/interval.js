@@ -1,3 +1,5 @@
+import { ensure_type, mod } from './utils.js'
+
 /**
  * An interval is the difference between two notes or pitch classes.
  * 
@@ -46,10 +48,21 @@ export class Interval {
     // chromatic scale respectively. The numbers do not include the root note.
     const wholeSteps = this.sign * (this.number - 1)
     const octaveHalfSteps = 12 * Math.trunc(wholeSteps / 7)
-    const tableHalfSteps = SEMITONE_TABLE[this.quality][this.number % 7 || 7]
+    const tableHalfSteps = SEMITONE_TABLE[this.quality][mod(this.number, 7, 1)]
 
     this.diatonicSteps = wholeSteps
     this.chromaticSteps = this.sign * tableHalfSteps + octaveHalfSteps
+  }
+
+  /**
+   * Checks if the interval is enharmonic (represents the same number of
+   * semitones) as another interval.
+   * 
+   * @param {(Interval|string)} interval Interval to compare to
+   */
+  isEnharmonic(interval) {
+    interval = ensure_type(interval, Interval)
+    return this.chromaticSteps == interval.chromaticSteps
   }
 
   toString() {
@@ -58,7 +71,7 @@ export class Interval {
 }
 
 // Number of semitones of each main interval (e.g. P4 = 5 semitones)
-// Compound intervals use `number % 7 || 7` (e.g. P11 = 5 semitones + 1 octave)
+// Compound intervals can use mod with an offset of 1 and re-add octaves
 // d1 is -1 to simplify compound interval math, but is blocked in validation
 const SEMITONE_TABLE = {
   'P': {1: 0, 4: 5, 5: 7},
@@ -89,7 +102,7 @@ function validateInterval(quality, number, direction) {
     throw new Error(`direction must be '+' or '-'`)
   }
   const octaves = Math.floor((number - 1) / 7)
-  const semitones = SEMITONE_TABLE?.[quality]?.[number % 7 || 7] + 12 * octaves
+  const semitones = SEMITONE_TABLE?.[quality]?.[mod(number, 7, 1)] + 12 * octaves
   if (!Number.isInteger(semitones) || semitones < 0) {
     throw new Error(`'${quality}${number}' is not a valid interval`)
   }

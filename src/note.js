@@ -1,5 +1,5 @@
 import { Interval } from './interval.js'
-import { ensure_type } from './utils.js'
+import { ensure_type, mod } from './utils.js'
 
 /**
  * A note represents a specific pitch or a general pitch class.
@@ -62,7 +62,7 @@ export class Note {
     interval = ensure_type(interval, Interval)
 
     const diatonicTarget = this.diatonicOffset + interval.diatonicSteps
-    const newLetter = Note.diatonic[circularMod(diatonicTarget, 7)]
+    const newLetter = Note.diatonic[mod(diatonicTarget, 7)]
 
     const octaveDiff = Math.floor(diatonicTarget / 7)
     const newOctave = this.octave + octaveDiff
@@ -100,9 +100,6 @@ function validateNote(letter, accidentals, octave) {
     throw new Error('octave must be a valid number or NaN')
   }
 }
-
-// Safe for negative numbers
-const circularMod = (i, N) => (i % N + N) % N
 
 // Accidentals helper functions
 const accToNum = a => a[0] === 'b' ? -a.length : a.length
