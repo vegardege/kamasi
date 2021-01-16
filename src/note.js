@@ -1,3 +1,6 @@
+import { Interval } from './interval.js'
+import { ensure_type } from './utils.js'
+
 /**
  * A note represents a specific pitch or a general pitch class.
  * 
@@ -44,6 +47,33 @@ export class Note {
                          + accToNum(accidentals)
   }
 
+  /**
+   * Move the note up or down in pitch by the specified interval.
+   * 
+   * Returns a new note. Pitch classes will be transposed to pitch classes,
+   * specific pitches to specific pitches.
+   * 
+   * @param {(Interval|string)} interval Interval object OR
+   *                                     Shorthand interval notation (e.g. P5)
+   * 
+   * @see {@link https://en.wikipedia.org/wiki/Transposition_(music)}
+   */
+  transpose(interval) {
+    interval = ensure_type(interval, Interval)
+
+    const diatonicTarget = this.diatonicOffset + interval.diatonicSteps
+    const newLetter = Note.diatonic[circularMod(diatonicTarget, 7)]
+
+    const octaveDiff = Math.floor(diatonicTarget / 7)
+    const newOctave = this.octave + octaveDiff
+
+    const chromaticTarget = this.chromaticOffset + interval.chromaticSteps
+    const chromaticMoved = Note.chromatic.indexOf(newLetter) + 12 * octaveDiff
+    const newAccidentals = numToAcc(chromaticTarget - chromaticMoved)
+
+    return new Note(newLetter, newAccidentals, newOctave)
+  }
+
   toString() {
     return `${this.letter}${this.accidentals}${this.octave || ''}`
   }
@@ -71,5 +101,9 @@ function validateNote(letter, accidentals, octave) {
   }
 }
 
+// Safe for negative numbers
+const circularMod = (i, N) => (i % N + N) % N
+
 // Accidentals helper functions
 const accToNum = a => a[0] === 'b' ? -a.length : a.length
+const numToAcc = n => n > 0 ? '#'.repeat(n) : 'b'.repeat(-n)
