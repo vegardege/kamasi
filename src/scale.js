@@ -24,7 +24,7 @@ export class Scale extends NoteList {
    *                              Full name of scale with space after tonic
    * @param {string} name Name of the scale (without note)
    */
-  constructor(tonic, name=NaN) {
+  constructor(tonic, name='') {
     if (!name.length) {
       [tonic, name] = tonic.split(" ")
     }

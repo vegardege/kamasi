@@ -3,6 +3,7 @@ const { NoteList, Note } = require('../dist/kamasi.js')
 test('create note list', () => {
   expect(new NoteList([]).toString()).toBe('')
   expect(new NoteList(['C', 'D', 'E']).toString()).toBe('C D E')
+  expect(new NoteList('G4 A4 B4').toString()).toBe('G4 A4 B4')
   expect(new NoteList([new Note('F#5'), new Note('Gb5')])
     .toString()).toBe('F#5 Gb5')
 })
