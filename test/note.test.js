@@ -63,3 +63,28 @@ test('transpose difficult notes', () => {
   expect(t('Cbb5', '-d3')).toBe('Ab4')
   expect(t('B#############2', 'A3')).toBe('D###############3')
 })
+
+// Utility function tests
+test('calculate distance between notes and enharmonicity', () => {
+  expect(new Note('C4').distance('F4')).toBe(5)
+  expect(new Note('Abb').distance('D#')).toBe(-4)
+  expect(new Note('B3').distance('C6')).toBe(25)
+  expect(new Note('C##').isEnharmonic('Ebb')).toBe(true)
+  expect(new Note('C##4').isEnharmonic('Ebb5')).toBe(false)
+})
+
+test('calculate frequency and midi of note', () => {
+  expect(new Note('C4').frequency()).toBeCloseTo(261.6256, 3)
+  expect(new Note('B7').frequency()).toBeCloseTo(3951.066, 2)
+  expect(new Note('C0').frequency()).toBeCloseTo(16.35160, 3)
+  expect(new Note('F1').midi()).toBe(29)
+  expect(new Note('G#8').midi()).toBe(116)
+  expect(new Note('C-2').midi()).toBe(-1)
+  expect(new Note('B9').midi()).toBe(-1)
+})
+
+test('simplify a note', () => {
+  expect(new Note('F####').simplify().toString()).toBe('A')
+  expect(new Note('Dbbbb4').simplify().toString()).toBe('A#3')
+  expect(new Note('B##############2').simplify().toString()).toBe('C#4')
+})

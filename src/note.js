@@ -74,6 +74,61 @@ export class Note {
     return new Note(newLetter, newAccidentals, newOctave)
   }
 
+  /**
+   * 
+   * @param {(Note|string)} note Note to compare to OR
+   *                             Full scientific pitch notation for note
+   */
+  distance(note) {
+    note = ensure_type(note, Note)
+
+    const isPitchClass = isNaN(this.octave) && isNaN(note.octave)
+    const octaves = isPitchClass ? 0 : note.octave - this.octave
+    const semitones = note.chromaticOffset - this.chromaticOffset
+
+    return 12 * octaves + semitones
+  }
+
+  /**
+   * Return frequency in a 12-tone equal temperament with A4 = 440 Hz.
+   */
+  frequency() {
+    return 2 ** (-this.distance('A4') / 12)
+  }
+
+  /**
+   * Return the midi number of this note, or -1 if it can't be represented.
+   * Doesn't work for pitch classes.
+   */
+  midi() {
+    const midi = 60 - this.distance('C4')
+    return midi > 0 && midi <= 127 ? midi : -1
+  }
+
+  /**
+   * Two notes are enharmonic if they represent the same pitch or pitch class.
+   * Note that pitch classes and specific pitches can't be enharmonic.
+   * 
+   * @param {(Note|string)} note note Note to compare to OR
+   *                             Full scientific pitch notation for note
+   * @see {@link https://en.wikipedia.org/wiki/Enharmonic}
+   */
+  isEnharmonic(note) {
+    note = ensure_type(note, Note)
+    return this.distance(note) === 0
+  }
+
+  /**
+   * Create an enharmonic note with the fewest possible accidentals.
+   * Arbitrarily chooses '#' over 'b' to be deterministic.
+   */
+  simplify() {
+    const octave = this.octave + Math.floor(this.chromaticOffset / 12)
+    const [root, acc] = Note.chromatic[mod(this.chromaticOffset, 12)]
+
+    return new Note(root, acc || '', octave || NaN)
+  }
+
   toString() {
     return `${this.letter}${this.accidentals}${this.octave || ''}`
   }
