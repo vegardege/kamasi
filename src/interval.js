@@ -2,6 +2,7 @@ import { ensure_type, mod } from './utils.js'
 
 /**
  * An interval is the difference between two notes or pitch classes.
+ * It can be harmonic (simulaneous) and melodic (sequential).
  * 
  * It is named according to three defining properties:
  * 
@@ -52,6 +53,44 @@ export class Interval {
 
     this.diatonicSteps = wholeSteps
     this.chromaticSteps = this.sign * tableHalfSteps + octaveHalfSteps
+  }
+
+  /**
+   * Frequency ratio in 12-tone equal temperament
+   * @see {@link https://en.wikipedia.org/wiki/Interval_ratio}
+   */
+  frequencyRatio() {
+    return 2 ** (this.chromaticSteps / 12)
+  }
+
+  /**
+   * Cents in 12-tone equal temperament
+   * @see {@link https://en.wikipedia.org/wiki/Cent_(music)}
+   */
+  cents() {
+    return 100 * this.chromaticSteps
+  }
+
+  /**
+   * The inversion of an interval is the interval which, together with the
+   * original interval, raises the lower note by one (or more) octaves.
+   * 
+   * A simple interval plus its invert will make one octave.
+   * A compount intervals plus its invert will make two or more octaves.
+   * 
+   * E.g. a P5 and a P4 will raise a pitch class by an octave, and are 
+   * therefore each other's inversion. P11 and P4 together make two octaves,
+   * therefore P4 is the inversion of P11 (but not the other way around).
+   * 
+   * @see {@link https://en.wikipedia.org/wiki/Inversion_(music)#Intervals}
+   */
+  invert() {
+    const invQuality = {'P': 'P', 'M': 'm', 'm': 'M', 'A': 'd', 'd': 'A'}
+    // P1 is the inverse of P8, the other pure octaves are inverted to P1
+    const invNumber = this.number === 1 ? 8 : 9 - mod(this.number, 7, 2)
+
+    return new Interval(
+      invQuality[this.quality], invNumber, this.sign === 1 ? '+' : '-')
   }
 
   /**
