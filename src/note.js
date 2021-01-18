@@ -105,7 +105,7 @@ export class Note {
    * Return frequency in a 12-tone equal temperament with A4 = 440 Hz.
    */
   frequency() {
-    return 2 ** (-this.distance('A4') / 12)
+    return 440 * 2 ** (-this.distance('A4') / 12)
   }
 
   /**
@@ -114,7 +114,7 @@ export class Note {
    */
   midi() {
     const midi = 60 - this.distance('C4')
-    return midi > 0 && midi <= 127 ? midi : -1
+    return midi > 0 && midi <= 127 ? midi : NaN
   }
 
   /**

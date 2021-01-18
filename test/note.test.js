@@ -79,8 +79,8 @@ test('calculate frequency and midi of note', () => {
   expect(Note.fromString('C0').frequency()).toBeCloseTo(16.35160, 3)
   expect(Note.fromString('F1').midi()).toBe(29)
   expect(Note.fromString('G#8').midi()).toBe(116)
-  expect(Note.fromString('C-2').midi()).toBe(-1)
-  expect(Note.fromString('B9').midi()).toBe(-1)
+  expect(Note.fromString('C-2').midi()).toBe(NaN)
+  expect(Note.fromString('B9').midi()).toBe(NaN)
 })
 
 test('simplify a note', () => {
