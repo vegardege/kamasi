@@ -19,7 +19,7 @@ test('create invalid interval', () => {
   expect(() => new Interval('m', 1)).toThrowError() // Invalid combination
   expect(() => new Interval({})).toThrowError() // Invalid type
   expect(() => Interval.fromString('big')).toThrowError() // Invalid string
-  expect(() => Interval.fromString('d1')).toThrowError() // Invalid combination
+  expect(() => Interval.fromString('P2')).toThrowError() // Invalid combination
 })
 
 test('calculate diatonic and chromatic steps', () => {

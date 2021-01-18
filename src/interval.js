@@ -10,7 +10,7 @@ import { ensure_type, mod } from './utils.js'
  *           how many note letters or staff positions it will move a note.
  *  `quality` qualifies how many semitones the interval spans, and determines
  *            which accidentals (# or b) are added to the note letter.
- *  `direction` determines if the interval increases or decreases the pitch.
+ *  `sign` determines if the interval moves up or down the diatonic scale.
  * 
  * Examples:
  * 
@@ -38,15 +38,20 @@ export class Interval {
     this.quality = quality
     this.number = number
     this.sign = sign == '+' ? 1 : -1
-    
-    // Calculate how many steps the interval encompasses on the diatonic and
-    // chromatic scale respectively. The numbers do not include the root note.
-    const wholeSteps = this.sign * (this.number - 1)
-    const octaveHalfSteps = 12 * Math.trunc(wholeSteps / 7)
-    const tableHalfSteps = SEMITONE_TABLE[this.quality][mod(this.number, 7, 1)]
 
-    this.diatonicSteps = wholeSteps
-    this.chromaticSteps = this.sign * tableHalfSteps + octaveHalfSteps
+    // From the key properties, we calculate how many diatonic and chromatic
+    // steps the interval spans. The diatonic is determined purely by number:
+    this.diatonicSteps = this.sign * (this.number - 1)
+
+    // The chromatic steps are calculated using three factors:
+    //   (1) Each full octave contains 12 semitones
+    //   (2) Interval number maps to a default number of semitones
+    //   (3) The quality may add or remove semitones from the default
+    const octaveSteps = 12 * Math.floor((number - 1) / DIATONIC.length),
+          [mainType, mainSteps] = DIATONIC[mod(number - 1, DIATONIC.length)],
+          qualitySteps = qualityToSemitoneDiff(mainType, quality)
+
+    this.chromaticSteps = this.sign * (octaveSteps + mainSteps + qualitySteps)
   }
 
   /**
@@ -58,7 +63,7 @@ export class Interval {
    */
   static fromString(string) {
     try {
-      const [, dir, qual, number] = string.match('^([+-]?)([PMmAd])([0-9]*)$')
+      const [, dir, qual, number] = string.match(INTERVAL_REGEX)
       return new Interval(qual, parseInt(number, 10), dir || '+')
     } catch {
       throw new Error(`'${string}' is not a valid interval`)
@@ -122,21 +127,36 @@ export class Interval {
   }
 }
 
-// Number of semitones of each main interval (e.g. P4 = 5 semitones)
-// Compound intervals can use mod with an offset of 1 and re-add octaves
-// d1 is -1 to simplify compound interval math, but is blocked in validation
-const SEMITONE_TABLE = {
-  'P': {1: 0, 4: 5, 5: 7},
-  'M': {2: 2, 3: 4, 6: 9, 7: 11},
-  'm': {2: 1, 3: 3, 6: 8, 7: 10}, // M-1
-  'A': {1: 1, 2: 3, 3: 5, 4: 6, 5: 8, 6: 10, 7: 12}, // P+1 or M+1
-  'd': {1: -1, 2: 0, 3: 2, 4: 4, 5: 6, 6: 7, 7: 9}, // P-1 or M-2
+// Intervals of the diatonic scale. Indexed by diatonic steps,
+// contains the quality and number of chromatic steps per interval.
+const DIATONIC = [['P', 0], ['M', 2], ['M', 4], ['P', 5], ['P', 7],
+  ['M', 9], ['M', 11]]
+
+/**
+ * Perfect ('P') and Major ('M') intervals are associated with a number of
+ * semitone steps. Any other quality will change this number of semitones.
+ * This function finds the semitone diff based on type (P/M) and quality.
+ */
+function qualityToSemitoneDiff(type, quality) {
+  if (type == 'P') {
+    if (quality == 'P') return 0
+    if (quality[0] == 'A') return quality.length
+    if (quality[0] == 'd') return -quality.length
+  } else if (type == 'M') {
+    if (quality == 'M') return 0
+    if (quality == 'm') return -1
+    if (quality[0] == 'A') return quality.length
+    if (quality[0] == 'd') return -quality.length - 1
+  }
 }
 
+
+const QUALITY_REGEX = '^[PMm]|[A]+|[d]+$'
+const INTERVAL_REGEX = '^([+-]?)([PMm]|[A]+|[d]+)([0-9]*)$'
+
 function validateInterval(quality, number, direction) {
-  const validQualities = Object.keys(SEMITONE_TABLE)
-  if (!validQualities.includes(quality)) {
-    throw new Error(`quality must be one of: ${validQualities.join(', ')}`)
+  if (!quality.match(QUALITY_REGEX)) {
+    throw new Error(`quality must be one of: P, M, m, A, d}`)
   }
   if (!Number.isInteger(number) || number < 1) {
     throw new Error(`number must be 1 or higher`)
@@ -144,9 +164,11 @@ function validateInterval(quality, number, direction) {
   if (!['+', '-'].includes(direction)) {
     throw new Error(`direction must be '+' or '-'`)
   }
-  const octaves = Math.floor((number - 1) / 7)
-  const semitones = SEMITONE_TABLE?.[quality]?.[mod(number, 7, 1)] + 12 * octaves
-  if (!Number.isInteger(semitones) || semitones < 0) {
-    throw new Error(`'${quality}${number}' is not a valid interval`)
-  }
+  // Check if quality and number are compatible
+  const [mainType, _] = DIATONIC[mod(number - 1, DIATONIC.length)]
+  if ((mainType == 'P' && quality == 'M')
+   || (mainType == 'P' && quality == 'm')
+   || (mainType == 'M' && quality == 'P')) {
+     throw new Error(`${quality}${number} is not a valid interval`)
+   }
 }
