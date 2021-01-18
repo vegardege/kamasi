@@ -11,7 +11,7 @@ export function ensure_type(object, cls) {
   if (object instanceof cls) {
     return object
   }
-  return new cls(object)
+  return cls.fromString(object)
 }
 
 /**

@@ -16,13 +16,23 @@ export class NoteList {
    * Create a new note list, using a list of Notes or strings on scientific
    * pitch notation, or as a single string of the latter.
    * 
-   * @param {(list|string)} notes Ordered list of notes
+   * @param {list} notes Ordered list of Note objects
    */
   constructor(notes) {
-    if (typeof notes === 'string') {
-      notes = notes.split(' ')
+    this.notes = notes
+  }
+
+  /**
+   * Create a note list from a string of notes.
+   * 
+   * @param {string} string Space separated list of notes
+   */
+  static fromString(string) {
+    try {
+      return new NoteList(string.split(' ').map(n => ensure_type(n, Note)))
+    } catch {
+      throw new Error(`'${string}' is not a valid note list`)
     }
-    this.notes = notes.map(n => ensure_type(n, Note))
   }
   
   /**

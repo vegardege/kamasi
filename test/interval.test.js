@@ -7,24 +7,24 @@ test('create interval with quality, number, and direction', () => {
 })
 
 test('create interval with shorthand notation', () => {
-  expect(new Interval('M2').toString()).toBe('M2')
-  expect(new Interval('-d8').toString()).toBe('-d8')
-  expect(new Interval('+d44').toString()).toBe('d44')
+  expect(Interval.fromString('M2').toString()).toBe('M2')
+  expect(Interval.fromString('-d8').toString()).toBe('-d8')
+  expect(Interval.fromString('+d44').toString()).toBe('d44')
 })
 
 test('create invalid interval', () => {
-  expect(() => new Interval('big')).toThrowError() // Invalid string
   expect(() => new Interval('x', 4)).toThrowError() // Invalid quality
   expect(() => new Interval('P', -1)).toThrowError() // Invalid number
   expect(() => new Interval('P', 1, '/')).toThrowError() // Invalid sign
   expect(() => new Interval('m', 1)).toThrowError() // Invalid combination
-  expect(() => new Interval('d1')).toThrowError() // Invalid combination
   expect(() => new Interval({})).toThrowError() // Invalid type
+  expect(() => Interval.fromString('big')).toThrowError() // Invalid string
+  expect(() => Interval.fromString('d1')).toThrowError() // Invalid combination
 })
 
 test('calculate diatonic and chromatic steps', () => {
   const steps = i => {
-    i = new Interval(i)
+    i = Interval.fromString(i)
     return [i.diatonicSteps, i.chromaticSteps].join(", ")
   }
   expect(steps('M7')).toBe('6, 11')
@@ -34,22 +34,22 @@ test('calculate diatonic and chromatic steps', () => {
 })
 
 test('calculate frequency ratio and cents', () => {
-  expect(new Interval('m3').frequencyRatio()).toBeCloseTo(1.18921, 5)
-  expect(new Interval('-m3').frequencyRatio()).toBeCloseTo(0.84090, 5)
-  expect(new Interval('P15').frequencyRatio()).toBe(4)
-  expect(new Interval('P5').cents()).toBe(700)
+  expect(Interval.fromString('m3').frequencyRatio()).toBeCloseTo(1.18921, 5)
+  expect(Interval.fromString('-m3').frequencyRatio()).toBeCloseTo(0.84090, 5)
+  expect(Interval.fromString('P15').frequencyRatio()).toBe(4)
+  expect(Interval.fromString('P5').cents()).toBe(700)
 })
 
 test('find inversion of interval', () => {
-  expect(new Interval('P1').invert().toString()).toBe('P8')
-  expect(new Interval('P8').invert().toString()).toBe('P1')
-  expect(new Interval('-P15').invert().toString()).toBe('-P1')
-  expect(new Interval('A6').invert().toString()).toBe('d3')
-  expect(new Interval('-M9').invert().toString()).toBe('-m7')
+  expect(Interval.fromString('P1').invert().toString()).toBe('P8')
+  expect(Interval.fromString('P8').invert().toString()).toBe('P1')
+  expect(Interval.fromString('-P15').invert().toString()).toBe('-P1')
+  expect(Interval.fromString('A6').invert().toString()).toBe('d3')
+  expect(Interval.fromString('-M9').invert().toString()).toBe('-m7')
 })
 
 test('check if intervals are enharmonic', () => {
-  expect(new Interval('M3').isEnharmonic('d4')).toBe(true)
-  expect(new Interval('-A6').isEnharmonic('-m7')).toBe(true)
-  expect(new Interval('d9').isEnharmonic('d2')).toBe(false)
+  expect(Interval.fromString('M3').isEnharmonic('d4')).toBe(true)
+  expect(Interval.fromString('-A6').isEnharmonic('-m7')).toBe(true)
+  expect(Interval.fromString('d9').isEnharmonic('d2')).toBe(false)
 })

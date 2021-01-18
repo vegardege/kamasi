@@ -25,11 +25,6 @@ export class Chord extends NoteList {
    * @param {string} name Name of the chord (without note)
    */
   constructor(root, name='') {
-    if (!name.length) {
-      [root, name] = root.split(" ")
-    }
-    root = ensure_type(root, Note)
-    name = (name || '').trim()
     validateChord(name)
 
     const intervals = Chord.chords?.[name] ||
@@ -40,6 +35,17 @@ export class Chord extends NoteList {
     this.root = root
     this.name = name
     this.intervals = intervals
+  }
+
+  /**
+   * Create a chord from a string representation.
+   * 
+   * @param {string} string Root note and chord name separated by space
+   */
+  static fromString(string) {
+    let [root, name] = string.split(' ')
+    root = ensure_type(root, Note)
+    return new Chord(root, name)
   }
 
   /**

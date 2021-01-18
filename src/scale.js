@@ -17,19 +17,12 @@ import { ensure_type } from './utils.js'
 export class Scale extends NoteList {
 
   /**
-   * Create a new scale based on its name
+   * Create a new scale based on tonic note and name
    * 
-   * @param {(Note|string)} tonic Tonic note of the scale OR
-   *                              Full scientific pitch notation for tonic OR
-   *                              Full name of scale with space after tonic
+   * @param {Note} tonic Tonic note of the scale
    * @param {string} name Name of the scale (without note)
    */
   constructor(tonic, name='') {
-    if (!name.length) {
-      [tonic, name] = tonic.split(" ")
-    }
-    tonic = ensure_type(tonic, Note)
-    name = (name || '').trim()
     validateScale(name)
 
     const intervals = Scale.scales?.[name] ||
@@ -40,6 +33,17 @@ export class Scale extends NoteList {
     this.tonic = tonic
     this.name = name
     this.intervals = intervals
+  }
+
+  /**
+   * Create a scale from a string representation.
+   * 
+   * @param {string} string Tonic note and scale name separated by space
+   */
+  static fromString(string) {
+    let [tonic, name] = string.split(' ')
+    tonic = ensure_type(tonic, Note)
+    return new Scale(tonic, name)
   }
 
   /**

@@ -24,17 +24,13 @@ import { ensure_type, mod } from './utils.js'
 export class Note {
 
   /**
-   * @param {string} letter Note letter (A-G) OR
-   *                        Full scientific pitch notation
+   * Create a note from note letter, accidentals, and an optional octave.
+   * 
+   * @param {string} letter Note letter (A-G)
    * @param {string} accidentals A secuencque of # or b modifying the letter
    * @param {number} octave Number for a specific pitch, NaN for pitch class
-   * 
-   * @see {@link https://en.wikipedia.org/wiki/Scientific_pitch_notation}
    */
-  constructor(letter, accidentals = '', octave = NaN) {
-    if (letter.length > 1) {
-      [letter, accidentals, octave] = parseNoteString(letter)
-    }
+  constructor(letter, accidentals='', octave=NaN) {
     validateNote(letter, accidentals, octave)
 
     this.letter = letter
@@ -45,6 +41,22 @@ export class Note {
     this.diatonicOffset = Note.diatonic.indexOf(letter)
     this.chromaticOffset = Note.chromatic.indexOf(letter)
                          + accToNum(accidentals)
+  }
+
+  /**
+   * Create a note from scientific pitch notation
+   * 
+   * @param {string} string 
+   * 
+   * @see {@link https://en.wikipedia.org/wiki/Scientific_pitch_notation}
+   */
+  static fromString(string) {
+    try {
+      const [, root, acc, oct] = string.match('^([A-G])(#*|b*)(-?[0-9]?)$')
+      return new Note(root, acc, parseInt(oct, 10))
+    } catch {
+      throw new Error(`'${string}' is not a valid note`)
+    }
   }
 
   /**
@@ -137,11 +149,6 @@ export class Note {
 Note.diatonic = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 Note.chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
                   'G', 'G#', 'A', 'A#', 'B']
-
-function parseNoteString(string) {
-  const [, root, acc, oct] = string.match('^([A-G])(#*|b*)(-?[0-9]?)$')
-  return [root, acc, parseInt(oct, 10)]
-}
 
 function validateNote(letter, accidentals, octave) {
   if (!Note.diatonic.includes(letter)) {

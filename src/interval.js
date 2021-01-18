@@ -1,8 +1,8 @@
 import { ensure_type, mod } from './utils.js'
 
 /**
- * An interval is the difference between two notes or pitch classes.
- * It can be harmonic (simulaneous) and melodic (sequential).
+ * An interval is the difference between two pitches or pitch classes.
+ * It can be harmonic (simulaneous) or melodic (sequential).
  * 
  * It is named according to three defining properties:
  * 
@@ -26,19 +26,13 @@ import { ensure_type, mod } from './utils.js'
 export class Interval {
 
   /**
-   * Create a new interval by short hand notation or defining properties.
+   * Create a new interval from quality, number, and an optional sign.
    * 
-   * @param {string} quality Interval quality ('P', 'M', 'm', 'A', or 'd') OR
-   *                         Interval shorthand notation (e.g. '-P5')
+   * @param {string} quality Interval quality ('P', 'M', 'm', 'A', or 'd')
    * @param {number} number Interval number (1 or higher)
    * @param {string} sign '+' for higher pitch, '-' for lower pitch
-   * 
-   * @see {@link https://en.wikipedia.org/wiki/Interval_%28music%29#Shorthand_notation}
    */
   constructor(quality, number, sign='+') {
-    if (quality.length > 1) {
-      [quality, number, sign] = parseIntervalString(quality)
-    }
     validateInterval(quality, number, sign)
     
     this.quality = quality
@@ -53,6 +47,22 @@ export class Interval {
 
     this.diatonicSteps = wholeSteps
     this.chromaticSteps = this.sign * tableHalfSteps + octaveHalfSteps
+  }
+
+  /**
+   * Create an interval with the specified short hand notation.
+   * 
+   * @param {string} string Interval short hand notation
+   * 
+   * @see {@link https://en.wikipedia.org/wiki/Interval_%28music%29#Shorthand_notation}
+   */
+  static fromString(string) {
+    try {
+      const [, dir, qual, number] = string.match('^([+-]?)([PMmAd])([0-9]*)$')
+      return new Interval(qual, parseInt(number, 10), dir || '+')
+    } catch {
+      throw new Error(`'${string}' is not a valid interval`)
+    }
   }
 
   /**
@@ -86,7 +96,7 @@ export class Interval {
    */
   invert() {
     const invQuality = {'P': 'P', 'M': 'm', 'm': 'M', 'A': 'd', 'd': 'A'}
-    // P1 is the inverse of P8, the other pure octaves are inverted to P1
+    // P1 is the inverse of P8, compound pure octaves are inverted to P1
     const invNumber = this.number === 1 ? 8 : 9 - mod(this.number, 7, 2)
 
     return new Interval(
@@ -104,6 +114,9 @@ export class Interval {
     return this.chromaticSteps == interval.chromaticSteps
   }
 
+  /**
+   * Interval in short hand form.
+   */
   toString() {
     return `${this.sign === -1 ? '-' : ''}${this.quality}${this.number}`
   }
@@ -118,15 +131,6 @@ const SEMITONE_TABLE = {
   'm': {2: 1, 3: 3, 6: 8, 7: 10}, // M-1
   'A': {1: 1, 2: 3, 3: 5, 4: 6, 5: 8, 6: 10, 7: 12}, // P+1 or M+1
   'd': {1: -1, 2: 0, 3: 2, 4: 4, 5: 6, 6: 7, 7: 9}, // P-1 or M-2
-}
-
-function parseIntervalString(string) {
-  try {
-    const [, dir, qual, number] = string.match('^([+-]?)([PMmAd])([0-9]*)$')
-    return [qual, parseInt(number, 10), dir || '+']
-  } catch {
-    throw new Error(`'${string}' is not a valid interval`)
-  }
 }
 
 function validateInterval(quality, number, direction) {
