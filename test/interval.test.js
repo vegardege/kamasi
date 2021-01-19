@@ -12,6 +12,21 @@ test('create interval with shorthand notation', () => {
   expect(Interval.fromString('+d44').toString()).toBe('d44')
 })
 
+test('create interval from semitones', () => {
+  expect(Interval.fromSemitones(5).toString()).toBe('P4')
+  expect(Interval.fromSemitones(-6).toString()).toBe('-A4')
+  expect(Interval.fromSemitones(-21).toString()).toBe('-M13')
+})
+
+test('create interval from steps', () => {
+  expect(Interval.fromSteps(2, 3).toString()).toBe('m3')
+  expect(Interval.fromSteps(-4, -7).toString()).toBe('-P5')
+  expect(Interval.fromSteps(14, 23).toString()).toBe('d15')
+  expect(Interval.fromSteps(-9, -18).toString()).toBe('-AA10')
+  expect(Interval.fromSteps(1, -1).toString()).toBe('dd2')
+  expect(Interval.fromSteps(-1, 1).toString()).toBe('-dd2')
+})
+
 test('create invalid interval', () => {
   expect(() => new Interval('x', 4)).toThrowError() // Invalid quality
   expect(() => new Interval('P', -1)).toThrowError() // Invalid number
@@ -44,10 +59,10 @@ test('find inversion of interval', () => {
   expect(Interval.fromString('P1').invert().toString()).toBe('P8')
   expect(Interval.fromString('P8').invert().toString()).toBe('P1')
   expect(Interval.fromString('-P15').invert().toString()).toBe('-P1')
-  expect(Interval.fromString('A6').invert().toString()).toBe('d3')
+  expect(Interval.fromString('AA6').invert().toString()).toBe('dd3')
   expect(Interval.fromString('-M9').invert().toString()).toBe('-m7')
 })
-
+ 
 test('check if intervals are enharmonic', () => {
   expect(Interval.fromString('M3').isEnharmonic('d4')).toBe(true)
   expect(Interval.fromString('-A6').isEnharmonic('-m7')).toBe(true)

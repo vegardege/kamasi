@@ -71,6 +71,58 @@ export class Interval {
   }
 
   /**
+   * Creates an interval spanning the given number of semitones.
+   * 
+   * Note that semitone to interval is a one-to-many mapping, with several
+   * equally valid answers. This function will always return the same answer,
+   * giving preference to qualities in the order: P, M, m, A, d.
+   * 
+   * @param {number} semitones Number of semitones the interval should span
+   */
+  static fromSemitones(semitones) {
+
+    const chromaticSteps = Math.abs(semitones),
+          octaves = Math.floor(chromaticSteps / 12)
+
+    // Find default interval for semitones (minus the full octaves)
+    const [quality, number] = CHROMATIC[mod(chromaticSteps, 12)],
+          sign = semitones >= 0 ? '+' : '-'
+
+    // Re-add 7 diatonic steps per full octave
+    return new Interval(quality, number + 7 * octaves, sign)
+  }
+
+  /**
+   * Finds the interval spanning a certain number of whole and semitones,
+   * if it exists. This is a one-to-one mapping, but not guaranteed to have
+   * an answer.
+   * 
+   * @param {number} wholetones Number of wholetones the interval should span
+   * @param {number} semitones Number of semitones the interval should span
+   */
+  static fromSteps(wholetones, semitones) {
+
+    // Number and sign depends entirely on the number of diatonic steps
+    const number = Math.abs(wholetones) + 1,
+          sign = wholetones >= 0 ? 1 : -1
+
+    // The quality is determined by the difference between the semitones we
+    // want to move, and the number of semitones spanned by the wholetones.
+    // As usual, we keep the octaves out of the calculation until the end.
+    const octaveSteps = 12 * Math.trunc((number - 1) / 7),
+          [mainType, mainSteps] = DIATONIC[mod(number - 1, DIATONIC.length)]
+
+    const semitoneDiff = sign * semitones - (octaveSteps + mainSteps),
+          quality = semitoneDiffToQuality(mainType, semitoneDiff)
+
+    if (quality === undefined) {
+      // Not all combinations are valid intervals
+      return undefined
+    }
+    return new Interval(quality, number, sign === 1 ? '+' : '-')
+  }
+
+  /**
    * Frequency ratio in 12-tone equal temperament
    * @see {@link https://en.wikipedia.org/wiki/Interval_ratio}
    */
@@ -100,12 +152,11 @@ export class Interval {
    * @see {@link https://en.wikipedia.org/wiki/Inversion_(music)#Intervals}
    */
   invert() {
-    const invQuality = {'P': 'P', 'M': 'm', 'm': 'M', 'A': 'd', 'd': 'A'}
     // P1 is the inverse of P8, compound pure octaves are inverted to P1
     const invNumber = this.number === 1 ? 8 : 9 - mod(this.number, 7, 2)
 
     return new Interval(
-      invQuality[this.quality], invNumber, this.sign === 1 ? '+' : '-')
+      invertQuality(this.quality), invNumber, this.sign === 1 ? '+' : '-')
   }
 
   /**
@@ -132,6 +183,12 @@ export class Interval {
 const DIATONIC = [['P', 0], ['M', 2], ['M', 4], ['P', 5], ['P', 7],
   ['M', 9], ['M', 11]]
 
+// Intervals of the chromatic scale. There are several enharmonic intervals,
+// but these are reasonable default solutions. Indexed by chromatic steps,
+// contains the quality and interval number per interval.
+const CHROMATIC = [['P', 1], ['m', 2], ['M', 2], ['m', 3], ['M', 3],
+['P', 4], ['A', 4], ['P', 5], ['m', 6], ['M', 6], ['m', 7], ['M', 7]]
+
 /**
  * Perfect ('P') and Major ('M') intervals are associated with a number of
  * semitone steps. Any other quality will change this number of semitones.
@@ -150,6 +207,36 @@ function qualityToSemitoneDiff(type, quality) {
   }
 }
 
+/**
+ * Perfect ('P') and Major ('M') intervals are associated with a number of
+ * semitone steps. Any other quality will change this number of semitones.
+ * This function finds the quality based on type (P/M) and semitone diff.
+ */
+function semitoneDiffToQuality(type, semitoneDiff) {
+  if (type == 'P') {
+    if (semitoneDiff == 0) return 'P'
+    if (semitoneDiff > 0) return 'A'.repeat(semitoneDiff)
+    if (semitoneDiff < 0) return 'd'.repeat(-semitoneDiff)
+  } else if (type == 'M') {
+    if (semitoneDiff == 0) return 'M'
+    if (semitoneDiff == -1) return 'm'
+    if (semitoneDiff > 0) return 'A'.repeat(semitoneDiff)
+    if (semitoneDiff < -1) return 'd'.repeat(-semitoneDiff - 1)
+  }
+}
+
+/**
+ * Quality inverts according to a simple table
+ */
+function invertQuality(quality) {
+  switch (quality[0]) {
+    case 'P': return 'P'
+    case 'M': return 'm'
+    case 'm': return 'M'
+    case 'A': return 'd'.repeat(quality.length)
+    case 'd': return 'A'.repeat(quality.length)
+  }
+}
 
 const QUALITY_REGEX = '^[PMm]|[A]+|[d]+$'
 const INTERVAL_REGEX = '^([+-]?)([PMm]|[A]+|[d]+)([0-9]*)$'
