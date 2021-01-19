@@ -30,7 +30,7 @@ export class NoteList {
   static fromString(string) {
     try {
       return new NoteList(string.split(' ').map(n => ensure_type(n, Note)))
-    } catch {
+    } catch (e) {
       throw new Error(`'${string}' is not a valid note list`)
     }
   }

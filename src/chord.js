@@ -27,7 +27,7 @@ export class Chord extends NoteList {
   constructor(root, name='') {
     validateChord(name)
 
-    const intervals = Chord.chords?.[name] ||
+    const intervals = Chord.chords[name] ||
                       Chord.chords[Chord.alias[name]]
 
     super(intervals.map(i => root.transpose(i)))
@@ -63,6 +63,7 @@ export class Chord extends NoteList {
 
 Chord.chords = {
   'major': ['P1', 'M3', 'P5'],
+  'minor': ['P1', 'm3', 'P5'],
 }
 Chord.chordNames = Object.keys(Chord.chords)
 

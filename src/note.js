@@ -54,7 +54,7 @@ export class Note {
     try {
       const [, root, acc, oct] = string.match('^([A-G])(#*|b*)(-?[0-9]?)$')
       return new Note(root, acc, parseInt(oct, 10))
-    } catch {
+    } catch (e) {
       throw new Error(`'${string}' is not a valid note`)
     }
   }
@@ -110,7 +110,7 @@ export class Note {
 
     return Interval.fromSteps(
       note.diatonicOffset - this.diatonicOffset + 7 * octaveDiff,
-      note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff,
+      note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff
     )
   }
 
@@ -128,7 +128,7 @@ export class Note {
    * Return frequency in a 12-tone equal temperament with A4 = 440 Hz.
    */
   frequency() {
-    return 440 * 2 ** (-this.distance('A4') / 12)
+    return 440 * Math.pow(2, -this.distance('A4') / 12)
   }
 
   /**

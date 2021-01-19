@@ -1,21 +1,20 @@
 import { terser } from 'rollup-plugin-terser'
 
-const config = {
-  input: 'src/index.js',
-  output: {
-    file: 'dist/kamasi.js',
-    format: 'umd',
-    name: 'kamasi',
-  }
-}
-
 export default [
-  config,
   {
-    ...config,
+    input: 'src/index.js',
     output: {
-      ...config.output,
+      file: 'dist/kamasi.js',
+      format: 'umd',
+      name: 'kamasi',
+    }
+  },
+  {
+    input: 'src/index.js',
+    output: {
       file: 'dist/kamasi.min.js',
+      format: 'umd',
+      name: 'kamasi',
     },
     plugins: [terser()]
   }

@@ -25,7 +25,7 @@ export class Scale extends NoteList {
   constructor(tonic, name='') {
     validateScale(name)
 
-    const intervals = Scale.scales?.[name] ||
+    const intervals = Scale.scales[name] ||
                       Scale.scales[Scale.alias[name]]
 
     super(intervals.map(i => tonic.transpose(i)))

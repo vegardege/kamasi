@@ -65,7 +65,7 @@ export class Interval {
     try {
       const [, dir, qual, number] = string.match(INTERVAL_REGEX)
       return new Interval(qual, parseInt(number, 10), dir || '+')
-    } catch {
+    } catch (e) {
       throw new Error(`'${string}' is not a valid interval`)
     }
   }
@@ -151,7 +151,7 @@ export class Interval {
    * @see {@link https://en.wikipedia.org/wiki/Interval_ratio}
    */
   frequencyRatio() {
-    return 2 ** (this.chromaticSteps / 12)
+    return Math.pow(2, this.chromaticSteps / 12)
   }
 
   /**
@@ -276,7 +276,7 @@ function validateInterval(quality, number, direction) {
     throw new Error(`direction must be '+' or '-'`)
   }
   // Check if quality and number are compatible
-  const [mainType, _] = DIATONIC[mod(number - 1, DIATONIC.length)]
+  const [mainType] = DIATONIC[mod(number - 1, DIATONIC.length)]
   if ((mainType == 'P' && quality == 'M')
    || (mainType == 'P' && quality == 'm')
    || (mainType == 'M' && quality == 'P')) {
