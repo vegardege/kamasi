@@ -73,6 +73,12 @@ test('calculate distance between notes and enharmonicity', () => {
   expect(Note.fromString('C##4').isEnharmonic('Ebb5')).toBe(false)
 })
 
+test('calculate interval between two notes', () => {
+  // More tests in interval.test.js, this is just for the wrapper
+  expect(Note.fromString('C#').intervalTo('Ab').toString()).toBe('d6')
+  expect(Note.fromString('C#3').intervalFrom('Ab2').toString()).toBe('A3')
+})
+
 test('calculate frequency and midi of note', () => {
   expect(Note.fromString('C4').frequency()).toBeCloseTo(261.6256, 3)
   expect(Note.fromString('B7').frequency()).toBeCloseTo(3951.066, 2)

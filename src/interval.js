@@ -123,6 +123,30 @@ export class Interval {
   }
 
   /**
+   * Find the interval with the same number of diatonic and chromatic steps as
+   * the two underlying intervals combined. Not guaranteed to have a result.
+   * 
+   * @param {(Interval|string)} interval Interval to add
+   */
+  add(interval) {
+    interval = ensure_type(interval, Interval)
+    return Interval.fromSteps(this.diatonicSteps + interval.diatonicSteps,
+                              this.chromaticSteps + interval.chromaticSteps)
+  }
+
+  /**
+   * Find the interval whose diatonic and chromatic steps are the difference
+   * between the underlying intervals. Not guaranteed to have a result.
+   * 
+   * @param {(Interval|string)} interval Interval to subtract
+   */
+  sub(interval) {
+    interval = ensure_type(interval, Interval)
+    return Interval.fromSteps(this.diatonicSteps - interval.diatonicSteps,
+                              this.chromaticSteps - interval.chromaticSteps)
+  }
+
+  /**
    * Frequency ratio in 12-tone equal temperament
    * @see {@link https://en.wikipedia.org/wiki/Interval_ratio}
    */

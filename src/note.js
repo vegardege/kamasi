@@ -87,18 +87,41 @@ export class Note {
   }
 
   /**
+   * Distance between two notes measured in semitones.
    * 
    * @param {(Note|string)} note Note to compare to OR
    *                             Full scientific pitch notation for note
    */
   distance(note) {
     note = ensure_type(note, Note)
+    const octaveDiff = (note.octave - this.octave) || 0
 
-    const isPitchClass = isNaN(this.octave) && isNaN(note.octave)
-    const octaves = isPitchClass ? 0 : note.octave - this.octave
-    const semitones = note.chromaticOffset - this.chromaticOffset
+    return note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff
+  }
 
-    return 12 * octaves + semitones
+  /**
+   * Find the interval required to transpose this note into a different one.
+   * 
+   * @param {(Note|string)} note 
+   */
+  intervalTo(note) {
+    note = ensure_type(note, Note)
+    const octaveDiff = (note.octave - this.octave) || 0
+
+    return Interval.fromSteps(
+      note.diatonicOffset - this.diatonicOffset + 7 * octaveDiff,
+      note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff,
+    )
+  }
+
+  /**
+   * Find the interval required to transpose a note into this one.
+   * 
+   * @param {(Note|string)} note 
+   */
+  intervalFrom(note) {
+    note = ensure_type(note, Note)
+    return note.intervalTo(this)
   }
 
   /**

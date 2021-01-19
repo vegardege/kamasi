@@ -46,6 +46,13 @@ export class NoteList {
     return new NoteList(this.notes.map(n => n.transpose(interval)))
   }
 
+  /**
+   * Find the intervals from first note to each subsequent note.
+   */
+  intervals() {
+    return this.notes.map(n => this.notes[0].intervalTo(n))
+  }
+
   toString() {
     return this.notes.map(n => n.toString()).join(' ')
   }

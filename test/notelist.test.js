@@ -16,3 +16,11 @@ test('transpose note list', () => {
   expect(NoteList.fromString('C E G').transpose('P5')
     .toString()).toBe('G B D')
 })
+
+test('find intervals in list', () => {
+  // Directly maps Note.intervalTo(), which is tested in note.test.js
+  const intervals = NoteList.fromString('C E G').intervals()
+  expect(intervals[0].toString()).toBe('P1')
+  expect(intervals[1].toString()).toBe('M3')
+  expect(intervals[2].toString()).toBe('P5')
+})

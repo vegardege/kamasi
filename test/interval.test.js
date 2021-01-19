@@ -48,6 +48,13 @@ test('calculate diatonic and chromatic steps', () => {
   expect(steps('-A18')).toBe('-17, -30')
 })
 
+test('add and subtract intervals', () => {
+  expect(Interval.fromString('M3').add('m2').toString()).toBe('P4')
+  expect(Interval.fromString('-A11').add('P4').toString()).toBe('-A8')
+  expect(Interval.fromString('d20').sub('A11').toString()).toBe('dd10')
+  expect(Interval.fromString('-P5').sub('m3').toString()).toBe('-m7')
+})
+
 test('calculate frequency ratio and cents', () => {
   expect(Interval.fromString('m3').frequencyRatio()).toBeCloseTo(1.18921, 5)
   expect(Interval.fromString('-m3').frequencyRatio()).toBeCloseTo(0.84090, 5)
