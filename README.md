@@ -4,6 +4,13 @@ Music theory library for node and browsers.
 
 ## Reference
 
+ * Interval
+ * Note
+ * Scale
+ * Chords
+ * NoteLists
+ * Search
+
 ### Intervals
 
 An [interval](https://en.wikipedia.org/wiki/Interval_%28music%29) is the difference between two pitches or pitch classes. It is represented by its [shorthand notation](https://en.wikipedia.org/wiki/Interval_%28music%29#Shorthand_notation), which specifies the direction, quality, and number of the interval.
@@ -113,5 +120,21 @@ See `Chord.chordNames` or `Chord.alias` for a list of supported scale names.
 If you want to represent a sequence of notes without being restricted to names scales or chords, you can use the `NoteList` class:
 
 ```js
-notelist('C4 D#4 Ab4 D5').transpose('-m6').toString() // 'E3 F##3 C4 F#4'
+notes('C4 D#4 Ab4 D5').transpose('-m6').toString() // 'E3 F##3 C4 F#4'
 ```
+
+
+Methods:
+
+ * _notelist_.**transpose**(_interval_) 
+ * _notelist_.**simplify**()
+ * _notelist_.**includes**(_note_[,_enharmonic_])
+ * _notelist_.**includesAll**(_notelist_[,_enharmonic_])
+ * _notelist_.**intervals**()
+ * _notelist_.**sort**()
+ * _notelist_.**toStringArray**()
+ * _notelist_.**toString**()
+
+ ### Search
+
+ 

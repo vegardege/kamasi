@@ -214,9 +214,6 @@ export class Interval {
   }
 }
 
-// Shortcut for creating an interval with short hand notation
-export const interval = Interval.fromString
-
 // Intervals of the diatonic scale. Indexed by diatonic steps,
 // contains the quality and number of chromatic steps per interval.
 const DIATONIC = [['P', 0], ['M', 2], ['M', 4], ['P', 5], ['P', 7],
@@ -298,3 +295,6 @@ function validateInterval(quality, number, direction) {
      throw new Error(`${quality}${number} is not a valid interval`)
    }
 }
+
+// Shortcut for creating an interval with short hand notation
+export const interval = Interval.fromString

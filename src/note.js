@@ -179,6 +179,20 @@ export class Note {
   }
 
   /**
+   * Two notes are equal if letter, accidentals, and octave are equal. 
+   *
+   * @param {(Note|string)} note note Note to compare to OR
+   *                             Full scientific pitch notation for note
+   */
+  isEqual(note) {
+    note = ensure_type(note, Note)
+    return (this.letter === note.letter)
+        && (this.accidentals === note.accidentals)
+        && ((Number.isNaN(this.octave) && Number.isNaN(note.octave))
+         || (this.octave === note.octave))
+  }
+
+  /**
    * Two notes are enharmonic if they represent the same pitch or pitch class.
    * Note that pitch classes and specific pitches can't be enharmonic.
    * 
@@ -196,12 +210,18 @@ export class Note {
   }
 }
 
-// Shortcut for creating an note with scientific pitch notation
-export const note = Note.fromString
-
+// The diatonic notes are 
 Note.diatonic = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+
+// The chromatic notes are 
 Note.chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
                   'G', 'G#', 'A', 'A#', 'B']
+
+// Use this comparator if you want to sort notes. Pitch classes are sorted
+// before all pitches, then they are sorted by octave, pitch, and letter.
+Note.compare = (a, b) => (a.octave || -Infinity) - (b.octave || -Infinity)
+                      || a.chromaticOffset - b.chromaticOffset
+                      || a.diatonicOffset - b.diatonicOffset
 
 function validateNote(letter, accidentals, octave) {
   if (!Note.diatonic.includes(letter.toUpperCase())) {
@@ -219,3 +239,6 @@ function validateNote(letter, accidentals, octave) {
 // Accidentals helper functions
 const accToNum = a => a[0] === 'b' ? -a.length : a.length
 const numToAcc = n => n > 0 ? '#'.repeat(n) : 'b'.repeat(-n)
+
+// Shortcut for creating an note with scientific pitch notation
+export const note = Note.fromString

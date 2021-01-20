@@ -59,6 +59,13 @@ export class Chord extends NoteList {
     interval = ensure_type(interval, Interval)
     return new Chord(this.root.transpose(interval), this.name)
   }
+
+  /**
+   * A more descriptive version of toString()
+   */
+  describe() {
+    return `${this.root.toString()} ${this.name} (${this.notes.toString()})`
+  }
 }
 
 Chord.chords = {

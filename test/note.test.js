@@ -106,3 +106,13 @@ test('convert between pitch classes and pitches', () => {
   expect(new Note('F').isPitchClass()).toBe(true)
   expect(new Note('G', '#', 4).isPitchClass()).toBe(false)
 })
+
+test('check equality', () => {
+  expect(new Note('C', '#', 4).isEqual('C#4')).toBe(true)
+  expect(new Note('C', '#').isEqual('C#4')).toBe(false)
+  expect(new Note('C', '', 4).isEqual('C#4')).toBe(false)
+  expect(new Note('D', '#', 4).isEqual('C#4')).toBe(false)
+  expect(new Note('D', '#', 4).isEqual('C#')).toBe(false)
+  expect(new Note('D', '#', 4).isEqual('D#')).toBe(false)
+  expect(new Note('D', '#', 4).isEqual('D4')).toBe(false)
+})

@@ -1,4 +1,3 @@
-import { Interval } from './interval.js'
 import { Note } from './note.js'
 import { ensure_type } from './utils.js'
 
@@ -16,7 +15,7 @@ export class NoteList {
    * Create a new note list, using a list of Notes or strings on scientific
    * pitch notation, or as a single string of the latter.
    * 
-   * @param {list} notes Ordered list of Note objects
+   * @param {list} notes Ordered array of Note objects
    */
   constructor(notes) {
     this.notes = notes
@@ -25,7 +24,7 @@ export class NoteList {
   /**
    * Create a note list from a string of notes.
    * 
-   * @param {string} string Space separated list of notes
+   * @param {string} string Comma separated list of notes
    */
   static fromString(string) {
     try {
@@ -42,8 +41,34 @@ export class NoteList {
    *                                     Shorthand interval notation (e.g. P5)
    */
   transpose(interval) {
-    interval = ensure_type(interval, Interval)
     return new NoteList(this.notes.map(n => n.transpose(interval)))
+  }
+
+  /**
+   * Reduce accidentals as much as possible for each note in the list.
+   */
+  simplify() {
+    return new NoteList(this.notes.map(n => n.simplify()))
+  }
+
+  /**
+   * Check if note list contains a note equa to `note`.
+   * 
+   * @param {(Note|string)} note Note to look for OR
+   *                             Full scientific pitch notation for note
+   */
+  includes(note, enharmonic=false) {
+    note = ensure_type(note, Note)
+    return enharmonic ? this.notes.some(n => n.isEnharmonic(note))
+                      : this.notes.some(n => n.isEqual(note))
+  }
+
+  /**
+   * Check if note list contains all the notes in `notes`.
+   */
+  includesAll(notes, enharmonic=false) {
+    notes = notes instanceof NoteList ? notes.notes : notes
+    return notes.every(n => this.includes(n, enharmonic))
   }
 
   /**
@@ -53,10 +78,22 @@ export class NoteList {
     return this.notes.map(n => this.notes[0].intervalTo(n))
   }
 
+  /**
+   * Sort the note list by pitch
+   */
+  sort() {
+    // .slice(0) copies the array to keep the original
+    return new NoteList(this.notes.slice(0).sort(Note.compare))
+  }
+
+  toStringArray() {
+    return this.notes.map(n => n.toString())
+  }
+
   toString() {
-    return this.notes.map(n => n.toString()).join(' ')
+    return this.toStringArray().join(' ')
   }
 }
 
 // Shortcut for creating a note list from space separated notes
-export const notelist = NoteList.fromString
+export const notes = NoteList.fromString

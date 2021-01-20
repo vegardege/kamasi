@@ -57,6 +57,13 @@ export class Scale extends NoteList {
     interval = ensure_type(interval, Interval)
     return new Scale(this.tonic.transpose(interval), this.name)
   }
+
+  /**
+   * A more descriptive version of toString()
+   */
+  describe() {
+    return `${this.tonic.toString()} ${this.name} (${this.notes.toString()})`
+  }
 }
 
 // List of scales with their intervals
