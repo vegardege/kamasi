@@ -64,6 +64,11 @@ test('transpose difficult notes', () => {
   expect(t('B#############2', 'A3')).toBe('D###############3')
 })
 
+test('transpose with numbers', () => {
+  expect(t('C', 2)).toBe('D')
+  expect(t('D#4', -5)).toBe('A#3')
+})
+
 test('calculate distance between notes and enharmonicity', () => {
   expect(new Note('C', '', 4).distance('F4')).toBe(5)
   expect(new Note('A', 'bb').distance('D#')).toBe(-4)
@@ -92,4 +97,12 @@ test('simplify a note', () => {
   expect(new Note('F', '####').simplify().toString()).toBe('A')
   expect(new Note('D', 'bbbb', 4).simplify().toString()).toBe('A#3')
   expect(new Note('B', '#############', 2).simplify().toString()).toBe('C4')
+})
+
+test('convert between pitch classes and pitches', () => {
+  expect(new Note('C').toPitchClass().toString()).toBe('C')
+  expect(new Note('D', '', 4).toPitchClass().toString()).toBe('D')
+  expect(new Note('E', '#').toPitch(4).toString()).toBe('E#4')
+  expect(new Note('F').isPitchClass()).toBe(true)
+  expect(new Note('G', '#', 4).isPitchClass()).toBe(false)
 })

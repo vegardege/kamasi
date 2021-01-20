@@ -33,7 +33,7 @@ export class Note {
   constructor(letter, accidentals='', octave=NaN) {
     validateNote(letter, accidentals, octave)
 
-    this.letter = letter
+    this.letter = letter.toUpperCase()
     this.accidentals = accidentals
     this.octave = octave
 
@@ -52,7 +52,7 @@ export class Note {
    */
   static fromString(string) {
     try {
-      const [, root, acc, oct] = string.match('^([A-G])(#*|b*)(-?[0-9]?)$')
+      const [, root, acc, oct] = string.match('^([a-gA-G])(#*|b*)(-?[0-9]?)$')
       return new Note(root, acc, parseInt(oct, 10))
     } catch (e) {
       throw new Error(`'${string}' is not a valid note`)
@@ -71,17 +71,23 @@ export class Note {
    * @see {@link https://en.wikipedia.org/wiki/Transposition_(music)}
    */
   transpose(interval) {
-    interval = ensure_type(interval, Interval)
+    interval = Number.isInteger(interval) ? Interval.fromSemitones(interval)
+                                          : ensure_type(interval, Interval)
 
-    const diatonicTarget = this.diatonicOffset + interval.diatonicSteps
-    const newLetter = Note.diatonic[mod(diatonicTarget, 7)]
+    // The interval number specifies how many note letters we should move
+    const diatonicTarget = this.diatonicOffset + interval.diatonicSteps,
+          newLetter = Note.diatonic[mod(diatonicTarget, 7)]
 
-    const octaveDiff = Math.floor(diatonicTarget / 7)
-    const newOctave = this.octave + octaveDiff
+    // Similarly, the new octave is trivially calculated from the number
+    const octaveDiff = Math.floor(diatonicTarget / 7),
+          newOctave = this.octave + octaveDiff
 
-    const chromaticTarget = this.chromaticOffset + interval.chromaticSteps
-    const chromaticMoved = Note.chromatic.indexOf(newLetter) + 12 * octaveDiff
-    const newAccidentals = numToAcc(chromaticTarget - chromaticMoved)
+    // Accidentals are a bit harder. We need to calculate how many semitones
+    // the interval represents, and how many semitones the letter change
+    // represented. Accidentals are used to compensate for the difference.
+    const chromaticTarget = this.chromaticOffset + interval.chromaticSteps,
+          chromaticMoved = Note.chromatic.indexOf(newLetter) + 12 * octaveDiff,
+          newAccidentals = numToAcc(chromaticTarget - chromaticMoved)
 
     return new Note(newLetter, newAccidentals, newOctave)
   }
@@ -141,6 +147,38 @@ export class Note {
   }
 
   /**
+   * Create an enharmonic note with the fewest possible accidentals.
+   * Arbitrarily chooses '#' over 'b' to be deterministic.
+   */
+  simplify() {
+    const octave = this.octave + Math.floor(this.chromaticOffset / 12)
+    const [root, acc] = Note.chromatic[mod(this.chromaticOffset, 12)]
+
+    return new Note(root, acc || '', octave || NaN)
+  }
+
+  /**
+   * Convert a pitch to a pitch class by removing the octave
+   */
+  toPitchClass() {
+    if (this.isPitchClass()) return this
+    return new Note(this.letter, this.accidentals)
+  }
+
+  /**
+   * Convert a pitch class to a pitch by giving it an octave
+   * 
+   * @param {number} octave Octave the pitch should belong to
+   */
+  toPitch(octave) {
+    return new Note(this.letter, this.accidentals, octave)
+  }
+
+  isPitchClass() {
+    return !Number.isInteger(this.octave)
+  }
+
+  /**
    * Two notes are enharmonic if they represent the same pitch or pitch class.
    * Note that pitch classes and specific pitches can't be enharmonic.
    * 
@@ -153,31 +191,20 @@ export class Note {
     return this.distance(note) === 0
   }
 
-  /**
-   * Create an enharmonic note with the fewest possible accidentals.
-   * Arbitrarily chooses '#' over 'b' to be deterministic.
-   */
-  simplify() {
-    const octave = this.octave + Math.floor(this.chromaticOffset / 12)
-    const [root, acc] = Note.chromatic[mod(this.chromaticOffset, 12)]
-
-    return new Note(root, acc || '', octave || NaN)
-  }
-
   toString() {
     return `${this.letter}${this.accidentals}${this.octave || ''}`
   }
 }
 
 // Shortcut for creating an note with scientific pitch notation
-export const note = Note.fromStrings
+export const note = Note.fromString
 
 Note.diatonic = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 Note.chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
                   'G', 'G#', 'A', 'A#', 'B']
 
 function validateNote(letter, accidentals, octave) {
-  if (!Note.diatonic.includes(letter)) {
+  if (!Note.diatonic.includes(letter.toUpperCase())) {
     throw new Error(`letter must be one of ${Note.diatonic.join(', ')}`)
   }
   if (accidentals.replaceAll('#', '').length &&

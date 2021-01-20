@@ -73,8 +73,11 @@ Methods:
  * _note_.**intervalFrom**(_note_) Returns the interval from another note to this
  * _note_.**frequency**() Returns the frequency in Hz as a float (A4 = 440Hz)
  * _note_.**midi**() Returns the MIDI code of the note
- * _note_.**isEnharmonic**(_note_) Checks if the note is [enharmonically equivalent](https://en.wikipedia.org/wiki/Enharmonic) to another
  * _note_.**simplify**() Returns the enharmonic note with the fewest possible accidentals
+ * _note_.**toPitchClass**() Convert a pitch to a pitch class by removing the octave
+ * _note_.**toPitch**(_octave_) Convert a pitch class to a pitch in the specified octave
+ * _note_.**isPitchClass**() Check if the note represents a pitch or a pitch class
+ * _note_.**isEnharmonic**(_note_) Checks if the note is [enharmonically equivalent](https://en.wikipedia.org/wiki/Enharmonic) to another
  * _note_.**toString**() Returns the [scientific pitch notation](https://en.wikipedia.org/wiki/Scientific_pitch_notation) as a string
 
 ### Scales
