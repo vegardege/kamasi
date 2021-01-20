@@ -38,21 +38,21 @@ test('create invalid interval', () => {
 })
 
 test('calculate diatonic and chromatic steps', () => {
-  const steps = i => {
-    i = Interval.fromString(i)
+  const steps = (q, a, s) => {
+    const i = new Interval(q, a, s)
     return [i.diatonicSteps, i.chromaticSteps].join(", ")
   }
-  expect(steps('M7')).toBe('6, 11')
-  expect(steps('P12')).toBe('11, 19')
-  expect(steps('-P8')).toBe('-7, -12')
-  expect(steps('-A18')).toBe('-17, -30')
+  expect(steps('M', 7)).toBe('6, 11')
+  expect(steps('P', 12)).toBe('11, 19')
+  expect(steps('P', 8, '-')).toBe('-7, -12')
+  expect(steps('A', 18, '-')).toBe('-17, -30')
 })
 
 test('add and subtract intervals', () => {
-  expect(Interval.fromString('M3').add('m2').toString()).toBe('P4')
-  expect(Interval.fromString('-A11').add('P4').toString()).toBe('-A8')
-  expect(Interval.fromString('d20').sub('A11').toString()).toBe('dd10')
-  expect(Interval.fromString('-P5').sub('m3').toString()).toBe('-m7')
+  expect(new Interval('M', 3).add('m2').toString()).toBe('P4')
+  expect(new Interval('A', 11, '-').add('P4').toString()).toBe('-A8')
+  expect(new Interval('d', 20).sub('A11').toString()).toBe('dd10')
+  expect(new Interval('P', 5, '-').sub('m3').toString()).toBe('-m7')
 })
 
 test('find the simple term of a compound interval', () => {
@@ -63,18 +63,18 @@ test('find the simple term of a compound interval', () => {
 })
 
 test('calculate frequency ratio and cents', () => {
-  expect(Interval.fromString('m3').frequencyRatio()).toBeCloseTo(1.18921, 5)
-  expect(Interval.fromString('-m3').frequencyRatio()).toBeCloseTo(0.84090, 5)
-  expect(Interval.fromString('P15').frequencyRatio()).toBe(4)
-  expect(Interval.fromString('P5').cents()).toBe(700)
+  expect(new Interval('m', 3).frequencyRatio()).toBeCloseTo(1.18921, 5)
+  expect(new Interval('m', 3, '-').frequencyRatio()).toBeCloseTo(0.84090, 5)
+  expect(new Interval('P', 15).frequencyRatio()).toBe(4)
+  expect(new Interval('P', 5).cents()).toBe(700)
 })
 
 test('find inversion of interval', () => {
-  expect(Interval.fromString('P1').invert().toString()).toBe('P8')
-  expect(Interval.fromString('P8').invert().toString()).toBe('P1')
-  expect(Interval.fromString('-P15').invert().toString()).toBe('-P1')
-  expect(Interval.fromString('AA6').invert().toString()).toBe('dd3')
-  expect(Interval.fromString('-M9').invert().toString()).toBe('-m7')
+  expect(new Interval('P', 1).invert().toString()).toBe('P8')
+  expect(new Interval('P', 8).invert().toString()).toBe('P1')
+  expect(new Interval('P', 15, '-').invert().toString()).toBe('-P1')
+  expect(new Interval('AA', 6).invert().toString()).toBe('dd3')
+  expect(new Interval('M', 9, '-').invert().toString()).toBe('-m7')
 })
 
 test('check if intervals are compound', () => {
@@ -85,7 +85,7 @@ test('check if intervals are compound', () => {
 })
 
 test('check if intervals are enharmonic', () => {
-  expect(Interval.fromString('M3').isEnharmonic('d4')).toBe(true)
-  expect(Interval.fromString('-A6').isEnharmonic('-m7')).toBe(true)
-  expect(Interval.fromString('d9').isEnharmonic('d2')).toBe(false)
+  expect(new Interval('M', 3).isEnharmonic('d4')).toBe(true)
+  expect(new Interval('A', 6,'-').isEnharmonic('-m7')).toBe(true)
+  expect(new Interval('d', 9).isEnharmonic('d2')).toBe(false)
 })

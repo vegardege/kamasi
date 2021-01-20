@@ -22,20 +22,20 @@ test('create invalid note', () => {
 })
 
 test('calcuate diatonic and chromatic offset', () => {
-  const offset = n => {
-    n = Note.fromString(n)
+  const offset = (n, a, o) => {
+    n = new Note(n, a, o)
     return [n.diatonicOffset, n.chromaticOffset].join(", ")
   }
   expect(offset('C')).toBe('0, 0')
-  expect(offset('F#')).toBe('3, 6')
-  expect(offset('Gb4')).toBe('4, 6')
-  expect(offset('B####')).toBe('6, 15')
+  expect(offset('F', '#')).toBe('3, 6')
+  expect(offset('G', 'b', 4)).toBe('4, 6')
+  expect(offset('B', '####')).toBe('6, 15')
 })
 
 // Transposition tests
 test('transpose function input', () => {
-  expect(Note.fromString('C').transpose(new Interval('P', 5)).toString()).toBe('G')
-  expect(Note.fromString('Db').transpose('m3').toString()).toBe('Fb')
+  expect(new Note('C').transpose(new Interval('P', 5)).toString()).toBe('G')
+  expect(new Note('D', 'b').transpose('m3').toString()).toBe('Fb')
 })
 
 const t = (note, interval) => Note.fromString(note).transpose(interval).toString()
@@ -64,33 +64,32 @@ test('transpose difficult notes', () => {
   expect(t('B#############2', 'A3')).toBe('D###############3')
 })
 
-// Utility function tests
 test('calculate distance between notes and enharmonicity', () => {
-  expect(Note.fromString('C4').distance('F4')).toBe(5)
-  expect(Note.fromString('Abb').distance('D#')).toBe(-4)
-  expect(Note.fromString('B3').distance('C6')).toBe(25)
-  expect(Note.fromString('C##').isEnharmonic('Ebb')).toBe(true)
-  expect(Note.fromString('C##4').isEnharmonic('Ebb5')).toBe(false)
+  expect(new Note('C', '', 4).distance('F4')).toBe(5)
+  expect(new Note('A', 'bb').distance('D#')).toBe(-4)
+  expect(new Note('B', '', 3).distance('C6')).toBe(25)
+  expect(new Note('C', '##').isEnharmonic('Ebb')).toBe(true)
+  expect(new Note('C', '##', 4).isEnharmonic('Ebb5')).toBe(false)
 })
 
 test('calculate interval between two notes', () => {
   // More tests in interval.test.js, this is just for the wrapper
-  expect(Note.fromString('C#').intervalTo('Ab').toString()).toBe('d6')
-  expect(Note.fromString('C#3').intervalFrom('Ab2').toString()).toBe('A3')
+  expect(new Note('C', '#').intervalTo('Ab').toString()).toBe('d6')
+  expect(new Note('C', '#', 3).intervalFrom('Ab2').toString()).toBe('A3')
 })
 
 test('calculate frequency and midi of note', () => {
-  expect(Note.fromString('C4').frequency()).toBeCloseTo(261.6256, 3)
-  expect(Note.fromString('B7').frequency()).toBeCloseTo(3951.066, 2)
-  expect(Note.fromString('C0').frequency()).toBeCloseTo(16.35160, 3)
-  expect(Note.fromString('F1').midi()).toBe(29)
-  expect(Note.fromString('G#8').midi()).toBe(116)
-  expect(Note.fromString('C-2').midi()).toBe(NaN)
-  expect(Note.fromString('B9').midi()).toBe(NaN)
+  expect(new Note('C', '', 4).frequency()).toBeCloseTo(261.6256, 3)
+  expect(new Note('B', '', 7).frequency()).toBeCloseTo(3951.066, 2)
+  expect(new Note('C', '', 0).frequency()).toBeCloseTo(16.35160, 3)
+  expect(new Note('F', '', 1).midi()).toBe(29)
+  expect(new Note('G', '#', 8).midi()).toBe(116)
+  expect(new Note('C', '', -2).midi()).toBe(NaN)
+  expect(new Note('B', '', 9).midi()).toBe(NaN)
 })
 
 test('simplify a note', () => {
-  expect(Note.fromString('F####').simplify().toString()).toBe('A')
-  expect(Note.fromString('Dbbbb4').simplify().toString()).toBe('A#3')
-  expect(Note.fromString('B#############2').simplify().toString()).toBe('C4')
+  expect(new Note('F', '####').simplify().toString()).toBe('A')
+  expect(new Note('D', 'bbbb', 4).simplify().toString()).toBe('A#3')
+  expect(new Note('B', '#############', 2).simplify().toString()).toBe('C4')
 })
