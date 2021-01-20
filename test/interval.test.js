@@ -55,6 +55,13 @@ test('add and subtract intervals', () => {
   expect(Interval.fromString('-P5').sub('m3').toString()).toBe('-m7')
 })
 
+test('find the simple term of a compound interval', () => {
+  expect(new Interval('M', 2).simpleTerm().toString()).toBe('M2')
+  expect(new Interval('A', 16).simpleTerm().toString()).toBe('A2')
+  expect(new Interval('M', 3, '-').simpleTerm().toString()).toBe('-M3')
+  expect(new Interval('d', 14, '-').simpleTerm().toString()).toBe('-d7')
+})
+
 test('calculate frequency ratio and cents', () => {
   expect(Interval.fromString('m3').frequencyRatio()).toBeCloseTo(1.18921, 5)
   expect(Interval.fromString('-m3').frequencyRatio()).toBeCloseTo(0.84090, 5)
@@ -69,7 +76,14 @@ test('find inversion of interval', () => {
   expect(Interval.fromString('AA6').invert().toString()).toBe('dd3')
   expect(Interval.fromString('-M9').invert().toString()).toBe('-m7')
 })
- 
+
+test('check if intervals are compound', () => {
+  expect(new Interval('M', 7).isCompound()).toBe(false)
+  expect(new Interval('M', 13).isCompound()).toBe(true)
+  expect(new Interval('m', 3, '-').isCompound()).toBe(false)
+  expect(new Interval('P', 11, '-').isCompound()).toBe(true)
+})
+
 test('check if intervals are enharmonic', () => {
   expect(Interval.fromString('M3').isEnharmonic('d4')).toBe(true)
   expect(Interval.fromString('-A6').isEnharmonic('-m7')).toBe(true)

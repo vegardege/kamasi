@@ -115,10 +115,6 @@ export class Interval {
     const semitoneDiff = sign * semitones - (octaveSteps + mainSteps),
           quality = semitoneDiffToQuality(mainType, semitoneDiff)
 
-    if (quality === undefined) {
-      // Not all combinations are valid intervals
-      return undefined
-    }
     return new Interval(quality, number, sign === 1 ? '+' : '-')
   }
 
@@ -144,6 +140,15 @@ export class Interval {
     interval = ensure_type(interval, Interval)
     return Interval.fromSteps(this.diatonicSteps - interval.diatonicSteps,
                               this.chromaticSteps - interval.chromaticSteps)
+  }
+
+  /**
+   * A compound interval spans more than a full octave. This function will
+   * return the simple interval left after subtracting the octaves.
+   */
+  simpleTerm() {
+    const number = Math.abs(this.diatonicSteps) % 7 + 1
+    return new Interval(this.quality, number, this.sign === 1 ? '+' : '-')
   }
 
   /**
@@ -177,10 +182,17 @@ export class Interval {
    */
   invert() {
     // P1 is the inverse of P8, compound pure octaves are inverted to P1
-    const invNumber = this.number === 1 ? 8 : 9 - mod(this.number, 7, 2)
+    const invQuality = invertQuality(this.quality),
+          invNumber = this.number === 1 ? 8 : 9 - mod(this.number, 7, 2)
 
-    return new Interval(
-      invertQuality(this.quality), invNumber, this.sign === 1 ? '+' : '-')
+    return new Interval(invQuality, invNumber, this.sign === 1 ? '+' : '-')
+  }
+
+  /**
+   * Returns true if the interval is compound (spans more than one octave).
+   */
+  isCompound() {
+    return this.number >= 8
   }
 
   /**
