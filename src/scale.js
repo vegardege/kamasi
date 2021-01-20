@@ -77,3 +77,6 @@ function validateScale(name) {
         throw new Error(`The scale ${name} is not known`)
       }
 }
+
+// Shortcut for creating a scale from its full name
+export const scale = Scale.fromString

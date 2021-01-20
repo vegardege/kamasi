@@ -78,3 +78,6 @@ function validateChord(name) {
         throw new Error(`The chords ${name} is not known`)
       }
 }
+
+// Shortcut for creating a chord from its full name
+export const chord = Chord.fromString

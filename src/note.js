@@ -169,6 +169,9 @@ export class Note {
   }
 }
 
+// Shortcut for creating an note with scientific pitch notation
+export const note = Note.fromStrings
+
 Note.diatonic = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 Note.chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
                   'G', 'G#', 'A', 'A#', 'B']

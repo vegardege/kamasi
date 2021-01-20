@@ -34,7 +34,7 @@ export class NoteList {
       throw new Error(`'${string}' is not a valid note list`)
     }
   }
-  
+
   /**
    * Transpose all notes in the list by the same interval.
    * 
@@ -57,3 +57,6 @@ export class NoteList {
     return this.notes.map(n => n.toString()).join(' ')
   }
 }
+
+// Shortcut for creating a note list from space separated notes
+export const notelist = NoteList.fromString
