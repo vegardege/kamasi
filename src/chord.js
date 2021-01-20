@@ -1,3 +1,4 @@
+import { CHORDS, ALIAS } from '../data/chords.js'
 import { Interval } from './interval.js'
 import { Note } from './note.js'
 import { NoteList } from './notelist.js'
@@ -68,16 +69,10 @@ export class Chord extends NoteList {
   }
 }
 
-Chord.chords = {
-  'major': ['P1', 'M3', 'P5'],
-  'minor': ['P1', 'm3', 'P5'],
-}
-Chord.chordNames = Object.keys(Chord.chords)
+Chord.chords = CHORDS
+Chord.alias = ALIAS
+Chord.chordNames = Object.keys(Chord.chords).concat(Object.keys(Chord.alias))
 
-Chord.alias = {
-  '': 'major',
-  'maj': 'major',
-}
 
 function validateChord(name) {
   if (!Chord.chordNames.includes(name) &&

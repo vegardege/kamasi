@@ -1,3 +1,4 @@
+import { SCALES, ALIAS } from '../data/scales.js'
 import { Interval } from './interval.js'
 import { Note } from './note.js'
 import { NoteList } from './notelist.js'
@@ -67,16 +68,9 @@ export class Scale extends NoteList {
 }
 
 // List of scales with their intervals
-Scale.scales = {
-  'major': ['P1', 'M2', 'M3', 'P4', 'P5', 'M6', 'M7'],
-}
-Scale.scaleNames = Object.keys(Scale.scales)
-
-// List of aliases for scales
-Scale.alias = {
-  '': 'major',
-  'maj': 'major',
-}
+Scale.scales = SCALES
+Scale.alias = ALIAS
+Scale.scaleNames = Object.keys(Scale.scales).concat(Object.keys(Scale.alias))
 
 function validateScale(name) {
   if (!Scale.scaleNames.includes(name) &&
