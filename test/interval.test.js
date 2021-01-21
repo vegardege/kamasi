@@ -62,6 +62,10 @@ test('find the simple term of a compound interval', () => {
   expect(new Interval('d', 14, '-').simpleTerm().toString()).toBe('-d7')
 })
 
+test('simplify an interval', () => {
+  expect(new Interval('ddd', 18, '-').simplify().toString()).toBe('-M16')
+})
+
 test('calculate frequency ratio and cents', () => {
   expect(new Interval('m', 3).frequencyRatio()).toBeCloseTo(1.18921, 5)
   expect(new Interval('m', 3, '-').frequencyRatio()).toBeCloseTo(0.84090, 5)

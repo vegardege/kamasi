@@ -152,6 +152,13 @@ export class Interval {
   }
 
   /**
+   * Returns an enharmonic interval with the fewest qualities possible.
+   */
+  simplify() {
+    return Interval.fromSemitones(this.chromaticSteps)
+  }
+
+  /**
    * Frequency ratio in 12-tone equal temperament
    * @see {@link https://en.wikipedia.org/wiki/Interval_ratio}
    */

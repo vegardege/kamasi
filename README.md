@@ -42,6 +42,7 @@ Methods:
  * _interval_.**add**(_interval_) Add two intervals
  * _interval_.**sub**(_interval_) Subtract one interval from another
  * _interval_.**simpleTerm**() Subtract all octaves from a compound interval
+ * _interval_.**simplify**() Find the enharmonic interval with the simplest quality possible
  * _interval_.**frequencyRatio**() Returns the [frequency ratio](https://en.wikipedia.org/wiki/Interval_%28music%29#Frequency_ratios) of interval as a float
  * _interval_.**cents**() Returns the interval size in [cents](https://en.wikipedia.org/wiki/Interval_%28music%29#Cents) as an int
  * _interval_.**invert**() Returns the [invert](https://en.wikipedia.org/wiki/Interval_%28music%29#Inversion) of the interval
