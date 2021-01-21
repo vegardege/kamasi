@@ -35,7 +35,6 @@ export class Chord extends NoteList {
 
     this.root = root
     this.name = name
-    this.intervals = intervals
   }
 
   /**
@@ -72,7 +71,6 @@ export class Chord extends NoteList {
 Chord.chords = CHORDS
 Chord.alias = ALIAS
 Chord.chordNames = Object.keys(Chord.chords).concat(Object.keys(Chord.alias))
-
 
 function validateChord(name) {
   if (!Chord.chordNames.includes(name) &&

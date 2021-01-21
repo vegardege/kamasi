@@ -33,7 +33,6 @@ export class Scale extends NoteList {
 
     this.tonic = tonic
     this.name = name
-    this.intervals = intervals
   }
 
   /**

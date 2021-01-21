@@ -1,5 +1,6 @@
 import { Note } from './note.js'
 import { ensure_type } from './utils.js'
+import { search as test } from './search.js'
 
 /**
  * A note list is an ordered sequence of notes.
@@ -19,6 +20,7 @@ export class NoteList {
    */
   constructor(notes) {
     this.notes = notes
+    this.intervals = notes.map(n => this.notes[0].intervalTo(n))
   }
 
   /**
@@ -72,18 +74,50 @@ export class NoteList {
   }
 
   /**
-   * Find the intervals from first note to each subsequent note.
-   */
-  intervals() {
-    return this.notes.map(n => this.notes[0].intervalTo(n))
-  }
-
-  /**
    * Sort the note list by pitch
    */
   sort() {
     // .slice(0) copies the array to keep the original
     return new NoteList(this.notes.slice(0).sort(Note.compare))
+  }
+
+  /**
+   * Search for chords and scales these notes form. Supports sub and super
+   * sets to search for possible extensions or reductions as well.
+   *
+   * @param {boolean} enharmonic If true, search won't differentiate
+   *                             between enharmonic intervals
+   * @param {string} type 'exact': Only find exact matches
+   *                      'sub': Find subsets of this notelist
+   *                      'sup': Find supersets of this notelist
+   */
+  search(enharmonic=true, type='exact') {
+    const intervals = enharmonic ? this.intervals.map(i => i.simplify())
+                                 : this.intervals
+
+    return test(intervals.map(i => i.toString()), type, enharmonic)
+  }
+
+  /**
+   * Find all known scales and chords that can be made up from a subset
+   * of these notes.
+   *
+   * @param {boolean} enharmonic If true, search won't differentiate
+   *                             between enharmonic intervals
+   */
+  subsets(enharmonic=true) {
+    return this.search(enharmonic, 'sub')
+  }
+
+  /**
+   * Find all known scales and chords that can be made up from a subset
+   * of these notes.
+   *
+   * @param {boolean} enharmonic If true, search won't differentiate
+   *                             between enharmonic intervals
+   */
+  supersets(enharmonic=true) {
+    return this.search(enharmonic, 'sup')
   }
 
   toStringArray() {
