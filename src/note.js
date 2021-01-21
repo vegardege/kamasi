@@ -100,7 +100,7 @@ export class Note {
    */
   distance(note) {
     note = ensure_type(note, Note)
-    const octaveDiff = (note.octave - this.octave) || 0
+    const octaveDiff = Note.octaveDiff(this, note)
 
     return note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff
   }
@@ -112,7 +112,7 @@ export class Note {
    */
   intervalTo(note) {
     note = ensure_type(note, Note)
-    const octaveDiff = (note.octave - this.octave) || 0
+    const octaveDiff = Note.octaveDiff(this, note)
 
     return Interval.fromSteps(
       note.diatonicOffset - this.diatonicOffset + 7 * octaveDiff,
@@ -188,7 +188,7 @@ export class Note {
     note = ensure_type(note, Note)
     return (this.letter === note.letter)
         && (this.accidentals === note.accidentals)
-        && ((Number.isNaN(this.octave) && Number.isNaN(note.octave))
+        && ((this.isPitchClass() && note.isPitchClass())
          || (this.octave === note.octave))
   }
 
@@ -222,6 +222,27 @@ Note.chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
 Note.compare = (a, b) => (a.octave || -Infinity) - (b.octave || -Infinity)
                       || a.chromaticOffset - b.chromaticOffset
                       || a.diatonicOffset - b.diatonicOffset
+
+/**
+ * Find the octave difference between two notes. This is easy for pitches.
+ * For two pitch classes, we always want to move up in pitch. If the first
+ * note has a higher pitch, we assume an octave shift.
+ *
+ * E.g. D -> C is assumed to be a shift from a D to a C in a higher octave.
+ *
+ * @param {Note} a First note
+ * @param {Note} b Second note
+ */
+Note.octaveDiff = (a, b) => {
+  if (a.isPitchClass() != b.isPitchClass()) {
+    throw new Error("Can't compare a pitch and a pitch class")
+  }
+  if (a.isPitchClass()) {
+    return a.chromaticOffset > b.chromaticOffset ? 1 : 0
+  } else {
+    return b.octave - a.octave
+  }
+}
 
 function validateNote(letter, accidentals, octave) {
   if (!Note.diatonic.includes(letter.toUpperCase())) {

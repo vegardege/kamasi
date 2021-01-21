@@ -71,7 +71,7 @@ test('transpose with numbers', () => {
 
 test('calculate distance between notes and enharmonicity', () => {
   expect(new Note('C', '', 4).distance('F4')).toBe(5)
-  expect(new Note('A', 'bb').distance('D#')).toBe(-4)
+  expect(new Note('A', 'bb').distance('D#')).toBe(8)
   expect(new Note('B', '', 3).distance('C6')).toBe(25)
   expect(new Note('C', '##').isEnharmonic('Ebb')).toBe(true)
   expect(new Note('C', '##', 4).isEnharmonic('Ebb5')).toBe(false)
