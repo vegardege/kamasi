@@ -38,9 +38,9 @@ export class Note {
     this.octave = octave
 
     // Offset from C (pitch class or in note's octave)
-    this.diatonicOffset = Note.diatonic.indexOf(letter)
-    this.chromaticOffset = Note.chromatic.indexOf(letter)
-                         + accToNum(accidentals)
+    this.diatonicOffset = Note.diatonic.indexOf(this.letter)
+    this.chromaticOffset = Note.chromatic.indexOf(this.letter)
+                         + accToNum(this.accidentals)
   }
 
   /**

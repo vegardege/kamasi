@@ -3,13 +3,13 @@ const { Note, Interval } = require('../dist/kamasi.js')
 test('create note with letter, accidentals, and octave', () => {
   expect(new Note('C').toString()).toBe('C')
   expect(new Note('D', '#').toString()).toBe('D#')
-  expect(new Note('E', 'b', 4).toString()).toBe('Eb4')
+  expect(new Note('e', 'b', 4).toString()).toBe('Eb4')
 })
 
 test('create interval from scientific pitch notation', () => {
   expect(Note.fromString('F##').toString()).toBe('F##')
   expect(Note.fromString('Gbb3').toString()).toBe('Gbb3')
-  expect(Note.fromString('A####-1').toString()).toBe('A####-1')
+  expect(Note.fromString('a####-1').toString()).toBe('A####-1')
 })
 
 test('create invalid note', () => {
