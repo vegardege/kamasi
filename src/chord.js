@@ -28,6 +28,7 @@ export class Chord extends NoteList {
   constructor(root, name='') {
     validateChord(name)
 
+    root = ensure_type(root, Note)
     const intervals = Chord.chords[name] ||
                       Chord.chords[Chord.alias[name]]
 
@@ -43,9 +44,9 @@ export class Chord extends NoteList {
    * @param {string} string Root note and chord name separated by space
    */
   static fromString(string) {
-    let [root, name] = string.split(' ')
-    root = ensure_type(root, Note)
-    return new Chord(root, name)
+    //eslint-disable-next-line
+    let [, root, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*([^\s]*)')
+    return new Chord(root, name.trim())
   }
 
   /**
@@ -60,11 +61,8 @@ export class Chord extends NoteList {
     return new Chord(this.root.transpose(interval), this.name)
   }
 
-  /**
-   * A more descriptive version of toString()
-   */
-  describe() {
-    return `${this.root.toString()} ${this.name} (${this.notes.toString()})`
+  toString() {
+    return `${this.root.toString()} ${this.name} chord (${this.notes.join(' ')})`
   }
 }
 

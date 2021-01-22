@@ -26,6 +26,7 @@ export class Scale extends NoteList {
   constructor(tonic, name='') {
     validateScale(name)
 
+    tonic = ensure_type(tonic, Note)
     const intervals = Scale.scales[name] ||
                       Scale.scales[Scale.alias[name]]
 
@@ -41,9 +42,9 @@ export class Scale extends NoteList {
    * @param {string} string Tonic note and scale name separated by space
    */
   static fromString(string) {
-    let [tonic, name] = string.split(' ')
-    tonic = ensure_type(tonic, Note)
-    return new Scale(tonic, name)
+    //eslint-disable-next-line
+    let [, tonic, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*([^\s]*)')
+    return new Scale(tonic, name.trim())
   }
 
   /**
@@ -58,11 +59,8 @@ export class Scale extends NoteList {
     return new Scale(this.tonic.transpose(interval), this.name)
   }
 
-  /**
-   * A more descriptive version of toString()
-   */
-  describe() {
-    return `${this.tonic.toString()} ${this.name} (${this.notes.toString()})`
+  toString() {
+    return `${this.tonic.toString()} ${this.name} scale (${this.notes.join(' ')})`
   }
 }
 
