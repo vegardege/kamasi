@@ -2,22 +2,6 @@ import { INTERVAL_BITMASK, INTERVAL_BITMASK_ENHARMONIC } from '../data/intervals
 import { CHORDS } from '../data/chords.js'
 import { SCALES } from '../data/scales.js'
 
-// Compare functions and match level for the three search types
-const searchTypes = {
-  'exact': {
-    'compare': (a, b) => a === b,
-    'match': () => 1,
-  },
-  'sub': {
-    'compare': (a, b) => (~a & b) === 0,
-    'match': (a, b) => b['length'] / a['length'],
-  },
-  'sup': {
-    'compare': (a, b) => (a & ~b) === 0,
-    'match': (a, b) => a['length'] / b['length']
-  }
-}
-
 // The index is initialized on first search, and contains
 // pre-calculated bitmasks for all chords and scales.
 const index = []
@@ -89,14 +73,33 @@ export function search(intervals, type='exact', enharmonic=true) {
         search = searchTypes[type],
         needle = bitmask(intervals, enharmonic)
 
-  for (const x of index) {
-    if (search.compare(needle, x[field])) {
+  for (const candidate of index) {
+    if (search.compare(needle, candidate[field])) {
       result.push({
-        'name': x['name'],
-        'type': x['type'],
-        'match': search.match(intervals, x),
+        'name': candidate['name'],
+        'type': candidate['type'],
+        'match': search.match(intervals, candidate),
       })
+      if (type === 'exact') {
+        return result // There can only be one exact match
+      }
     }
   }
   return result.sort((a, b) => b.match - a.match)
+}
+
+// Compare functions and match level for the three search types
+const searchTypes = {
+  'exact': {
+    'compare': (a, b) => a === b,
+    'match': () => 1.0,
+  },
+  'sub': {
+    'compare': (a, b) => (~a & b) === 0,
+    'match': (a, b) => b['length'] / a['length'],
+  },
+  'sup': {
+    'compare': (a, b) => (a & ~b) === 0,
+    'match': (a, b) => a['length'] / b['length'],
+  }
 }

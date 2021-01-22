@@ -1,6 +1,6 @@
 import { Note } from './note.js'
 import { ensure_type } from './utils.js'
-import { search as test } from './search.js'
+import { search as _search } from './search.js'
 
 /**
  * A note list is an ordered sequence of notes.
@@ -95,7 +95,7 @@ export class NoteList {
     const intervals = enharmonic ? this.intervals.map(i => i.simplify())
                                  : this.intervals
 
-    return test(intervals.map(i => i.toString()), type, enharmonic)
+    return _search(intervals.map(i => i.toString()), type, enharmonic)
   }
 
   /**
