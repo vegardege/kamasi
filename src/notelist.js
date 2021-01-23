@@ -120,6 +120,13 @@ export class NoteList {
     return this.search(enharmonic, 'sup')
   }
 
+  /**
+   * Check if the notelist is empty
+   */
+  isEmpty() {
+    return this.notes.length === 0
+  }
+
   toStringArray() {
     return this.notes.map(n => n.toString())
   }
