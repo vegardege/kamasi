@@ -68,24 +68,20 @@ export function search(intervals, type='exact', enharmonic=true) {
     return [] // Search term has intervals not in the index
   }
 
-  const result = [],
+  const result = {'scale': {}, 'chord': {}},
         field = enharmonic ? 'bitmaskEnharmonic' : 'bitmask',
         search = searchTypes[type],
         needle = bitmask(intervals, enharmonic)
 
   for (const candidate of index) {
     if (search.compare(needle, candidate[field])) {
-      result.push({
-        'name': candidate['name'],
-        'type': candidate['type'],
-        'match': search.match(intervals, candidate),
-      })
+      result[candidate['type']][candidate['name']] = search.match(intervals, candidate)
       if (type === 'exact') {
-        return result // There can only be one exact match
+        break // There can only be one exact match
       }
     }
   }
-  return result.sort((a, b) => b.match - a.match)
+  return result//.sort((a, b) => b.match - a.match)
 }
 
 // Compare functions and match level for the three search types
