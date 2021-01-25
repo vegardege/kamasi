@@ -36,6 +36,13 @@ test('simplify note list', () => {
     .toString()).toBe('E4 D6 B2 C#6 G#5')
 })
 
+test('add and remove notes', () => {
+  const noteList = new NoteList([new Note('F', '#', 5), new Note('G', 'b', 5)])
+  expect(noteList.add('A5').toString()).toBe('F#5 Gb5 A5')
+  expect(noteList.remove('F#5').toString()).toBe('Gb5')
+  expect(noteList.remove('F#4').toString()).toBe('F#5 Gb5')
+})
+
 test('check if note is in note list', () => {
   // Directly maps Note.simplify(), which is tested in note.test.js
   expect(NoteList.fromString('E4 F4 C#6').includes('E4')).toBe(true)
@@ -45,4 +52,10 @@ test('check if note is in note list', () => {
   expect(NoteList.fromString('C D E F G').includesAll(['C', 'D'])).toBe(true)
   expect(NoteList.fromString('C D E F G').includesAll(['C', 'Ebb'])).toBe(false)
   expect(NoteList.fromString('C D E F G').includesAll(['C', 'Ebb'], true)).toBe(true)
+})
+
+test('check if list is empty or root note', () => {
+  expect((new NoteList([])).isEmpty()).toBe(true)
+  expect(NoteList.fromString('C4 D4 E4').isEmpty()).toBe(false)
+  expect(NoteList.fromString('C4 D4 E4').root().toString()).toBe('C4')
 })

@@ -54,6 +54,26 @@ export class NoteList {
   }
 
   /**
+   * Returns a copy of the list with `note` added
+   * 
+   * @param {(Note|string)} note Note to add to list
+   */
+  add(note) {
+    note = ensure_type(note, Note)
+    return new NoteList(this.notes.concat([note]))
+  }
+
+  /**
+   * Returns a copy of the list with all instances of `note` removed
+   * 
+   * @param {(Note|string)} note Note to remove from list
+   */
+  remove(note) {
+    note = ensure_type(note, Note)
+    return new NoteList(this.notes.filter(n => !n.isEqual(note)))
+  }
+
+  /**
    * Check if note list contains a note equa to `note`.
    * 
    * @param {(Note|string)} note Note to look for OR
@@ -118,6 +138,14 @@ export class NoteList {
    */
   supersets(enharmonic=true) {
     return this.search(enharmonic, 'sup')
+  }
+
+  /**
+   * Returns the first note of the list. Note that this is not guaranteed
+   * to be the lowest pitch, as a notelist does not need to be ascending.
+   */
+  root() {
+    return this.notes[0]
   }
 
   /**
