@@ -40,7 +40,8 @@ test('add and remove notes', () => {
   const noteList = new NoteList([new Note('F', '#', 5), new Note('G', 'b', 5)])
   expect(noteList.add('A5').toString()).toBe('F#5 Gb5 A5')
   expect(noteList.remove('F#5').toString()).toBe('Gb5')
-  expect(noteList.remove('F#4').toString()).toBe('F#5 Gb5')
+  expect(noteList.remove('E##5').toString()).toBe('F#5 Gb5')
+  expect(noteList.remove('E##5', true).toString()).toBe('')
 })
 
 test('check if note is in note list', () => {

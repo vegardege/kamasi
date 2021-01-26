@@ -67,10 +67,13 @@ export class NoteList {
    * Returns a copy of the list with all instances of `note` removed
    * 
    * @param {(Note|string)} note Note to remove from list
+   * @param {boolean} enharmonic If true, removes all enharmonic notes
    */
-  remove(note) {
+  remove(note, enharmonic=false) {
     note = ensure_type(note, Note)
-    return new NoteList(this.notes.filter(n => !n.isEqual(note)))
+    const filter = enharmonic ? n => !n.isEnharmonic(note)
+                              : n => !n.isEqual(note)
+    return new NoteList(this.notes.filter(filter))
   }
 
   /**
