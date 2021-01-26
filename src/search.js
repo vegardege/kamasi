@@ -11,10 +11,10 @@ const index = []
  */
 function buildIndex() {
   for (const name in CHORDS) {
-    add(name, CHORDS[name], 'chord')
+    add(name, CHORDS[name], 'chords')
   }
   for (const name in SCALES) {
-    add(name, SCALES[name], 'scale')
+    add(name, SCALES[name], 'scales')
   }
 }
 
@@ -64,12 +64,13 @@ export function search(intervals, type='exact', enharmonic=true) {
     buildIndex() // Build index the first time `search` is called
   }
 
+  const result = {'scales': {}, 'chords': {}}
+
   if (intervals.some(i => INTERVAL_BITMASK[i] === undefined)) {
-    return [] // Search term has intervals not in the index
+    return result // Search term has intervals not in the index
   }
 
-  const result = {'scale': {}, 'chord': {}},
-        field = enharmonic ? 'bitmaskEnharmonic' : 'bitmask',
+  const field = enharmonic ? 'bitmaskEnharmonic' : 'bitmask',
         search = searchTypes[type],
         needle = bitmask(intervals, enharmonic)
 
@@ -81,7 +82,7 @@ export function search(intervals, type='exact', enharmonic=true) {
       }
     }
   }
-  return result//.sort((a, b) => b.match - a.match)
+  return result
 }
 
 // Compare functions and match level for the three search types
