@@ -18,7 +18,7 @@ export class NoteList {
    * 
    * @param {list} notes Ordered array of Note objects
    */
-  constructor(notes) {
+  constructor(notes=[]) {
     this.notes = notes
     this.intervals = notes.map(n => this.notes[0].intervalTo(n))
   }
