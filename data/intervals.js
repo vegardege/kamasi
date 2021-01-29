@@ -27,6 +27,8 @@ export const INTERVAL_BITMASK = {
   'A7': 1 << 23,
 }
 
+// Similar to `INTERVAL_BITMASK`, but does not differentiate between
+// enharmonic intervals.
 export const INTERVAL_BITMASK_ENHARMONIC = {
   'P1': 1 << 0,
   'd2': 1 << 0,
