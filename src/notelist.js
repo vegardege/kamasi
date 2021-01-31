@@ -1,3 +1,4 @@
+import { Interval } from './interval.js'
 import { Note } from './note.js'
 import { ensure_type } from './utils.js'
 import { search as _search } from './search.js'
@@ -5,7 +6,7 @@ import { search as _search } from './search.js'
 /**
  * A note list is an ordered sequence of notes.
  * The notes can be harmonic (simultaneous) or melodic (sequential).
- * 
+ *
  * This class is a collection used for an arbitrary list of notes. Subclasses
  * should be used for more specific purposes, e.g. a scale, a chord, or a
  * melody.
@@ -15,22 +16,38 @@ export class NoteList {
   /**
    * Create a new note list, using a list of Notes or strings on scientific
    * pitch notation, or as a single string of the latter.
-   * 
-   * @param {list} notes Ordered array of Note objects
+   *
+   * It can be created using a root note and a list of intervas, or as a
+   * list of notes (intervals will be calculated).
+   *
+   * @param {(Note|string|Array)} notes The first note of the note list OR
+   *                                    A list of valid notes
+   * @param {array} intervals A list of intervals from root note
    */
-  constructor(notes=[]) {
-    this.notes = notes.map(n => ensure_type(n, Note))
-    this.intervals = notes.map(n => this.notes[0].intervalTo(n))
+  constructor(root=[], intervals=[]) {
+
+    if (root instanceof Array && intervals.length === 0) {
+      this.notes = root.map(n => ensure_type(n, Note))
+      this.intervals = this.notes.map(n => this.notes[0].intervalTo(n))
+    } else if (intervals.length > 0) {
+      root = ensure_type(root, Note)
+
+      this.notes = intervals.map(i => root.transpose(i))
+      this.intervals = intervals.map(i => ensure_type(i, Interval))
+    } else {
+      throw new Error('NoteList must be created with a root note and a ' +
+                      'list of intervals, or as a list of notes')
+    }
   }
 
   /**
    * Create a note list from a string of notes.
    * 
-   * @param {string} string Comma separated list of notes
+   * @param {string} string Space separated list of notes
    */
   static fromString(string) {
     try {
-      return new NoteList(string.split(' ').map(n => ensure_type(n, Note)))
+      return new NoteList(string.split(' '))
     } catch (e) {
       throw new Error(`'${string}' is not a valid note list`)
     }

@@ -20,21 +20,21 @@ export class Chord extends NoteList {
   /**
    * Creates a new chord based on its name
    * 
-   * @param {(Note|string)} root Root note of the chord OR
-   *                             Full scientific pitch notation for root OR
-   *                             Full name of chord with space after root
+   * @param {(Note|string)} tonic Root note of the chord OR
+   *                              Full scientific pitch notation for root OR
+   *                              Full name of chord with space after root
    * @param {string} name Name of the chord (without note)
    */
-  constructor(root, name='') {
+  constructor(tonic, name='') {
     validateChord(name)
 
-    root = ensure_type(root, Note)
+    tonic = ensure_type(tonic, Note)
     const intervals = Chord.chords[name] ||
                       Chord.chords[Chord.alias[name]]
 
-    super(intervals.map(i => root.transpose(i)))
+    super(tonic, intervals)
 
-    this.root = root
+    this.tonic = tonic
     this.name = name
   }
 
@@ -45,8 +45,8 @@ export class Chord extends NoteList {
    */
   static fromString(string) {
     //eslint-disable-next-line
-    let [, root, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*([^\s]*)')
-    return new Chord(root, name.trim())
+    let [, tonic, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*([^\s]*)')
+    return new Chord(tonic, name.trim())
   }
 
   /**
@@ -61,8 +61,8 @@ export class Chord extends NoteList {
     return new Chord(this.root.transpose(interval), this.name)
   }
 
-  toString() {
-    return `${this.root.toString()} ${this.name} chord (${this.notes.join(' ')})`
+  describe() {
+    return `${this.root.toString()} ${this.name} chord (${this.toString()})`
   }
 }
 

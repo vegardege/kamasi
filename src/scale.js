@@ -20,7 +20,9 @@ export class Scale extends NoteList {
   /**
    * Create a new scale based on tonic note and name
    * 
-   * @param {Note} tonic Tonic note of the scale
+   * @param {(Note|string)} root Root note of the chord OR
+   *                             Full scientific pitch notation for root OR
+   *                             Full name of chord with space after root
    * @param {string} name Name of the scale (without note)
    */
   constructor(tonic, name='') {
@@ -30,7 +32,7 @@ export class Scale extends NoteList {
     const intervals = Scale.scales[name] ||
                       Scale.scales[Scale.alias[name]]
 
-    super(intervals.map(i => tonic.transpose(i)))
+    super(tonic, intervals)
 
     this.tonic = tonic
     this.name = name
@@ -59,8 +61,8 @@ export class Scale extends NoteList {
     return new Scale(this.tonic.transpose(interval), this.name)
   }
 
-  toString() {
-    return `${this.tonic.toString()} ${this.name} scale (${this.notes.join(' ')})`
+  describe() {
+    return `${this.root.toString()} ${this.name} chord (${this.toString()})`
   }
 }
 
