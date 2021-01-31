@@ -77,9 +77,6 @@ export function search(intervals, type='exact', enharmonic=true) {
   for (const candidate of index) {
     if (search.compare(needle, candidate[field])) {
       result[candidate['type']][candidate['name']] = search.match(intervals, candidate)
-      if (type === 'exact') {
-        break // There can only be one exact match
-      }
     }
   }
   return result
