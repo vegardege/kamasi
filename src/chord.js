@@ -26,11 +26,9 @@ export class Chord extends NoteList {
    * @param {string} name Name of the chord (without note)
    */
   constructor(tonic, name='') {
-    validateChord(name)
-
+    
     tonic = ensure_type(tonic, Note)
-    const intervals = Chord.chords[name] ||
-                      Chord.chords[Chord.alias[name]]
+    const intervals = chordIntervals(name)
 
     super(tonic, intervals)
 
@@ -58,23 +56,25 @@ export class Chord extends NoteList {
    */
   transpose(interval) {
     interval = ensure_type(interval, Interval)
-    return new Chord(this.root.transpose(interval), this.name)
+    return new Chord(this.tonic.transpose(interval), this.name)
   }
 
   describe() {
-    return `${this.root.toString()} ${this.name} chord (${this.toString()})`
+    return `${this.tonic.toString()} ${this.name} chord (${this.toString()})`
   }
 }
 
 Chord.chords = CHORDS
 Chord.alias = ALIAS
-Chord.chordNames = Object.keys(Chord.chords).concat(Object.keys(Chord.alias))
 
-function validateChord(name) {
-  if (!Chord.chordNames.includes(name) &&
-      !Object.keys(Chord.alias).includes(name)) {
-        throw new Error(`The chords ${name} is not known`)
-      }
+function chordIntervals(name) {
+  if (name in Chord.chords) {
+    return Chord.chords[name]
+  } else if (name in Chord.alias) {
+    return Chord.chords[Chord.alias[name]]
+  } else {
+    throw new Error(`The chord ${name} is not known`)
+  }
 }
 
 // Shortcut for creating a chord from its full name

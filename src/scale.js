@@ -26,11 +26,9 @@ export class Scale extends NoteList {
    * @param {string} name Name of the scale (without note)
    */
   constructor(tonic, name='') {
-    validateScale(name)
 
     tonic = ensure_type(tonic, Note)
-    const intervals = Scale.scales[name] ||
-                      Scale.scales[Scale.alias[name]]
+    const intervals = scaleIntervals(name)
 
     super(tonic, intervals)
 
@@ -62,20 +60,22 @@ export class Scale extends NoteList {
   }
 
   describe() {
-    return `${this.root.toString()} ${this.name} chord (${this.toString()})`
+    return `${this.root.toString()} ${this.name} scale (${this.toString()})`
   }
 }
 
 // List of scales with their intervals
 Scale.scales = SCALES
 Scale.alias = ALIAS
-Scale.scaleNames = Object.keys(Scale.scales).concat(Object.keys(Scale.alias))
 
-function validateScale(name) {
-  if (!Scale.scaleNames.includes(name) &&
-      !Object.keys(Scale.alias).includes(name)) {
-        throw new Error(`The scale ${name} is not known`)
-      }
+function scaleIntervals(name) {
+  if (name in Scale.scales) {
+    return Scale.scales[name]
+  } else if (name in Scale.alias) {
+    return Scale.scales[Scale.alias[name]]
+  } else {
+    throw new Error(`The scale ${name} is not known`)
+  }
 }
 
 // Shortcut for creating a scale from its full name
