@@ -94,6 +94,18 @@ export class NoteList {
   }
 
   /**
+   * Add note to list if it's not present, otherwise remove it
+   * 
+   * @param {(Note|string)} note Note to toggle
+   * @param {boolean} enharmonic If true, toggles all enharmonic notes
+   */
+  toggle(note, enharmonic=false) {
+    note = ensure_type(note, Note)
+    return this.includes(note, enharmonic) ? this.remove(note, enharmonic)
+                                           : this.add(note, enharmonic)
+  }
+
+  /**
    * Check if note list contains a note equa to `note`.
    * 
    * @param {(Note|string)} note Note to look for OR

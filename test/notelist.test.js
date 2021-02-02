@@ -36,12 +36,14 @@ test('simplify note list', () => {
     .toString()).toBe('E4 D6 B2 C#6 G#5')
 })
 
-test('add and remove notes', () => {
+test('add, remove, and toggle notes', () => {
   const noteList = new NoteList([new Note('F', '#', 5), new Note('G', 'b', 5)])
   expect(noteList.add('A5').toString()).toBe('F#5 Gb5 A5')
   expect(noteList.remove('F#5').toString()).toBe('Gb5')
   expect(noteList.remove('E##5').toString()).toBe('F#5 Gb5')
   expect(noteList.remove('E##5', true).toString()).toBe('')
+  expect(noteList.toggle('Gb5').toString()).toBe('F#5')
+  expect(noteList.toggle('A5', true).toString()).toBe('F#5 Gb5 A5')
 })
 
 test('check if note is in note list', () => {
