@@ -202,7 +202,8 @@ export class Note {
    */
   isEnharmonic(note) {
     note = ensure_type(note, Note)
-    return this.distance(note) === 0
+    return this.isPitchClass() === note.isPitchClass()
+        && this.distance(note) === 0
   }
 
   toString() {
