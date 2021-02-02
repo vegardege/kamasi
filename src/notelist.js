@@ -102,7 +102,7 @@ export class NoteList {
   toggle(note, enharmonic=false) {
     note = ensure_type(note, Note)
     return this.includes(note, enharmonic) ? this.remove(note, enharmonic)
-                                           : this.add(note, enharmonic)
+                                           : this.add(note)
   }
 
   /**
