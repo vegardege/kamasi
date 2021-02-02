@@ -25,6 +25,7 @@ export const INTERVAL_BITMASK = {
   'A6': 1 << 21,
   'M7': 1 << 22,
   'A7': 1 << 23,
+  'M9': 1 << 24,
 }
 
 // Similar to `INTERVAL_BITMASK`, but does not differentiate between
@@ -54,4 +55,5 @@ export const INTERVAL_BITMASK_ENHARMONIC = {
   'A6': 1 << 10,
   'M7': 1 << 11,
   'A7': 1 << 12,
+  'M9': 1 << 14,
 }

@@ -22,8 +22,19 @@ export const CHORDS = {
 
   // Extended chords (TODO)
   // Altered chords (TODO)
-  // Added tone chords (TODO)
-  // Suspended chords (TODO)
+  
+  // Added tone chords
+  'add nine':    ['P1', 'M3', 'P5', 'M9'],
+  'add fourth':  ['P1', 'M3', 'P5', 'P4'],
+  'six-nine':    ['P1', 'M3', 'P5', 'M6', 'M9'],
+  'seven-six':   ['P1', 'M3', 'P5', 'M6', 'm7'],
+  'mixed-third': ['P1', 'm3', 'M3', 'P5'],
+
+  // Suspended chords
+  'suspended second': ['P1', 'M2', 'P5'],
+  'suspended fourth': ['P1', 'P4', 'P5'],
+  'suspended jazz':   ['P1', 'P5', 'm7', 'M9'],
+
   // Borrowed chords (TODO)
 
 }
@@ -44,6 +55,7 @@ export const ALIAS = {
   '6': 'major sixth',
   'M6': 'major sixth',
   'maj6': 'major sixth',
+  'add sixth': 'major sixth',
 
   'm6': 'minor sixth',
   'min6': 'minor sixth',
@@ -72,4 +84,17 @@ export const ALIAS = {
 
   '+M7': 'augmented major seventh',
   'augM7': 'augmented major seventh',
+
+  '2': 'add nine',
+  'add9': 'add nine',
+
+  '4': 'add fourth',
+  'add11': 'add fourth',
+
+  '6/9': 'six-nine',
+  '7/6': 'seven-six',
+
+  'sus2': 'suspended second',
+  'sus4': 'suspended fourth',
+  '9sus4': 'suspended jazz',
 }
