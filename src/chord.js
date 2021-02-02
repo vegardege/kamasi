@@ -45,7 +45,7 @@ export class Chord extends NoteList {
    */
   static fromString(string) {
     //eslint-disable-next-line
-    let [, tonic, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*([^\s]*)')
+    let [, tonic, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*(.*)')
     return new Chord(tonic, name.trim())
   }
 
