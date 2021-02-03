@@ -165,30 +165,6 @@ export class Note {
   }
 
   /**
-   * Convert a pitch to a pitch class by removing the octave
-   */
-  toPitchClass() {
-    if (this.isPitchClass()) return this
-    return new Note(this.letter, this.accidentals)
-  }
-
-  /**
-   * Convert a pitch class to a pitch by giving it an octave
-   * 
-   * @param {number} octave Octave the pitch should belong to
-   */
-  toPitch(octave) {
-    return new Note(this.letter, this.accidentals, octave)
-  }
-
-  /**
-   * True if the note is a pitch class (C#), false if it's a pitch (C#4)
-   */
-  isPitchClass() {
-    return !Number.isInteger(this.octave)
-  }
-
-  /**
    * Two notes are equal if letter, accidentals, and octave are equal. 
    *
    * @param {(Note|string)} note note Note to compare to OR
@@ -214,6 +190,38 @@ export class Note {
     note = ensureType(note, Note)
     return this.isPitchClass() === note.isPitchClass()
         && this.distance(note) === 0
+  }
+
+  /**
+   * True if the note is a pitch (C#4), false if  it's a pitch class (C#)
+   */
+  isPitch() {
+    return Number.isInteger(this.octave)
+  }
+
+  /**
+   * True if the note is a pitch class (C#), false if it's a pitch (C#4)
+   */
+  isPitchClass() {
+    return !this.isPitch()
+  }
+
+  /**
+   * Convert a pitch class to a pitch by giving it an octave.
+   * Note that this will change the octave of an existing pitch.
+   *
+   * @param {number} octave Octave the pitch should belong to
+   */
+  toPitch(octave) {
+    return new Note(this.letter, this.accidentals, octave)
+  }
+
+  /**
+   * Convert a pitch to a pitch class by removing the octave
+   */
+  toPitchClass() {
+    if (this.isPitchClass()) return this
+    return new Note(this.letter, this.accidentals)
   }
 
   toString() {

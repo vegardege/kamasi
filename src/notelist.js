@@ -28,12 +28,19 @@ export class NoteList {
 
     if (root instanceof Array && intervals.length === 0) {
       this.notes = root.map(n => ensureType(n, Note))
-      this.intervals = this.notes.map(n => this.notes[0].intervalTo(n))
+
+      // There are no intervals between pitches and pitch classes, so
+      // intervals can't be calculated. The list will still work, but
+      // can't be used for searc or other functions requiring intervals.
+      this.intervals = this.isEmpty() ? [] :
+                       this.isMixed() ? undefined :
+        this.notes.map(n => this.notes[0].intervalTo(n))
+
     } else if (intervals.length > 0) {
       root = ensureType(root, Note)
-
       this.notes = intervals.map(i => root.transpose(i))
       this.intervals = intervals.map(i => ensureType(i, Interval))
+
     } else {
       throw new Error('NoteList must be created with a root note and a ' +
                       'list of intervals, or as a list of notes')
@@ -152,6 +159,13 @@ export class NoteList {
    *                      'sup': Find supersets of this notelist
    */
   search(enharmonic=true, type='exact') {
+
+    if (this.intervals.length === undefined) {
+      throw new Error('This note list is a mix of pitches and pitch ' +
+        'classes, and can not be used to search. Convert the list ' +
+        'using .toPitches(octave) or .toPitchClasses() to search.')
+    }
+
     const intervals = enharmonic ? this.intervals.map(i => i.simplify())
                                  : this.intervals
 
@@ -185,6 +199,47 @@ export class NoteList {
    */
   isEmpty() {
     return this.notes.length === 0
+  }
+
+  /**
+   * True if the notelist is a mix of pitches and pitch classes.
+   * These lists are possible to create and work with, but can't be used to
+   * search or convert to a chord or scale.
+   */
+  isMixed() {
+    const rootIsPitch = this.notes[0].isPitch()
+    return this.notes.some(n => n.isPitch() !== rootIsPitch)
+  }
+
+  /**
+   * True if all notes in the notelist are pitches (e.g. C#4, not C#)
+   */
+  isPitches() {
+    return this.notes.every(n => n.isPitch())
+  }
+
+  /**
+   * True if all notes in the notelist are pitch classes (e.g. C#, not C#4)
+   */
+  isPitchClasses() {
+    return this.notes.every(n => n.isPitchClass())
+  }
+
+  /**
+   * Convert all notes in the list to a pitch in the specified octave.
+   * Note that this will also change the octave of existing pitches.
+   * 
+   * @param {number} octave Octave of notes
+   */
+  toPitches(octave) {
+    return new NoteList(this.notes.map(n => n.toPitch(octave)))
+  }
+  
+  /**
+   * Convert all notes in the list to a pitch class
+   */
+  toPitchClasses() {
+    return new NoteList(this.notes.map(n => n.toPitchClass()))
   }
 
   toStringArray() {
