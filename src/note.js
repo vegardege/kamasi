@@ -1,5 +1,5 @@
 import { Interval } from './interval.js'
-import { ensure_type, mod } from './utils.js'
+import { ensureType, mod } from './utils.js'
 
 /**
  * A note represents a specific pitch or a general pitch class.
@@ -72,19 +72,19 @@ export class Note {
    */
   transpose(interval) {
     interval = Number.isInteger(interval) ? Interval.fromSemitones(interval)
-                                          : ensure_type(interval, Interval)
+                                          : ensureType(interval, Interval)
 
-    // The interval number specifies how many note letters we should move
+    // New letter and octave are determined by interval number alone.
+    // E.g. a P5 will move us four diatonic keys up in pitch.
     const diatonicTarget = this.diatonicOffset + interval.diatonicSteps,
           newLetter = Note.diatonic[mod(diatonicTarget, 7)]
 
-    // Similarly, the new octave is trivially calculated from the number
     const octaveDiff = Math.floor(diatonicTarget / 7),
           newOctave = this.octave + octaveDiff
 
     // Accidentals are a bit harder. We need to calculate how many semitones
-    // the interval represents, and how many semitones the letter change
-    // represented. Accidentals are used to compensate for the difference.
+    // the interval represents, and how many semitones were covered by the
+    // letter/octave movement. Accidentals compensate for the difference.
     const chromaticTarget = this.chromaticOffset + interval.chromaticSteps,
           chromaticMoved = Note.chromatic.indexOf(newLetter) + 12 * octaveDiff,
           newAccidentals = numToAcc(chromaticTarget - chromaticMoved)
@@ -94,12 +94,14 @@ export class Note {
 
   /**
    * Distance between two notes measured in semitones.
+   *
+   * Will fail if you try to compare a pitch and a pitch class.
    * 
    * @param {(Note|string)} note Note to compare to OR
    *                             Full scientific pitch notation for note
    */
   distance(note) {
-    note = ensure_type(note, Note)
+    note = ensureType(note, Note)
     const octaveDiff = Note.octaveDiff(this, note)
 
     return note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff
@@ -107,11 +109,13 @@ export class Note {
 
   /**
    * Find the interval required to transpose this note into a different one.
+   *
+   * Will fail if you try to compare a pitch and a pitch class.
    * 
    * @param {(Note|string)} note 
    */
   intervalTo(note) {
-    note = ensure_type(note, Note)
+    note = ensureType(note, Note)
     const octaveDiff = Note.octaveDiff(this, note)
 
     return Interval.fromSteps(
@@ -122,16 +126,19 @@ export class Note {
 
   /**
    * Find the interval required to transpose a note into this one.
+   *
+   * Will fail if you try to compare a pitch and a pitch class.
    * 
    * @param {(Note|string)} note 
    */
   intervalFrom(note) {
-    note = ensure_type(note, Note)
+    note = ensureType(note, Note)
     return note.intervalTo(this)
   }
 
   /**
    * Return frequency in a 12-tone equal temperament with A4 = 440 Hz.
+   * Will fail for pitch classes.
    */
   frequency() {
     return 440 * Math.pow(2, -this.distance('A4') / 12)
@@ -139,7 +146,7 @@ export class Note {
 
   /**
    * Return the midi number of this note, or -1 if it can't be represented.
-   * Doesn't work for pitch classes.
+   * Will fail for pitch classes.
    */
   midi() {
     const midi = 60 - this.distance('C4')
@@ -174,6 +181,9 @@ export class Note {
     return new Note(this.letter, this.accidentals, octave)
   }
 
+  /**
+   * True if the note is a pitch class (C#), false if it's a pitch (C#4)
+   */
   isPitchClass() {
     return !Number.isInteger(this.octave)
   }
@@ -185,7 +195,7 @@ export class Note {
    *                             Full scientific pitch notation for note
    */
   isEqual(note) {
-    note = ensure_type(note, Note)
+    note = ensureType(note, Note)
     return (this.letter === note.letter)
         && (this.accidentals === note.accidentals)
         && ((this.isPitchClass() && note.isPitchClass())
@@ -201,7 +211,7 @@ export class Note {
    * @see {@link https://en.wikipedia.org/wiki/Enharmonic}
    */
   isEnharmonic(note) {
-    note = ensure_type(note, Note)
+    note = ensureType(note, Note)
     return this.isPitchClass() === note.isPitchClass()
         && this.distance(note) === 0
   }

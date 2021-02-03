@@ -7,7 +7,7 @@
  * @param {*} object Input argument
  * @param {class} cls Target class
  */
-export function ensure_type(object, cls) {
+export function ensureType(object, cls) {
   if (object instanceof cls) {
     return object
   }

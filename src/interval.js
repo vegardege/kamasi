@@ -1,4 +1,4 @@
-import { ensure_type, mod } from './utils.js'
+import { ensureType, mod } from './utils.js'
 
 /**
  * An interval is the difference between two pitches or pitch classes.
@@ -125,7 +125,7 @@ export class Interval {
    * @param {(Interval|string)} interval Interval to add
    */
   add(interval) {
-    interval = ensure_type(interval, Interval)
+    interval = ensureType(interval, Interval)
     return Interval.fromSteps(this.diatonicSteps + interval.diatonicSteps,
                               this.chromaticSteps + interval.chromaticSteps)
   }
@@ -137,7 +137,7 @@ export class Interval {
    * @param {(Interval|string)} interval Interval to subtract
    */
   sub(interval) {
-    interval = ensure_type(interval, Interval)
+    interval = ensureType(interval, Interval)
     return Interval.fromSteps(this.diatonicSteps - interval.diatonicSteps,
                               this.chromaticSteps - interval.chromaticSteps)
   }
@@ -209,7 +209,7 @@ export class Interval {
    * @param {(Interval|string)} interval Interval to compare to
    */
   isEnharmonic(interval) {
-    interval = ensure_type(interval, Interval)
+    interval = ensureType(interval, Interval)
     return this.chromaticSteps == interval.chromaticSteps
   }
 

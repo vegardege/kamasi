@@ -1,8 +1,8 @@
-import { SCALES, ALIAS } from '../data/scales.js'
+import { SCALES, SCALE_ALIAS } from '../data/scales.js'
 import { Interval } from './interval.js'
 import { Note } from './note.js'
 import { NoteList } from './notelist.js'
-import { ensure_type } from './utils.js'
+import { ensureType } from './utils.js'
 
 /**
  * A scale is an ascending list of notes, typically spanning an octave,
@@ -27,7 +27,7 @@ export class Scale extends NoteList {
    */
   constructor(tonic, name='') {
 
-    tonic = ensure_type(tonic, Note)
+    tonic = ensureType(tonic, Note)
     const intervals = scaleIntervals(name)
 
     super(tonic, intervals)
@@ -55,7 +55,7 @@ export class Scale extends NoteList {
    *                                     Shorthand interval notation (e.g. P5)
    */
   transpose(interval) {
-    interval = ensure_type(interval, Interval)
+    interval = ensureType(interval, Interval)
     return new Scale(this.tonic.transpose(interval), this.name)
   }
 
@@ -66,7 +66,7 @@ export class Scale extends NoteList {
 
 // List of scales with their intervals
 Scale.scales = SCALES
-Scale.alias = ALIAS
+Scale.alias = SCALE_ALIAS
 
 function scaleIntervals(name) {
   if (name in Scale.scales) {

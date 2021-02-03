@@ -1,6 +1,6 @@
 import { Interval } from './interval.js'
 import { Note } from './note.js'
-import { ensure_type } from './utils.js'
+import { ensureType } from './utils.js'
 import { search as _search } from './search.js'
 
 /**
@@ -27,13 +27,13 @@ export class NoteList {
   constructor(root=[], intervals=[]) {
 
     if (root instanceof Array && intervals.length === 0) {
-      this.notes = root.map(n => ensure_type(n, Note))
+      this.notes = root.map(n => ensureType(n, Note))
       this.intervals = this.notes.map(n => this.notes[0].intervalTo(n))
     } else if (intervals.length > 0) {
-      root = ensure_type(root, Note)
+      root = ensureType(root, Note)
 
       this.notes = intervals.map(i => root.transpose(i))
-      this.intervals = intervals.map(i => ensure_type(i, Interval))
+      this.intervals = intervals.map(i => ensureType(i, Interval))
     } else {
       throw new Error('NoteList must be created with a root note and a ' +
                       'list of intervals, or as a list of notes')
@@ -76,8 +76,8 @@ export class NoteList {
    * @param {(Note|string)} note Note to add to list
    */
   add(note) {
-    note = ensure_type(note, Note)
-    return new NoteList(this.notes.concat([note]))
+    note = ensureType(note, Note)
+    return new NoteList(this.notes.concat(note))
   }
 
   /**
@@ -87,7 +87,7 @@ export class NoteList {
    * @param {boolean} enharmonic If true, removes all enharmonic notes
    */
   remove(note, enharmonic=false) {
-    note = ensure_type(note, Note)
+    note = ensureType(note, Note)
     const filter = enharmonic ? n => !n.isEnharmonic(note)
                               : n => !n.isEqual(note)
     return new NoteList(this.notes.filter(filter))
@@ -100,7 +100,7 @@ export class NoteList {
    * @param {boolean} enharmonic If true, toggles all enharmonic notes
    */
   toggle(note, enharmonic=false) {
-    note = ensure_type(note, Note)
+    note = ensureType(note, Note)
     return this.includes(note, enharmonic) ? this.remove(note, enharmonic)
                                            : this.add(note)
   }
@@ -112,7 +112,7 @@ export class NoteList {
    *                             Full scientific pitch notation for note
    */
   includes(note, enharmonic=false) {
-    note = ensure_type(note, Note)
+    note = ensureType(note, Note)
     return enharmonic ? this.notes.some(n => n.isEnharmonic(note))
                       : this.notes.some(n => n.isEqual(note))
   }
@@ -129,8 +129,16 @@ export class NoteList {
    * Sort the note list by pitch
    */
   sort() {
-    // .slice(0) copies the array to keep the original
+    // .slice(0) copies the array to avoid mutating the original
     return new NoteList(this.notes.slice(0).sort(Note.compare))
+  }
+  
+  /**
+   * Returns the first note of the list. Note that this is not guaranteed
+   * to be the lowest pitch, as a notelist does not need to be ascending.
+   */
+  root() {
+    return this.notes[0]
   }
 
   /**
@@ -170,14 +178,6 @@ export class NoteList {
    */
   supersets(enharmonic=true) {
     return this.search(enharmonic, 'sup')
-  }
-
-  /**
-   * Returns the first note of the list. Note that this is not guaranteed
-   * to be the lowest pitch, as a notelist does not need to be ascending.
-   */
-  root() {
-    return this.notes[0]
   }
 
   /**

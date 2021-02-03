@@ -44,15 +44,20 @@ export const SCALES = {
   'enigmatic':       ['P1', 'm2', 'M3', 'A4', 'A5', 'A6', 'M7'],
 }
 
-export const ALIAS = {
+export const SCALE_ALIAS = {
   '': 'major',
   'maj': 'major',
-  'ionian': 'major',
-  'm': 'minor',
-  'min': 'minor',
-  'minor natural': 'minor',
-  'aeolian': 'minor',
+
+  'm': 'minor natural',
+  'min': 'minor natural',
+  'minor': 'minor natural',
+
   'pentatonic suspended': 'pentatonic egyptian',
+
+  'man gong': 'blues minor',
+
+  'ritsusen': 'blues major',
+
   'mayamalavagowla': 'harmonic double',
   'bhairav raga': 'harmonic double',
   'byzantine': 'harmonic double',

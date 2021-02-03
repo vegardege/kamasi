@@ -89,7 +89,7 @@ export const CHORDS = Object.assign({},
   SUSPENDED,
 )
 
-export const ALIAS = {
+export const CHORD_ALIAS = {
   // Triads
   '': 'major',
   'M': 'major',

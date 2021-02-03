@@ -1,8 +1,8 @@
-import { CHORDS, ALIAS } from '../data/chords.js'
+import { CHORDS, CHORD_ALIAS } from '../data/chords.js'
 import { Interval } from './interval.js'
 import { Note } from './note.js'
 import { NoteList } from './notelist.js'
-import { ensure_type } from './utils.js'
+import { ensureType } from './utils.js'
 
 /**
  * A chord is an ascending list of notes, naming a subset of the chromatic
@@ -27,7 +27,7 @@ export class Chord extends NoteList {
    */
   constructor(tonic, name='') {
     
-    tonic = ensure_type(tonic, Note)
+    tonic = ensureType(tonic, Note)
     const intervals = chordIntervals(name)
 
     super(tonic, intervals)
@@ -55,7 +55,7 @@ export class Chord extends NoteList {
    *                                     Shorthand interval notation (e.g. P5)
    */
   transpose(interval) {
-    interval = ensure_type(interval, Interval)
+    interval = ensureType(interval, Interval)
     return new Chord(this.tonic.transpose(interval), this.name)
   }
 
@@ -65,7 +65,7 @@ export class Chord extends NoteList {
 }
 
 Chord.chords = CHORDS
-Chord.alias = ALIAS
+Chord.alias = CHORD_ALIAS
 
 function chordIntervals(name) {
   if (name in Chord.chords) {
