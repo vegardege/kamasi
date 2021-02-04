@@ -8,10 +8,10 @@
  * @param {class} cls Target class
  */
 export function ensureType(object, cls) {
-  if (object instanceof cls) {
-    return object
+  if (typeof object === "string") {
+    return cls.fromString(object)
   }
-  return cls.fromString(object)
+  return object
 }
 
 /**
