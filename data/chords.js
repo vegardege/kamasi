@@ -1,4 +1,14 @@
 /**
+ * This is a somewhat random collection of chords I've found on Wikipedia.
+ * Feel free to add chords, but please add some kind of source and try to
+ * group related chords in some way.
+ * 
+ * Please also use existing chords as bases if possible.
+ * 
+ * Ideally, I'd like to have a single source (database of chords), but I
+ * haven't found any open source lists I can use. Let me know if you know
+ * any freely available resources that can be used.
+ * 
  * Chords are grouped according to the lists on:
  * 
  *    https://en.wikipedia.org/wiki/Chord_(music)
