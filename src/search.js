@@ -2,8 +2,16 @@ import { INTERVAL_BITMASK, INTERVAL_BITMASK_ENHARMONIC } from '../data/intervals
 import { CHORDS } from '../data/chords.js'
 import { SCALES } from '../data/scales.js'
 
-// The index is initialized on first search, and contains
-// pre-calculated bitmasks for all chords and scales.
+/**
+ * The search function works by creating and bitmasks for all scales and
+ * chords, then comparing these with the bitmask of a note list.
+ * 
+ * The index is built on first search, to prevent overhead for users who
+ * won't use the search function.
+ * 
+ * At the moment, this functionality is only exposed publically through
+ * NoteList.search(), NoteList.subsets(), ad NoteList.supersets().
+ */
 const index = []
 
 /**
@@ -49,19 +57,19 @@ function bitmask(intervals, enharmonic=true) {
 }
 
 /**
- * Searches for scales or chords matching a list of intervals
+ * Search for scales or chords matching a list of intervals
  * 
  * @param {list} intervals List of interval string representations
  * @param {string} type 'exact': Only find exact matches
-   *                    'sub': Find subsets of intervals
-   *                    'sup': Find supersets of intervals
+ *                      'sub': Find subsets of intervals
+ *                      'sup': Find supersets of intervals
  * @param {boolean} enharmonic If true, search won't differentiate
-   *                           between enharmonic intervals
+ *                             between enharmonic intervals
  */
 export function search(intervals, type='exact', enharmonic=true) {
 
   if (index.length === 0) {
-    buildIndex() // Build index the first time `search` is called
+    buildIndex()
   }
 
   const result = {'scales': {}, 'chords': {}}
@@ -82,7 +90,11 @@ export function search(intervals, type='exact', enharmonic=true) {
   return result
 }
 
-// Compare functions and match level for the three search types
+/**
+ * Compare functions and match level for the three search types.
+ * 'compare' is a binary operation specifying whether two bitmasks match.
+ * 'match' is a function determining how well the two match from 0–1.
+ */
 const searchTypes = {
   'exact': {
     'compare': (a, b) => a === b,
@@ -90,10 +102,10 @@ const searchTypes = {
   },
   'sub': {
     'compare': (a, b) => (~a & b) === 0,
-    'match': (a, b) => b['length'] / a['length'],
+    'match': (a, b) => b.length / a.length,
   },
   'sup': {
     'compare': (a, b) => (a & ~b) === 0,
-    'match': (a, b) => a['length'] / b['length'],
+    'match': (a, b) => a.length / b.length,
   }
 }
