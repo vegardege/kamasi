@@ -58,7 +58,31 @@ test('check if note is in note list', () => {
 })
 
 test('check if list is empty or root note', () => {
-  expect((new NoteList([])).isEmpty()).toBe(true)
+  expect(new NoteList([]).isEmpty()).toBe(true)
   expect(NoteList.fromString('C4 D4 E4').isEmpty()).toBe(false)
   expect(NoteList.fromString('C4 D4 E4').root().toString()).toBe('C4')
+})
+
+test('check pitches and pitch classes', () => {
+  const noteList = new NoteList([new Note('F', '#'), new Note('G', 'b')])
+  const mixedNoteList = new NoteList([new Note('D', '#'), new Note('A', 'b', 4)])
+  expect(noteList.isPitches()).toBe(false)
+  expect(noteList.isPitchClasses()).toBe(true)
+  expect(noteList.isMixed()).toBe(false)
+  expect(noteList.toPitches(4).toString()).toBe('F#4 Gb4')
+  expect(mixedNoteList.isPitches()).toBe(false)
+  expect(mixedNoteList.isPitchClasses()).toBe(false)
+  expect(mixedNoteList.isMixed()).toBe(true)
+  expect(mixedNoteList.toPitches(4).toString()).toBe('D#4 Ab4')
+  expect(mixedNoteList.toPitchClasses().toString()).toBe('D# Ab')
+})
+
+test('search for scale/chord', () => {
+  const noteList = new NoteList([new Note('C'), new Note('F', 'b')])
+  const mixedNoteList = new NoteList([new Note('C'), new Note('E', '', 4)])
+  expect(noteList.search()).toStrictEqual({'scales': {}, 'chords': {}})
+  expect(noteList.search(true)).toStrictEqual({'scales': {}, 'chords': {}})
+  expect(noteList.supersets(true)['chords']['major']).toBe(2/3)
+  expect(noteList.subsets(true)).toStrictEqual({'scales': {}, 'chords': {}})
+  expect(() => mixedNoteList.search()).toThrow()
 })

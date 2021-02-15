@@ -81,6 +81,7 @@ test('calculate interval between two notes', () => {
   // More tests in interval.test.js, this is just for the wrapper
   expect(new Note('C', '#').intervalTo('Ab').toString()).toBe('d6')
   expect(new Note('C', '#', 3).intervalFrom('Ab2').toString()).toBe('A3')
+  expect(() => new Note('C', '#').intervalTo('D4').toString()).toThrow()
 })
 
 test('calculate frequency and midi of note', () => {
