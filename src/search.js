@@ -87,7 +87,10 @@ export function search(intervals, type='exact', enharmonic=true) {
       result[candidate['type']][candidate['name']] = search.match(intervals, candidate)
     }
   }
-  return result
+  return {
+    'scales': new ResultSet(result['scales']),
+    'chords': new ResultSet(result['chords']),
+  }
 }
 
 /**
@@ -107,5 +110,74 @@ const searchTypes = {
   'sup': {
     'compare': (a, b) => (a & ~b) === 0,
     'match': (a, b) => a.length / b.length,
+  }
+}
+
+/**
+ * A ResultSet is a list of scales and chords that matches the search
+ * intervals.
+ */
+class ResultSet {
+  constructor(results) {
+    this.results = results
+  }
+
+  /**
+   * Returns the first value matching at all (>0)
+   */
+  any() {
+    return Object.keys(this.results)[0]
+  }
+
+  /**
+   * Returns a list of all matching names
+   */
+  all() {
+    return Object.keys(this.results)
+  }
+
+  /**
+   * Returns the name of the best match (or undefined if none found)
+   */
+  best() {
+    let argmax = undefined,
+        max = 0
+
+    Object.keys(this.results).forEach(name => {
+      if (this.results[name] > max) {
+        argmax = name
+        max = this.results[name]
+      }
+    })
+    return argmax
+  }
+
+  /**
+   * Returns the name of an exact match (or undefined if none found)
+   */
+  exact() {
+    for (let name of Object.keys(this.results)) {
+      if (this.results[name] >= 1) {
+        return name
+      }
+    }
+  }
+
+  /**
+   * Returns true if scale/chord is in the resultset (>0)
+   * 
+   * @param {string} name Name of scale/chord
+   */
+  includes(name) {
+    return name in this.results
+  }
+
+  /**
+   * Returns true if scale/chord is a perfect match
+   * 
+   * @param {string} name Name of scale/chord
+   */
+  includesExact(name) {
+    return this.results[name] >= 1
   }
 }

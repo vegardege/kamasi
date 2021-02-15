@@ -6,6 +6,25 @@ Music theory library for node and browsers.
 
 ## Quick Intro
 
+If you want to start exploring `kamasi`, the easiest way is to use the functions `interval()`, `note()`, `notes()`, `scale()`, and `chord()`. They all accept a single string as an input, and return an object with all functions listed in the [reference](#reference). When using the library for development, you probably want to use the class constructors for better performance.
+
+Here are a few examples of what you can do:
+
+```js
+note('F#').transpose('P5').toString() // C#
+note('Cbb5').simplify().toString() // A#4
+note('A3').intervalTo('D#5').simpleTerm().invert().toString() // d5
+
+scale('F4 blues minor').toString() // F4 Ab4 Bb4 Db5 Eb5
+scale('D hirajoshi').subsets().chords.all() // ['minor', 'suspended second']
+
+chord('Bb suspended jazz').toString() // Bb F Ab C
+chord('A minor').add('F#').search().chords.exact() // minor sixth
+
+notes('C D F A').supersets().scales.best() // blues major
+notes('F Bb C').supersets().chords.all() // ['add fourth', 'suspended fourth']
+```
+
 ## Reference
 
  * [Intervals](#intervals)
