@@ -1,5 +1,7 @@
 import { Interval } from './interval.js'
 import { Note } from './note.js'
+import { SCALES, SCALE_ALIAS } from '../data/scales.js'
+import { CHORDS, CHORD_ALIAS } from '../data/chords.js'
 import { ensureType } from './utils.js'
 import { search as _search } from './search.js'
 
@@ -49,7 +51,7 @@ export class NoteList {
   }
 
   /**
-   * Create a note list from a string of notes.
+   * Create a note list from a string of notes
    * 
    * @param {string} string Space separated list of notes
    */
@@ -58,6 +60,40 @@ export class NoteList {
       return new NoteList(string.split(' '))
     } catch (e) {
       throw new Error(`'${string}' is not a valid note list`)
+    }
+  }
+
+  /**
+   * Create a scale from a tonic note and scale name
+   * 
+   * @param {(Note|string)} tonic Root note of scale
+   * @param {string} name Name of scale
+   */
+  static fromScale(tonic, name) {
+    tonic = ensureType(tonic, Note)
+    if (name in SCALES) {
+      return new NoteList(tonic, SCALES[name])
+    } else if (name in SCALE_ALIAS) {
+      return new NoteList(tonic, SCALES[SCALE_ALIAS[name]])
+    } else {
+      throw new Error(`The scale ${name} is not known`)
+    }
+  }
+
+  /**
+   * Create a chord from a tonic note and scchordale name
+   * 
+   * @param {(Note|string)} tonic Root note of chord
+   * @param {string} name Name of chord
+   */
+  static fromChord(tonic, name) {
+    tonic = ensureType(tonic, Note)
+    if (name in CHORDS) {
+      return new NoteList(tonic, CHORDS[name])
+    } else if (name in CHORD_ALIAS) {
+      return new NoteList(tonic, CHORDS[CHORD_ALIAS[name]])
+    } else {
+      throw new Error(`The chord ${name} is not known`)
     }
   }
 
@@ -254,3 +290,22 @@ export class NoteList {
 
 // Shortcut for creating a note list from space separated notes
 export const notes = NoteList.fromString
+
+
+/**
+ * Create a NoteList from a scale tonic and name
+ */
+export function scale(string) {
+  //eslint-disable-next-line
+  const [, tonic, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*(.*)')
+  return NoteList.fromScale(tonic, name.trim())
+}
+
+/**
+ * Create a NoteList from a chord tonic and name
+ */
+export function chord(string) {
+  //eslint-disable-next-line
+  const [, tonic, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*(.*)')
+  return NoteList.fromChord(tonic, name.trim())
+}

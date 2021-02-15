@@ -2,13 +2,17 @@
 
 Music theory library for node and browsers.
 
+## Installation
+
+## Quick Intro
+
 ## Reference
 
  * [Intervals](#intervals)
  * [Notes](#notes)
+ * [NoteLists](#notelists)
  * [Scales](#scales)
  * [Chords](#chords)
- * [NoteLists](#notelists)
  * [Search](#search)
 
 ### Intervals
@@ -81,38 +85,6 @@ Methods:
  * _note_.**toPitchClass**() Convert a pitch to a pitch class by removing the octave
  * _note_.**toString**() Returns the [scientific pitch notation](https://en.wikipedia.org/wiki/Scientific_pitch_notation) as a string
 
-### Scales
-
-A [scale](https://en.wikipedia.org/wiki/Scale_%28music%29) can be created from a known list of names, and similarly be transposed:
-
-```js
-scale('C major').transpose('M2').toString() // 'D E F# G A B C#'
-```
-
-See `Scale.scaleNames` or `Scale.alias` for a list of supported scale names.
-
-**Scale preserving functions** will always return a new scale.
-
- * _scale_.**transpose**(_interval_)
-
-**NoteList** functions can be used on a scale, but because they can't guarantee that the result is a valid scale, the return type is `NoteList`.
-
-### Chords
-
-A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) can be created from a known list of names, and similarly be transposed:
-
-```js
-chord('D major').transpose('P5').toString() // 'A C# E'
-```
-
-See `Chord.chordNames` or `Chord.alias` for a list of supported scale names.
-
-**Chord preserving functions** will always return a new chord.
-
- * _chord_.**transpose**(_interval_)
-
-**NoteList** functions can be used on a chords, but because they can't guarantee that the result is a valid chord, the return type is `NoteList`.
-
 ### NoteLists
 
 If you want to represent a sequence of notes without being restricted to names scales or chords, you can use the `NoteList` class:
@@ -120,6 +92,13 @@ If you want to represent a sequence of notes without being restricted to names s
 ```js
 notes('C4 D#4 Ab4 D5').transpose('-m6').toString() // 'E3 F##3 C4 F#4'
 ```
+
+Constructors:
+
+ * **new NoteLists**(_root_[, _intervals]) Create a NoteList from a list of notes or a root note and intervals
+ * NoteList.**fromString**(_string_) Create a NoteList from a space separated list of notes
+ * NoteList.**fromScale**(_tonic_, _name_) Create a NoteList from a tonic note and a scale name
+ * NoteList.**fromChord**(_tonic_, _name_) Create a NoteList from a tonic note and a chord name
 
 Methods:
 
@@ -144,6 +123,10 @@ Methods:
  * _notelist_.**toStringArray**()
  * _notelist_.**toString**()
 
- ### Search
+### Scales
+
+### Chords
+
+### Search
 
  

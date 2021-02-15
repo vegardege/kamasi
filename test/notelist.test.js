@@ -1,4 +1,4 @@
-const { NoteList, Note } = require('../dist/kamasi.js')
+const { NoteList, Note, chord, scale } = require('../dist/kamasi.js')
 
 test('create note list', () => {
   expect(new NoteList().toString()).toBe('')
@@ -9,6 +9,30 @@ test('create note list', () => {
 
 test('create invalid note list', () => {
   expect(() => NoteList.fromString('C #')).toThrow() // Invalid string
+})
+
+test('create chord', () => {
+  expect(NoteList.fromChord(new Note('C'), 'major').toString()).toBe('C E G')
+  expect(chord('D major').toString()).toBe('D F# A')
+  expect(chord('Eb').toString()).toBe('Eb G Bb')
+})
+
+test('create invalid chord', () => {
+  expect(() => chord({'tonic': 'C'})).toThrow() // Invalid type
+  expect(() => NoteList.fromChord('x', 'major')).toThrow() // Invalid note
+  expect(() => NoteList.fromChord('C', 'xxxxx')).toThrow() // Invalid name
+})
+
+test('create scale', () => {
+  expect(NoteList.fromScale(new Note('C'), 'major').toString()).toBe('C D E F G A B')
+  expect(scale('D major').toString()).toBe('D E F# G A B C#')
+  expect(scale('Eb').toString()).toBe('Eb F G Ab Bb C D')
+})
+
+test('create invalid scale', () => {
+  expect(() => scale({'tonic': 'C'})).toThrow() // Invalid type
+  expect(() => NoteList.fromScale('x', 'major')).toThrow() // Invalid note
+  expect(() => NoteList.fromScale('C', 'xxxxx')).toThrow() // Invalid name
 })
 
 test('transpose note list', () => {

@@ -1,5 +1,3 @@
 export { interval, Interval } from './interval.js'
 export { note, Note } from './note.js'
-export { notes, NoteList } from './notelist.js'
-export { scale, Scale } from './scale.js'
-export { chord, Chord } from './chord.js'
+export { notes, scale, chord, NoteList } from './notelist.js'
