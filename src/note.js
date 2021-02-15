@@ -4,17 +4,23 @@ import { ensureType, mod } from './utils.js'
 /**
  * A note represents a specific pitch or a general pitch class.
  * 
- * It is named according to three defining properties:
+ * In Western tonal music theory, an octave is divided into 12 pitch classes.
+ * 7 of these have a note letter (C, D, E, F, G, A, B), while the remaining
+ * 5 are represented by adding accidentals (# or b) to a note letter.
  * 
- *  `letter` represents a pitch class from the diatonic scale (A-G).
- *  `accidentals` modify the letter with sharps (#) or flats (b), shifting 
- *  pitch a semitone up or down. This allows us to represent all pitch classes
- *  on the chromatic scale.
- *  `octave` specifies the exact pitch of the note. A4, A in the 4th octave,
- *  is defined as 440Hz, and serves as the basis of pitch calculation.
+ * Two notes can represent the same pitch (or pitch class), but have different
+ * notation. These are called _enharmonic_. They will sound identical, but
+ * are considered separate notes for historical and notational reasons.
+ * E.g. C##4, D4, and Ebb4 are all the same pitch.
  * 
- * Note that a single pitch can be represented by several notes. These are
- * called enharmonic. E.g. C##4, D4, and Ebb4 are all the same pitch.
+ * A note is named according to three defining components:
+ * 
+ *  `letter` represents one of the 7 note letters.
+ *  `accidentals` modify the letter with sharps (#) or flats (b), shifting the
+ *                pitch a semitone up or down. This allows us to represent all
+ *                pitch classes on the chromatic scale.
+ *  `octave` specifies the exact pitch of the note. E.g. 'A' is a pitch class,
+ *           while 'A4' is 'A' in the fourth octave.
  * 
  * This library uses the English standard, where the letter A through G are
  * used. The letter H is not supported.
@@ -27,7 +33,7 @@ export class Note {
    * Create a note from note letter, accidentals, and an optional octave.
    * 
    * @param {string} letter Note letter (A-G)
-   * @param {string} accidentals A secuencque of # or b modifying the letter
+   * @param {string} accidentals A sequence of '#' or 'b' modifying the letter
    * @param {number} octave Number for a specific pitch, NaN for pitch class
    */
   constructor(letter, accidentals='', octave=NaN) {
@@ -38,8 +44,9 @@ export class Note {
     this.octave = octave
 
     // Offset from C (pitch class or in note's octave)
-    this.diatonicOffset = Note.diatonic.indexOf(this.letter)
-    this.chromaticOffset = Note.chromatic.indexOf(this.letter)
+    // Stored to simplify the math of transposing a note
+    this.diatonicOffset = NOTE_LETTERS.indexOf(this.letter)
+    this.chromaticOffset = DEFAULT_NOTE.indexOf(this.letter)
                          + accToNum(this.accidentals)
   }
 
@@ -75,18 +82,18 @@ export class Note {
                                           : ensureType(interval, Interval)
 
     // New letter and octave are determined by interval number alone.
-    // E.g. a P5 will move us four diatonic keys up in pitch.
+    // E.g. a P5 will move us four diatonic steps up in pitch.
     const diatonicTarget = this.diatonicOffset + interval.diatonicSteps,
-          newLetter = Note.diatonic[mod(diatonicTarget, 7)]
+          newLetter = NOTE_LETTERS[mod(diatonicTarget, 7)]
 
     const octaveDiff = Math.floor(diatonicTarget / 7),
           newOctave = this.octave + octaveDiff
 
     // Accidentals are a bit harder. We need to calculate how many semitones
-    // the interval represents, and how many semitones were covered by the
+    // the interval spans, and how many semitones were covered by the
     // letter/octave movement. Accidentals compensate for the difference.
     const chromaticTarget = this.chromaticOffset + interval.chromaticSteps,
-          chromaticMoved = Note.chromatic.indexOf(newLetter) + 12 * octaveDiff,
+          chromaticMoved = DEFAULT_NOTE.indexOf(newLetter) + 12 * octaveDiff,
           newAccidentals = numToAcc(chromaticTarget - chromaticMoved)
 
     return new Note(newLetter, newAccidentals, newOctave)
@@ -112,7 +119,8 @@ export class Note {
    *
    * Will fail if you try to compare a pitch and a pitch class.
    * 
-   * @param {(Note|string)} note 
+   * @param {(Note|string)} note Note to compare to OR
+   *                             Full scientific pitch notation for note
    */
   intervalTo(note) {
     note = ensureType(note, Note)
@@ -129,7 +137,8 @@ export class Note {
    *
    * Will fail if you try to compare a pitch and a pitch class.
    * 
-   * @param {(Note|string)} note 
+   * @param {(Note|string)} note Note to compare to OR
+   *                             Full scientific pitch notation for note
    */
   intervalFrom(note) {
     note = ensureType(note, Note)
@@ -159,7 +168,7 @@ export class Note {
    */
   simplify() {
     const octave = this.octave + Math.floor(this.chromaticOffset / 12)
-    const [root, acc] = Note.chromatic[mod(this.chromaticOffset, 12)]
+    const [root, acc] = DEFAULT_NOTE[mod(this.chromaticOffset, 12)]
 
     return new Note(root, acc || '', octave || NaN)
   }
@@ -229,15 +238,23 @@ export class Note {
   }
 }
 
-// The diatonic notes are 
-Note.diatonic = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+/**
+ * The 7 note letters indexed by diatonic offset from C
+ */
+const NOTE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
-// The chromatic notes are 
-Note.chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
-                  'G', 'G#', 'A', 'A#', 'B']
+/**
+ * The default note indexed by semitone offset from C. Note that all
+ * enharmonic notes are equally valid, these were chosen to be simple
+ * and make lookup deterministic.
+ */
+const DEFAULT_NOTE = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
+                      'G', 'G#', 'A', 'A#', 'B']
 
-// Use this comparator if you want to sort notes. Pitch classes are sorted
-// before all pitches, then they are sorted by octave, pitch, and letter.
+/**
+ * Use this comparator if you want to sort notes. Pitch classes are sorted
+ * before all pitches, then they are sorted by octave, pitch, and letter.
+ */
 Note.compare = (a, b) => (a.octave || -Infinity) - (b.octave || -Infinity)
                       || a.chromaticOffset - b.chromaticOffset
                       || a.diatonicOffset - b.diatonicOffset
@@ -247,7 +264,7 @@ Note.compare = (a, b) => (a.octave || -Infinity) - (b.octave || -Infinity)
  * For two pitch classes, we always want to move up in pitch. If the first
  * note has a higher pitch, we assume an octave shift.
  *
- * E.g. D -> C is assumed to be a shift from a D to a C in a higher octave.
+ * E.g. 'D' -> 'C' is assumed to shift from a 'D' to a 'C' in a higher octave.
  *
  * @param {Note} a First note
  * @param {Note} b Second note
@@ -264,8 +281,8 @@ Note.octaveDiff = (a, b) => {
 }
 
 function validateNote(letter, accidentals, octave) {
-  if (!Note.diatonic.includes(letter.toUpperCase())) {
-    throw new Error(`letter must be one of ${Note.diatonic.join(', ')}`)
+  if (!NOTE_LETTERS.includes(letter.toUpperCase())) {
+    throw new Error(`letter must be one of ${NOTE_LETTERS.join(', ')}`)
   }
   if (accidentals.replaceAll('#', '').length &&
       accidentals.replaceAll('b', '').length) {

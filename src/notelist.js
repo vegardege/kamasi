@@ -4,9 +4,9 @@ import { ensureType } from './utils.js'
 import { search as _search } from './search.js'
 
 /**
- * A note list is an ordered sequence of notes.
- * The notes can be harmonic (simultaneous) or melodic (sequential).
- *
+ * A note list is an ordered sequence of notes. The notes can be
+ * harmonic (simultaneous) or melodic (sequential).
+ * 
  * This class is a collection used for an arbitrary list of notes. Subclasses
  * should be used for more specific purposes, e.g. a scale, a chord, or a
  * melody.
@@ -16,13 +16,14 @@ export class NoteList {
   /**
    * Create a new note list, using a list of Notes or strings on scientific
    * pitch notation, or as a single string of the latter.
-   *
+   * 
    * It can be created using a root note and a list of intervas, or as a
    * list of notes (intervals will be calculated).
-   *
-   * @param {(Note|string|Array)} notes The first note of the note list OR
-   *                                    A list of valid notes
-   * @param {array} intervals A list of intervals from root note
+   * 
+   * @param {(Note|string|Array)} root The first note of the note list OR
+   *                                   A list of valid notes
+   * @param {array} intervals A list of intervals from root note. Can only be
+   *                          used if root is a single note.
    */
   constructor(root=[], intervals=[]) {
 
@@ -31,10 +32,10 @@ export class NoteList {
 
       // There are no intervals between pitches and pitch classes, so
       // intervals can't be calculated. The list will still work, but
-      // can't be used for searc or other functions requiring intervals.
+      // can't be used for search or other functions requiring intervals.
       this.intervals = this.isEmpty() ? [] :
                        this.isMixed() ? undefined :
-        this.notes.map(n => this.notes[0].intervalTo(n))
+                       this.notes.map(n => this.notes[0].intervalTo(n))
 
     } else if (intervals.length > 0) {
       root = ensureType(root, Note)

@@ -5,25 +5,25 @@
  * 
  * Ideally, I'd like to have a single source (database of scales), but I
  * haven't found any open source lists I can use. Let me know if you know
- * any freely available resources that can be used.
+ * any freely available resources.
  * 
  * Sources:
- * https://en.wikipedia.org/wiki/Major_scale
- * https://en.wikipedia.org/wiki/Minor_scale
- * https://en.wikipedia.org/wiki/Bebop_scale
- * https://en.wikipedia.org/wiki/Jazz_scale
- * https://en.wikipedia.org/wiki/Pentatonic_scale
- * https://en.wikipedia.org/wiki/Blues_scale
- * https://en.wikipedia.org/wiki/Synthetic_scale
- * https://en.wikipedia.org/wiki/Octatonic_scale
- * https://en.wikipedia.org/wiki/Double_harmonic_scale
- * https://en.wikipedia.org/wiki/Ukrainian_Dorian_scale
- * https://en.wikipedia.org/wiki/Phrygian_dominant_scale
- * https://en.wikipedia.org/wiki/Hungarian_major_scale
- * https://en.wikipedia.org/wiki/Japanese_musical_scales
- * https://en.wikipedia.org/wiki/Neapolitan_scale
- * https://en.wikipedia.org/wiki/Persian_scale
- * https://en.wikipedia.org/wiki/Romanian_major
+ *   https://en.wikipedia.org/wiki/Major_scale
+ *   https://en.wikipedia.org/wiki/Minor_scale
+ *   https://en.wikipedia.org/wiki/Bebop_scale
+ *   https://en.wikipedia.org/wiki/Jazz_scale
+ *   https://en.wikipedia.org/wiki/Pentatonic_scale
+ *   https://en.wikipedia.org/wiki/Blues_scale
+ *   https://en.wikipedia.org/wiki/Synthetic_scale
+ *   https://en.wikipedia.org/wiki/Octatonic_scale
+ *   https://en.wikipedia.org/wiki/Double_harmonic_scale
+ *   https://en.wikipedia.org/wiki/Ukrainian_Dorian_scale
+ *   https://en.wikipedia.org/wiki/Phrygian_dominant_scale
+ *   https://en.wikipedia.org/wiki/Hungarian_major_scale
+ *   https://en.wikipedia.org/wiki/Japanese_musical_scales
+ *   https://en.wikipedia.org/wiki/Neapolitan_scale
+ *   https://en.wikipedia.org/wiki/Persian_scale
+ *   https://en.wikipedia.org/wiki/Romanian_major
  */
 export const SCALES = {
 
@@ -120,8 +120,7 @@ export const SCALES = {
   'minor jazz b5':            ['P1', 'M2', 'm3', 'P4', 'd5', 'M6', 'M7'],
   'javanese b4':              ['P1', 'm2', 'm3', 'd4', 'P5', 'M6', 'm7'],
   'lydian augmented b3':      ['P1', 'M2', 'm3', 'A4', 'A5', 'M6', 'M7'],
-
-  'minor romanian': ['P1', 'M2', 'm3', 'd5', 'P5', 'M6', 'm7'],
+  'minor romanian':           ['P1', 'M2', 'm3', 'd5', 'P5', 'M6', 'm7'],
 
   // Double harmonic modes
   'major double harmonic': ['P1', 'm2', 'M3', 'P4', 'P5', 'm6', 'M7'],
@@ -132,12 +131,12 @@ export const SCALES = {
   'locrian bb3 bb7':       ['P1', 'm2', 'd3', 'P4', 'd5', 'm6', 'd7'],
 
   // Misc
-  'augmented':  ['P1', 'm3', 'M3', 'P5', 'A5', 'M7'],
-  'diminished': ['P1', 'M2', 'm3', 'P4', 'd5', 'm6', 'M6', 'M7'],
-  'dorian ukrainian': ['P1', 'M2', 'm3', 'A4', 'P5', 'M6', 'm7'],
+  'augmented':         ['P1', 'm3', 'M3', 'P5', 'A5', 'M7'],
+  'diminished':        ['P1', 'M2', 'm3', 'P4', 'd5', 'm6', 'M6', 'M7'],
+  'dorian ukrainian':  ['P1', 'M2', 'm3', 'A4', 'P5', 'M6', 'm7'],
   'phrygian dominant': ['P1', 'm2', 'M3', 'P4', 'P5', 'm6', 'm7'],
-  'enigmatic':  ['P1', 'm2', 'M3', 'A4', 'A5', 'A6', 'M7'],
-  'prometheus': ['P1', 'M2', 'M3', 'A4', 'M6', 'm7'],
+  'enigmatic':         ['P1', 'm2', 'M3', 'A4', 'A5', 'A6', 'M7'],
+  'prometheus':        ['P1', 'M2', 'M3', 'A4', 'M6', 'm7'],
 }
 
 export const SCALE_ALIAS = {

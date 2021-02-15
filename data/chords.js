@@ -10,9 +10,8 @@
  * any freely available resources that can be used.
  * 
  * Chords are grouped according to the lists on:
- * 
- *    https://en.wikipedia.org/wiki/Chord_(music)
- *    https://en.wikipedia.org/wiki/Chord_letters
+ *   https://en.wikipedia.org/wiki/Chord_(music)
+ *   https://en.wikipedia.org/wiki/Chord_letters
  */
 const TRIADS = {
   'major':      ['P1', 'M3', 'P5'],

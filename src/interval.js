@@ -1,25 +1,41 @@
+import { DIATONIC, CHROMATIC } from '../data/intervals.js'
 import { ensureType, mod } from './utils.js'
 
 /**
- * An interval is the difference between two pitches or pitch classes.
- * It can be harmonic (simulaneous) or melodic (sequential).
+ * An _interval_ is the difference between two pitches or pitch classes.
  * 
- * It is named according to three defining properties:
+ * In Western tonal music theory, an octave represents the difference between
+ * two pitches with a 2:1 frequency ratio. An octave is divided into 12
+ * equally large steps called _semitones_, which are the smallest intervals we
+ * can represent in this system.
  * 
- *  `number` specifies how many diatonic notes the interval encompasses, i.e.
- *           how many note letters or staff positions it will move a note.
- *  `quality` qualifies how many semitones the interval spans, and determines
- *            which accidentals (# or b) are added to the note letter.
- *  `sign` determines if the interval moves up or down the diatonic scale.
+ * In addition to the semitone difference, an interval specifies how many note
+ * letters separate two notes. This is called the _diatonic number_.
  * 
- * Examples:
+ * Two intervals representing the same semitone difference, but with different
+ * diatonic numbers, are called _enharmonic_. They will sound identical, but
+ * are considered separate intervals for historical and notational reasons.
  * 
- *  'M3' transposes a note by 2 diatonic steps (as the number includes the
- *  root note itself), and by 4 semitones (as found from `SEMITONE_TABLE`).
- *  This interval will e.g. transpose a 'C' to an 'E' and a 'B4' to a 'D#5'.
+ * An interval is named according to three defining components:
  * 
- *  '-P5' transposes a note down by 4 diatonic steps, a total of 7 semitones.
- *  This interval will e.g. transpose a 'G' to a 'C' and an 'F4' to a 'Bb3'.
+ *  `number` is the diatonic number, specifying how many note letters the
+ *           interval will modify a note by. It includes the origin note,
+ *           e.g. the number 3 is the difference between a 'C' and an 'E'.
+ *  `quality` qualifies how many semitones the interval spans, relative to
+ *            the expectation of the diatonic number. An interval can be
+ *            perfect (P), major (M), minor (m), augmented (A), or
+ *            diminished (d).
+ *  `sign` determines if the diatonic number of positive or negative.
+ * 
+ * The short hand notation is sign, quality, and number in that order:
+ * 
+ *  'M3' is a major third. It encompasses 3 note letters, as specified by its
+ *  diatonic number. A major third represents 4 semitones. This is the
+ *  difference between a 'C' and an 'E', or e.g. an 'B4' and a 'D#5'.
+ * 
+ *  '-P5' is a descending perfect fifth. It encompasses 5 note letters and 7
+ *  semitones. This is the difference between 'G' and 'C' in the same octave,
+ *  or e.g. an 'F4' and a 'Bb3'.
  * 
  * @see {@link https://en.wikipedia.org/wiki/Interval_(music)}
  */
@@ -29,8 +45,8 @@ export class Interval {
    * Create a new interval from quality, number, and an optional sign.
    * 
    * @param {string} quality Interval quality ('P', 'M', 'm', 'A', or 'd')
-   * @param {number} number Interval number (1 or higher)
-   * @param {string} sign '+' for higher pitch, '-' for lower pitch
+   * @param {number} number Diatonic number (1 or higher)
+   * @param {string} sign '+' for ascending, '-' for descending
    */
   constructor(quality, number, sign='+') {
     validateInterval(quality, number, sign)
@@ -39,14 +55,15 @@ export class Interval {
     this.number = number
     this.sign = sign == '+' ? 1 : -1
 
-    // From the key properties, we calculate how many diatonic and chromatic
-    // steps the interval spans. The diatonic is determined purely by number:
+    // Diatonic steps represents how many note letters two notes differ by.
+    // We subtract one from the number to avoid the annoying 1-indexing.
     this.diatonicSteps = this.sign * (this.number - 1)
 
-    // The chromatic steps are calculated using three factors:
-    //   (1) Each full octave contains 12 semitones
-    //   (2) Interval number maps to a default number of semitones
-    //   (3) The quality may add or remove semitones from the default
+    // Chromatic steps represents how many semitones two pitches differ by.
+    // It is calculated in three steps:
+    //  (1) Each full octave contains 12 semitones
+    //  (2) The diatonic number maps to a default number of semitones
+    //  (3) The quality may add or remove semitones from (2)
     const octaveSteps = 12 * Math.floor((number - 1) / DIATONIC.length),
           [mainType, mainSteps] = DIATONIC[mod(number - 1, DIATONIC.length)],
           qualitySteps = qualityToSemitoneDiff(mainType, quality)
@@ -97,14 +114,14 @@ export class Interval {
    * if it exists. This is a one-to-one mapping, but not guaranteed to have
    * an answer.
    * 
-   * @param {number} wholetones Number of wholetones the interval should span
-   * @param {number} semitones Number of semitones the interval should span
+   * @param {number} diatonicSteps Desired number of diatonic steps
+   * @param {number} semitones Desired number of semitones
    */
-  static fromSteps(wholetones, semitones) {
+  static fromSteps(diatonicSteps, semitones) {
 
     // Number and sign depends entirely on the number of diatonic steps
-    const number = Math.abs(wholetones) + 1,
-          sign = wholetones >= 0 ? 1 : -1
+    const number = Math.abs(diatonicSteps) + 1,
+          sign = diatonicSteps >= 0 ? 1 : -1
 
     // The quality is determined by the difference between the semitones we
     // want to move, and the number of semitones spanned by the wholetones.
@@ -144,7 +161,8 @@ export class Interval {
 
   /**
    * A compound interval spans more than a full octave. This function will
-   * return the simple interval left after subtracting the octaves.
+   * return the simple interval left after subtracting the octaves. Note that
+   * this will _not_ be an enharmonic interval.
    */
   simpleTerm() {
     const number = Math.abs(this.diatonicSteps) % 7 + 1
@@ -152,7 +170,7 @@ export class Interval {
   }
 
   /**
-   * Returns an enharmonic interval with the fewest qualities possible.
+   * Returns an enharmonic interval with the simplest quality possible.
    */
   simplify() {
     return Interval.fromSemitones(this.chromaticSteps)
@@ -220,17 +238,6 @@ export class Interval {
     return `${this.sign === -1 ? '-' : ''}${this.quality}${this.number}`
   }
 }
-
-// Intervals of the diatonic scale. Indexed by diatonic steps,
-// contains the quality and number of chromatic steps per interval.
-const DIATONIC = [['P', 0], ['M', 2], ['M', 4], ['P', 5], ['P', 7],
-  ['M', 9], ['M', 11]]
-
-// Intervals of the chromatic scale. There are several enharmonic intervals,
-// but these are reasonable default solutions. Indexed by chromatic steps,
-// contains the quality and interval number per interval.
-const CHROMATIC = [['P', 1], ['m', 2], ['M', 2], ['m', 3], ['M', 3],
-['P', 4], ['A', 4], ['P', 5], ['m', 6], ['M', 6], ['m', 7], ['M', 7]]
 
 /**
  * Perfect ('P') and Major ('M') intervals are associated with a number of

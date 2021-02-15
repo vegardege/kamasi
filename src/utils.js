@@ -1,11 +1,11 @@
 /**
- * Several functions accepts either an object of a given class, or the input
- * to that classes constructor, e.g. `new Note('C4')` or `'C4'`.
+ * Several `kamasi` functions accept either an object or a short hand notation
+ * string form, e.g. `new Note('C', '#', 4)` or `'C#4'`.
  * 
- * This function returns a valid `cls` instance or throws an error.
+ * This function converts the string representation to `cls` if necessary.
  * 
- * @param {*} object Input argument
- * @param {class} cls Target class
+ * @param {(class|string)} object Input argument
+ * @param {class} cls Target class (with static `.fromString(str)` function)
  */
 export function ensureType(object, cls) {
   if (typeof object === "string") {
@@ -15,12 +15,14 @@ export function ensureType(object, cls) {
 }
 
 /**
- * Calculates modulo (remainder of a division) with an optional offset.
+ * Calculates modulo with offset.
  * 
- * Normal mod maps dividend to [0, divisor-1]. The offset shifts this to
- * [offset, offset+divisor-1]. This is, for instance, useful when mapping
- * a number to a list that is not 0-indexed, as the case is with intervals.
+ * Normal mod has the range [0, dividend - 1]. The offset shifts this to
+ * [offset, offset + dividend - 1]. This is useful when mapping a number to
+ * a list that is not 0-indexed, as the case is with intervals.
+ * 
+ * @see {@link https://en.wikipedia.org/wiki/Modulo_operation#Modulo_with_offset}
  */
-export function mod(divisor, dividend, offset=0) {
-  return divisor - dividend * Math.floor((divisor - offset) / dividend)
+export function mod(dividend, divisor, offset=0) {
+  return dividend - divisor * Math.floor((dividend - offset) / divisor)
 }

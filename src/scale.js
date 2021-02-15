@@ -59,6 +59,9 @@ export class Scale extends NoteList {
     return new Scale(this.tonic.transpose(interval), this.name)
   }
 
+  /**
+   * Add scale name to toString()
+   */
   describe() {
     return `${this.root.toString()} ${this.name} scale (${this.toString()})`
   }

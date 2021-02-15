@@ -4,16 +4,16 @@ Music theory library for node and browsers.
 
 ## Reference
 
- * Interval
- * Note
- * Scale
- * Chords
- * NoteLists
- * Search
+ * [Intervals](#intervals)
+ * [Notes](#notes)
+ * [Scales](#scales)
+ * [Chords](#chords)
+ * [NoteLists](#notelists)
+ * [Search](#search)
 
 ### Intervals
 
-An [interval](https://en.wikipedia.org/wiki/Interval_%28music%29) is the difference between two pitches or pitch classes. It is represented by its [shorthand notation](https://en.wikipedia.org/wiki/Interval_%28music%29#Shorthand_notation), which specifies the direction, quality, and number of the interval.
+An [interval](https://en.wikipedia.org/wiki/Interval_%28music%29) is the difference between two pitches or pitch classes. It is represented by its [shorthand notation](https://en.wikipedia.org/wiki/Interval_%28music%29#Shorthand_notation), which specifies the direction, quality, and diatonic number of the interval.
 
 In the example below, we show that a major second (M2) and a minor third (m3) following each other is enharmonically equivalent to a perfect fourth (P4):
 
@@ -21,21 +21,12 @@ In the example below, we show that a major second (M2) and a minor third (m3) fo
 interval('M2').add('m3').isEnharmonic('P4') // true
 ```
 
-The library API is built around chaining.
-
-```js
-interval('-m2').add('M14')
-               .sub('A6')
-               .simpleTerm()
-               .toString() // 'P1'
-```
-
 Constructors:
 
  * new **Interval**(_quality_, _number_[, _sign_])
  * Interval.**fromString**(_string_) – Create from [shorthand notation](https://en.wikipedia.org/wiki/Interval_%28music%29#Shorthand_notation)
  * Interval.**fromSemitones**(_semitones_) – Create interval spanning the specified number of semitones
- * Interval.**fromSteps**(_wholetones_, _semitones_) – Create interval spanning specified number of steps
+ * Interval.**fromSteps**(_diatonicSteps_, _semitones_) – Create interval spanning specified number of steps (not guaranteed to have a valid answer)
 
 Methods:
 
@@ -82,10 +73,12 @@ Methods:
  * _note_.**frequency**() Returns the frequency in Hz as a float (A4 = 440Hz)
  * _note_.**midi**() Returns the MIDI code of the note
  * _note_.**simplify**() Returns the enharmonic note with the fewest possible accidentals
- * _note_.**toPitchClass**() Convert a pitch to a pitch class by removing the octave
+ * _note_.**isEqual**(_note_) Check if two notes are identical
+ * _note_.**isEnharmonic**(_note_) Check if the note is [enharmonically equivalent](https://en.wikipedia.org/wiki/Enharmonic) to another note
+ * _note_.**isPitch**() Check if the note is a specific pitch
+ * _note_.**isPitchClass**() Check if the note is a pitch class
  * _note_.**toPitch**(_octave_) Convert a pitch class to a pitch in the specified octave
- * _note_.**isPitchClass**() Check if the note represents a pitch or a pitch class
- * _note_.**isEnharmonic**(_note_) Checks if the note is [enharmonically equivalent](https://en.wikipedia.org/wiki/Enharmonic) to another
+ * _note_.**toPitchClass**() Convert a pitch to a pitch class by removing the octave
  * _note_.**toString**() Returns the [scientific pitch notation](https://en.wikipedia.org/wiki/Scientific_pitch_notation) as a string
 
 ### Scales
@@ -99,6 +92,8 @@ scale('C major').transpose('M2').toString() // 'D E F# G A B C#'
 See `Scale.scaleNames` or `Scale.alias` for a list of supported scale names.
 
 **Scale preserving functions** will always return a new scale.
+
+ * _scale_.**transpose**(_interval_)
 
 **NoteList** functions can be used on a scale, but because they can't guarantee that the result is a valid scale, the return type is `NoteList`.
 
@@ -114,9 +109,11 @@ See `Chord.chordNames` or `Chord.alias` for a list of supported scale names.
 
 **Chord preserving functions** will always return a new chord.
 
+ * _chord_.**transpose**(_interval_)
+
 **NoteList** functions can be used on a chords, but because they can't guarantee that the result is a valid chord, the return type is `NoteList`.
 
-### Note Lists
+### NoteLists
 
 If you want to represent a sequence of notes without being restricted to names scales or chords, you can use the `NoteList` class:
 
@@ -124,15 +121,26 @@ If you want to represent a sequence of notes without being restricted to names s
 notes('C4 D#4 Ab4 D5').transpose('-m6').toString() // 'E3 F##3 C4 F#4'
 ```
 
-
 Methods:
 
  * _notelist_.**transpose**(_interval_) 
  * _notelist_.**simplify**()
- * _notelist_.**includes**(_note_[,_enharmonic_])
- * _notelist_.**includesAll**(_notelist_[,_enharmonic_])
- * _notelist_.**intervals**()
+ * _notelist_.**add**(_note_)
+ * _notelist_.**remove**(_note_[, _enharmonic_])
+ * _notelist_.**toggle**(_note_[, _enharmonic_])
+ * _notelist_.**includes**(_note_[, _enharmonic_])
+ * _notelist_.**includesAll**(_notelist_[, _enharmonic_])
  * _notelist_.**sort**()
+ * _notelist_.**root**()
+ * _notelist_.**search**([_enharmonic_[, _type_]])
+ * _notelist_.**subsets**([_enharmonic_])
+ * _notelist_.**supersets**([_enharmonic_])
+ * _notelist_.**isEmpty**()
+ * _notelist_.**isMixed**()
+ * _notelist_.**isPitches**()
+ * _notelist_.**isPitchClasses**()
+ * _notelist_.**toPitches**(_octave_)
+ * _notelist_.**toPitchClasses**()
  * _notelist_.**toStringArray**()
  * _notelist_.**toString**()
 

@@ -59,6 +59,9 @@ export class Chord extends NoteList {
     return new Chord(this.tonic.transpose(interval), this.name)
   }
 
+  /**
+   * Add chord name to toString()
+   */
   describe() {
     return `${this.tonic.toString()} ${this.name} chord (${this.toString()})`
   }
