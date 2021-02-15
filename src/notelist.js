@@ -161,7 +161,7 @@ export class NoteList {
    */
   search(enharmonic=true, type='exact') {
 
-    if (this.intervals.length === undefined) {
+    if (this.intervals === undefined) {
       throw new Error('This note list is a mix of pitches and pitch ' +
         'classes, and can not be used to search. Convert the list ' +
         'using .toPitches(octave) or .toPitchClasses() to search.')
