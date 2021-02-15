@@ -37,6 +37,13 @@ export const SCALES = {
   'chromatic':      ['P1', 'm2', 'M2', 'm3', 'M3', 'P4',
                      'A4', 'P5', 'm6', 'M6', 'm7', 'M7'],
 
+  // Blues scales
+  'blues major':      ['P1', 'M2', 'P4', 'P5', 'M6'],
+  'blues minor':      ['P1', 'm3', 'P4', 'm6', 'm7'],
+  'blues hexatonic':  ['P1', 'm3', 'P4', 'd5', 'P5', 'm7'],
+  'blues heptatonic': ['P1', 'M2', 'm3', 'P4', 'd5', 'M6', 'm7'],
+  'blues nonatonic':  ['P1', 'M2', 'm3', 'M3', 'P4', 'P5', 'M6', 'm7', 'M7'],
+
   // Penatonic scales
   'pentatonic major':    ['P1', 'M2', 'M3', 'P5', 'M6'],
   'pentatonic minor':    ['P1', 'm3', 'P4', 'P5', 'm7'],
@@ -61,13 +68,6 @@ export const SCALES = {
   'lydian dominant':  ['P1', 'M2', 'M3', 'A4', 'P5', 'M6', 'm7'],
   'half-diminished':  ['P1', 'M2', 'm3', 'P4', 'd5', 'm6', 'm7'],
   'altered':          ['P1', 'm2', 'm3', 'd4', 'd5', 'm6', 'm7'],
-
-  // Blues scales
-  'blues major':      ['P1', 'M2', 'P4', 'P5', 'M6'],
-  'blues minor':      ['P1', 'm3', 'P4', 'm6', 'm7'],
-  'blues hexatonic':  ['P1', 'm3', 'P4', 'd5', 'P5', 'm7'],
-  'blues heptatonic': ['P1', 'M2', 'm3', 'P4', 'd5', 'M6', 'm7'],
-  'blues nonaonic':   ['P1', 'M2', 'm3', 'M3', 'P4', 'P5', 'M6', 'm7', 'M7'],
 
   // Bebop scales
   'bebop':                ['P1', 'M2', 'M3', 'P4', 'P5', 'M6', 'm7', 'M7'],
