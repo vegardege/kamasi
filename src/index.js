@@ -1,5 +1,6 @@
 export { interval, Interval } from './interval.js'
 export { note, Note } from './note.js'
 export { notes, scale, chord, NoteList } from './notelist.js'
+export { search } from './search.js'
 export { SCALES, SCALE_ALIAS } from '../data/scales.js'
 export { CHORDS, CHORD_ALIAS } from '../data/chords.js'

@@ -6,41 +6,50 @@ import { SCALES } from '../data/scales.js'
  * The search function works by creating and bitmasks for all scales and
  * chords, then comparing these with the bitmask of a note list.
  * 
- * The index is built on first search, to prevent overhead for users who
+ * The index is built lazily, to prevent overhead for users who
  * won't use the search function.
- * 
- * At the moment, this functionality is only exposed publically through
- * NoteList.search(), NoteList.subsets(), ad NoteList.supersets().
  */
-const index = []
-
-/**
- * Initialize the index
- */
-function buildIndex() {
-  for (const name in CHORDS) {
-    add(name, CHORDS[name], 'chords')
-  }
-  for (const name in SCALES) {
-    add(name, SCALES[name], 'scales')
-  }
+const index = {
+  'chords': {
+    'exact': [],
+    'enharmonic': [],
+  },
+  'scales': {
+    'exact': [],
+    'enharmonic': [],
+  },
 }
 
 /**
- * Add a potential match to the index
- * 
- * @param {string} name Name of match
- * @param {list} intervals List of interval strings
- * @param {string} type 'scale' or 'chord'
+ * Four search functions are currently supported:
+ *  'exact': Only match if all intervals are similar
+ *  'sub': Match if scale/chord is a subset of given intervals
+ *  'sup': Match if scale/chord is a superset of given intervals
+ *  'all': Match if scale/chord is a subset or a superset
  */
-function add(name, intervals, type) {
-  index.push({
-    'name': name,
-    'type': type,
-    'bitmask': bitmask(intervals, false),
-    'bitmaskEnharmonic': bitmask(intervals, true),
-    'length': intervals.length,
-  })
+const searchFunctions = {
+  'exact': (a, b) => a === b,
+  'sub': (a, b) => (~a & b) === 0,
+  'sup': (a, b) => (a & ~b) === 0,
+  'all': (a, b) => ((~a & b) === 0) | ((a & ~b) === 0),
+}
+
+/**
+ * Lazily build index the first time it's requested
+ */
+function loadIndex(type, enharmonic) {
+  const db = type === 'chords' ? CHORDS : SCALES
+  const enharmonicType = enharmonic ? 'enharmonic' : 'exact'
+
+  if (index[type][enharmonicType].length === 0) {
+    for (const name in db) {
+      index[type][enharmonicType].push({
+        'name': name,
+        'bitmask': bitmask(db[name], enharmonic),
+      })
+    }
+  }
+  return index[type][enharmonicType]
 }
 
 /**
@@ -57,127 +66,51 @@ function bitmask(intervals, enharmonic=true) {
 }
 
 /**
- * Search for scales or chords matching a list of intervals
  * 
- * @param {list} intervals List of interval string representations
- * @param {string} type 'exact': Only find exact matches
- *                      'sub': Find subsets of intervals
- *                      'sup': Find supersets of intervals
- * @param {boolean} enharmonic If true, search won't differentiate
- *                             between enharmonic intervals
+ * @param {string} type 'chords' or 'scales'
+ * @param {array} intervals Array of intervals as strings
+ * @param {string} filter Filter function ('exact', 'sub', 'sup', 'all')
+ * @param {boolean} enharmonic If true, bitmask will be identical
+ *                             for enharmonic intervals
  */
-export function search(intervals, type='exact', enharmonic=true) {
+function searcher(type, intervals, filter, enharmonic) {
 
-  if (index.length === 0) {
-    buildIndex()
-  }
+  const needle = bitmask(intervals, enharmonic),
+        haystack = loadIndex(type, enharmonic),
+        match = searchFunctions[filter]
 
-  const result = {'scales': {}, 'chords': {}}
+  return haystack.filter(
+    candidate => match(needle, candidate.bitmask)
+  ).map(
+    candidate => candidate.name
+  ) || []
+}
 
-  if (intervals.some(i => INTERVAL_BITMASK[i] === undefined)) {
-    return result // Search term has intervals not in the index
-  }
-
-  const field = enharmonic ? 'bitmaskEnharmonic' : 'bitmask',
-        search = searchTypes[type],
-        needle = bitmask(intervals, enharmonic)
-
-  for (const candidate of index) {
-    if (search.compare(needle, candidate[field])) {
-      result[candidate['type']][candidate['name']] = search.match(intervals, candidate)
-    }
-  }
+/**
+ * Search for chords or scales containing a specified set of intervals.
+ * Lazily finds values for a specified combination of scale/chord and
+ * filter (exact, all, supersets, subsets).
+ * 
+ * @param {array} intervals Array of intervals as strings
+ * @param {boolean} enharmonic If true, bitmask will be identical
+ *                             for enharmonic intervals
+ */
+export function search(intervals, enharmonic) {
+  intervals = typeof intervals === 'string' ? intervals.split(' ') : intervals
   return {
-    'scales': new ResultSet(result['scales']),
-    'chords': new ResultSet(result['chords']),
-  }
-}
-
-/**
- * Compare functions and match level for the three search types.
- * 'compare' is a binary operation specifying whether two bitmasks match.
- * 'match' is a function determining how well the two match from 0–1.
- */
-const searchTypes = {
-  'exact': {
-    'compare': (a, b) => a === b,
-    'match': () => 1.0,
-  },
-  'sub': {
-    'compare': (a, b) => (~a & b) === 0,
-    'match': (a, b) => b.length / a.length,
-  },
-  'sup': {
-    'compare': (a, b) => (a & ~b) === 0,
-    'match': (a, b) => a.length / b.length,
-  }
-}
-
-/**
- * A ResultSet is a list of scales and chords that matches the search
- * intervals.
- */
-class ResultSet {
-  constructor(results) {
-    this.results = results
-  }
-
-  /**
-   * Returns the first value matching at all (>0)
-   */
-  any() {
-    return Object.keys(this.results)[0]
-  }
-
-  /**
-   * Returns a list of all matching names
-   */
-  all() {
-    return Object.keys(this.results)
-  }
-
-  /**
-   * Returns the name of the best match (or undefined if none found)
-   */
-  best() {
-    let argmax = undefined,
-        max = 0
-
-    Object.keys(this.results).forEach(name => {
-      if (this.results[name] > max) {
-        argmax = name
-        max = this.results[name]
-      }
-    })
-    return argmax
-  }
-
-  /**
-   * Returns the name of an exact match (or undefined if none found)
-   */
-  exact() {
-    for (let name of Object.keys(this.results)) {
-      if (this.results[name] >= 1) {
-        return name
-      }
-    }
-  }
-
-  /**
-   * Returns true if scale/chord is in the resultset (>0)
-   * 
-   * @param {string} name Name of scale/chord
-   */
-  includes(name) {
-    return name in this.results
-  }
-
-  /**
-   * Returns true if scale/chord is a perfect match
-   * 
-   * @param {string} name Name of scale/chord
-   */
-  includesExact(name) {
-    return this.results[name] >= 1
+    'chords': () => {
+      return {
+        'exact': () => searcher('chords', intervals, 'exact', enharmonic),
+        'supersets': () => searcher('chords', intervals, 'sup', enharmonic),
+        'subsets': () => searcher('chords', intervals, 'sub', enharmonic),
+        'all': () => searcher('chords', intervals, 'all', enharmonic),
+    }},
+    'scales': () => {
+      return {
+        'exact': () => searcher('scales', intervals, 'exact', enharmonic),
+        'supersets': () => searcher('scales', intervals, 'sup', enharmonic),
+        'subsets': () => searcher('scales', intervals, 'sub', enharmonic),
+        'all': () => searcher('scales', intervals, 'all', enharmonic),
+    }},
   }
 }

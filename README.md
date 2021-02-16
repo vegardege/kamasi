@@ -6,23 +6,23 @@ Music theory library for node and browsers.
 
 ## Quick Intro
 
-If you want to start exploring `kamasi`, the easiest way is to use the functions `interval()`, `note()`, `notes()`, `scale()`, and `chord()`. They all accept a single string as an input, and return an object with all functions listed in the [reference](#reference). When using the library for development, you probably want to use the class constructors for better performance.
+If you want to start exploring `kamasi`, the easiest way is to use the functions `interval()`, `note()`, `notes()`, `scale()`, `chord()`, and `search()`. They all accept a single string as an input, and return an object with all functions listed in the [reference](#reference). When using the library for development, you probably want to use the class constructors for better performance.
 
 Here are a few examples of what you can do:
 
 ```js
-note('F#').transpose('P5').toString() // C#
-note('Cbb5').simplify().toString() // A#4
-note('A3').intervalTo('D#5').simpleTerm().invert().toString() // d5
+note('F#').transpose('P5').toString() // 'C#'
+note('Cbb5').simplify().toString() // 'A#4'
+note('A3').intervalTo('Db5').simpleTerm().toString() // 'd4'
 
-scale('F4 blues minor').toString() // F4 Ab4 Bb4 Db5 Eb5
-scale('D hirajoshi').subsets().chords.all() // ['minor', 'suspended second']
+search('P1 m3 P5').chords().exact() // [ 'minor' ]
+notes('F Bb C').chords().supersets() // [ 'add fourth', 'suspended fourth' ]
 
-chord('Bb suspended jazz').toString() // Bb F Ab C
-chord('A minor').add('F#').search().chords.exact() // minor sixth
+scale('F4 blues minor').toString() // 'F4 Ab4 Bb4 Db5 Eb5'
+scale('D hirajoshi').chords().subsets() // [ 'minor', 'suspended second' ]
 
-notes('C D F A').supersets().scales.best() // blues major
-notes('F Bb C').supersets().chords.all() // ['add fourth', 'suspended fourth']
+chord('Bb suspended jazz').toString() // 'Bb F Ab C'
+chord('A minor').add('F#').chords().exact() // [ 'minor sixth' ]
 ```
 
 ## Reference
@@ -42,6 +42,15 @@ In the example below, we show that a major second (M2) and a minor third (m3) fo
 
 ```js
 interval('M2').add('m3').isEnharmonic('P4') // true
+```
+
+You can use chaining to combine different actions:
+
+```js
+Interval.fromSteps(4, 7)
+        .add('M6')
+        .simpleTerm()
+        .frequencyRatio() // 1.4142135623730951
 ```
 
 Constructors:
@@ -78,8 +87,16 @@ Notes can be transposed using intervals. We can also find an interval from two n
 
 ```js
 note('C').transpose('P5').toString() // 'G'
-note('Eb5').transpose('-A5').toString() // 'Abb4'
 note('D#').intervalTo('A').toString() // 'd5'
+note('Eb5').transpose('-A5').toString() // 'Abb4'
+```
+
+Kamasi uses chaining to help you perform several actions in one line. If you're unhappy with the 'Abb4' return value of the last line, it can be simplified:
+
+```js
+note('Eb5').transpose('-A5')
+           .simplify()
+           .toString() // 'G4'
 ```
 
 Constructors:
@@ -110,6 +127,16 @@ If you want to represent a sequence of notes without being restricted to names s
 
 ```js
 notes('C4 D#4 Ab4 D5').transpose('-m6').toString() // 'E3 F##3 C4 F#4'
+```
+
+Chaining still works for the lists:
+
+```js
+notes('E4 C Abb').toPitches(4)
+                 .simplify()
+                 .remove('G4')
+                 .sort()
+                 .toString() // 'C4 E4'
 ```
 
 Constructors:

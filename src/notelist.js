@@ -3,7 +3,7 @@ import { Note } from './note.js'
 import { SCALES, SCALE_ALIAS } from '../data/scales.js'
 import { CHORDS, CHORD_ALIAS } from '../data/chords.js'
 import { ensureType } from './utils.js'
-import { search as _search } from './search.js'
+import { chordSearch, search as _search } from './search.js'
 
 /**
  * A note list is an ordered sequence of notes. The notes can be
@@ -187,15 +187,12 @@ export class NoteList {
 
   /**
    * Search for chords and scales these notes form. Supports sub and super
-   * sets to search for possible extensions or reductions as well.
+   * sets as well as exact search.
    *
    * @param {boolean} enharmonic If true, search won't differentiate
    *                             between enharmonic intervals
-   * @param {string} type 'exact': Only find exact matches
-   *                      'sub': Find subsets of this notelist
-   *                      'sup': Find supersets of this notelist
    */
-  search(enharmonic=true, type='exact') {
+  search(enharmonic=true) {
 
     if (this.intervals === undefined) {
       throw new Error('This note list is a mix of pitches and pitch ' +
@@ -206,29 +203,29 @@ export class NoteList {
     const intervals = enharmonic ? this.intervals.map(i => i.simplify())
                                  : this.intervals
 
-    return _search(intervals.map(i => i.toString()), type, enharmonic)
+    return _search(intervals.map(i => i.toString()), enharmonic)
   }
 
   /**
-   * Find all known scales and chords that can be made up from a subset
-   * of these notes.
-   *
+   * Search for chords these notes may form. Supports sub and super
+   * sets as well as exact search.
+   * 
    * @param {boolean} enharmonic If true, search won't differentiate
    *                             between enharmonic intervals
    */
-  subsets(enharmonic=true) {
-    return this.search(enharmonic, 'sub')
+  chords(enharmonic=true) {
+    return this.search(enharmonic).chords()
   }
 
   /**
-   * Find all known scales and chords that can be made up from a subset
-   * of these notes.
-   *
+   * Search for scales these notes may form. Supports sub and super
+   * sets as well as exact search.
+   * 
    * @param {boolean} enharmonic If true, search won't differentiate
    *                             between enharmonic intervals
    */
-  supersets(enharmonic=true) {
-    return this.search(enharmonic, 'sup')
+  scales(enharmonic=true) {
+    return this.search(enharmonic).scales()
   }
 
   /**
