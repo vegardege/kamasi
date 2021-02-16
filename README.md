@@ -148,26 +148,26 @@ Constructors:
 
 Methods:
 
- * _notelist_.**transpose**(_interval_) 
- * _notelist_.**simplify**()
- * _notelist_.**add**(_note_)
- * _notelist_.**remove**(_note_[, _enharmonic_])
- * _notelist_.**toggle**(_note_[, _enharmonic_])
- * _notelist_.**includes**(_note_[, _enharmonic_])
- * _notelist_.**includesAll**(_notelist_[, _enharmonic_])
- * _notelist_.**sort**()
- * _notelist_.**root**()
- * _notelist_.**search**([_enharmonic_[, _type_]])
- * _notelist_.**subsets**([_enharmonic_])
- * _notelist_.**supersets**([_enharmonic_])
- * _notelist_.**isEmpty**()
- * _notelist_.**isMixed**()
- * _notelist_.**isPitches**()
- * _notelist_.**isPitchClasses**()
- * _notelist_.**toPitches**(_octave_)
- * _notelist_.**toPitchClasses**()
- * _notelist_.**toStringArray**()
- * _notelist_.**toString**()
+ * _notelist_.**transpose**(_interval_) Transpose all notes in list
+ * _notelist_.**simplify**() Simplify all notes in list
+ * _notelist_.**add**(_note_) Add note to the end of the list
+ * _notelist_.**remove**(_note_[, _enharmonic_]) Remove (enharmonic) notes from list
+ * _notelist_.**toggle**(_note_[, _enharmonic_]) Toggle (enharmonic) notes in list
+ * _notelist_.**includes**(_note_[, _enharmonic_]) True if list contains (enharmonic) note
+ * _notelist_.**includesAll**(_notelist_[, _enharmonic_]) True if list contains all (enharmonic) notes
+ * _notelist_.**sort**() Return a sorted copy of the list
+ * _notelist_.**root**() Return the root note of the list
+ * _notelist_.**search**([_enharmonic_[, _type_]]) See [search](#search)
+ * _notelist_.**chords**([_enharmonic_]) See [search](#search)
+ * _notelist_.**scales**([_enharmonic_]) See [search](#search)
+ * _notelist_.**isEmpty**() True if list is empty
+ * _notelist_.**isMixed**() True if list is mix of pitches and pitch classes
+ * _notelist_.**isPitches**() True if list is only specific pitches
+ * _notelist_.**isPitchClasses**() True if list is only pitch classes
+ * _notelist_.**toPitches**(_octave_) Convert all notes to pitches in specified octave
+ * _notelist_.**toPitchClasses**() Convert all notes to pitch classes
+ * _notelist_.**toStringArray**() Return array of [scientific pitch notation](https://en.wikipedia.org/wiki/Scientific_pitch_notation)
+ * _notelist_.**toString**() Return [scientific pitch notation](https://en.wikipedia.org/wiki/Scientific_pitch_notation) as a string
 
 ### Scales
 
