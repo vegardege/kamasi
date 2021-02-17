@@ -143,8 +143,6 @@ Constructors:
 
  * **new NoteLists**(_root_[, _intervals]) Create a NoteList from a list of notes or a root note and intervals
  * NoteList.**fromString**(_string_) Create a NoteList from a space separated list of notes
- * NoteList.**fromScale**(_tonic_, _name_) Create a NoteList from a tonic note and a scale name
- * NoteList.**fromChord**(_tonic_, _name_) Create a NoteList from a tonic note and a chord name
 
 Methods:
 
@@ -171,8 +169,66 @@ Methods:
 
 ### Scales
 
+A scale is just a NoteList, but you can create it using a known name:
+
+ * NoteList.**fromScale**(_tonic_, _name_) Create a NoteList from a tonic note and a scale name
+ * **scale**(_name_) Create a NoteList from a scale name string
+
+These functions both return a NoteList, allowing normal use.
+
+To find a scale from a NoteList, see the [search](#search) section.
+
 ### Chords
+
+A chord is just a NoteList, but you can create it using a known name:
+
+ * NoteList.**fromChord**(_tonic_, _name_) Create a NoteList from a tonic note and a chord name
+ * **chord**(_name_) Create a NoteList from a chord name string
+
+These functions both return a NoteList, allowing normal use.
+
+To find a chord from a NoteList, see the [search](#search) section.
 
 ### Search
 
- 
+There are two ways to search for chords or scales using kamasi. To search with intervals, use the top-level `search()` function:
+
+ * **search**(_intervals_, _enharmonic_) Find scales and chords from a space separated list of (enharmonic) intervals
+
+If you want to search based on notes, use `_notelist_.**search**()`, `_notelist_.**chords**()`, or `_notelist_.**scales**()`:
+
+ * _notelist_.**search**([_enharmonic_[, _type_]]) Find scales and chords from a notelist
+ * _notelist_.**chords**([_enharmonic_]) Find chords from a notelist
+ * _notelist_.**scales**([_enharmonic_]) Find scales from a notelist
+
+All of these functions will return an object with functions you can use to narrow the search. The search itself is performed lazily.
+
+The top level of the search object contains two functions:
+
+ * **chords**() Narrow search object down to chords
+ * **scales**() Narrow search object down to scales
+
+The search is further specifed by one of four functions:
+
+ * **exact**() Scale/chord has the exact same intervals as search object
+ * **subsets**() Scale/chord contains only intervals in the search object
+ * **supersets**() Scale/chord contains all intervals in the search object
+ * **all**() Scale/chord is either a subset or a superset
+
+Examples:
+
+```js
+search('P1 M3 P5 M7').chords().exact() // [ 'major seventh' ]
+notes('C E G').chords().exact() // [ 'major' ]
+notes('C D E F G A B').chords().subsets() // [ 'major', 'major sixth', ... ]
+notes('C Eb G').scales().supersets() // [ 'minor', 'minor harmonic', ... ]
+```
+
+Note that `scale()` and `chord()` returns `NoteList`, allowing you to find sub and supersets of scales and chords:
+
+```js
+scale('C minor').scales().supersets() // [ 'minor', 'chromatic', ... ]
+scale('C minor').chords().subsets() // [ 'minor', 'minor seventh', ... ]
+chord('C7').chords().subsets() // [ 'major' ]
+chord('C dim').scales().supersets() // [ 'chromatic', 'blues hexatonic', ... ]
+```
