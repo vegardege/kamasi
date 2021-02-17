@@ -94,23 +94,43 @@ function searcher(type, intervals, filter, enharmonic) {
  * @param {array} intervals Array of intervals as strings
  * @param {boolean} enharmonic If true, bitmask will be identical
  *                             for enharmonic intervals
+ * @param {string} searchType If set, only returns search type
+ *                            'exact', 'subsets', or 'supersets'
+ * @param {string} patternType If set, only returns pattern type
+ *                             'chord', 'scale', 'chords', or 'scales'
  */
-export function search(intervals, enharmonic) {
+export function search(intervals, enharmonic=true, searchType=undefined, patternType=undefined) {
   intervals = typeof intervals === 'string' ? intervals.split(' ') : intervals
-  return {
-    'chords': () => {
+  
+  const result = {
+    'exact': () => {
       return {
-        'exact': () => searcher('chords', intervals, 'exact', enharmonic),
-        'supersets': () => searcher('chords', intervals, 'sup', enharmonic),
-        'subsets': () => searcher('chords', intervals, 'sub', enharmonic),
-        'all': () => searcher('chords', intervals, 'all', enharmonic),
+        'chord': () => searcher('chords', intervals, 'exact', enharmonic)[0],
+        'scale': () => searcher('scales', intervals, 'exact', enharmonic)[0],
+        'chords': () => searcher('chords', intervals, 'exact', enharmonic),
+        'scales': () => searcher('scales', intervals, 'exact', enharmonic),
     }},
-    'scales': () => {
+    'supersets': () => {
       return {
-        'exact': () => searcher('scales', intervals, 'exact', enharmonic),
-        'supersets': () => searcher('scales', intervals, 'sup', enharmonic),
-        'subsets': () => searcher('scales', intervals, 'sub', enharmonic),
-        'all': () => searcher('scales', intervals, 'all', enharmonic),
+        'chord': () => searcher('chords', intervals, 'sup', enharmonic)[0],
+        'scale': () => searcher('scales', intervals, 'sup', enharmonic)[0],
+        'chords': () => searcher('chords', intervals, 'sup', enharmonic),
+        'scales': () => searcher('scales', intervals, 'sup', enharmonic),
     }},
+    'subsets': () => {
+      return {
+        'chord': () => searcher('chords', intervals, 'sup', enharmonic)[0],
+        'scale': () => searcher('scales', intervals, 'sup', enharmonic)[0],
+        'chords': () => searcher('chords', intervals, 'sub', enharmonic),
+        'scales': () => searcher('scales', intervals, 'sub', enharmonic),
+    }},
+  }
+
+  if (searchType && patternType) {
+    return result[searchType]()[patternType]()
+  } else if (searchType) {
+    return result[searchType]()
+  } else {
+    return result
   }
 }

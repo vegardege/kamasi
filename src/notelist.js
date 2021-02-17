@@ -192,7 +192,7 @@ export class NoteList {
    * @param {boolean} enharmonic If true, search won't differentiate
    *                             between enharmonic intervals
    */
-  search(enharmonic=true) {
+  search(enharmonic=true, searchType=undefined, patternType=undefined) {
 
     if (this.intervals === undefined) {
       throw new Error('This note list is a mix of pitches and pitch ' +
@@ -203,29 +203,40 @@ export class NoteList {
     const intervals = enharmonic ? this.intervals.map(i => i.simplify())
                                  : this.intervals
 
-    return _search(intervals.map(i => i.toString()), enharmonic)
+    return _search(intervals.map(i => i.toString()),
+                   enharmonic,
+                   searchType,
+                   patternType)
   }
 
   /**
-   * Search for chords these notes may form. Supports sub and super
-   * sets as well as exact search.
+   * Search for scales/chords with the exact notes from this notelist
    * 
    * @param {boolean} enharmonic If true, search won't differentiate
    *                             between enharmonic intervals
    */
-  chords(enharmonic=true) {
-    return this.search(enharmonic).chords()
+  exact(enharmonic=true) {
+    return this.search(enharmonic, 'exact')
   }
 
   /**
-   * Search for scales these notes may form. Supports sub and super
-   * sets as well as exact search.
+   * Search for scales/chords including the notes from this notelist
    * 
    * @param {boolean} enharmonic If true, search won't differentiate
    *                             between enharmonic intervals
    */
-  scales(enharmonic=true) {
-    return this.search(enharmonic).scales()
+  supersets(enharmonic=true) {
+    return this.search(enharmonic, 'supersets')
+  }
+
+  /**
+   * Search for scales/chords containing only notes from this notelist
+   * 
+   * @param {boolean} enharmonic If true, search won't differentiate
+   *                             between enharmonic intervals
+   */
+  subsets(enharmonic=true) {
+    return this.search(enharmonic, 'subsets')
   }
 
   /**

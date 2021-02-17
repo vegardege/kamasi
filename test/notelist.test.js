@@ -104,9 +104,9 @@ test('check pitches and pitch classes', () => {
 test('search for scale/chord', () => {
   const noteList = new NoteList([new Note('C'), new Note('F', 'b')])
   const mixedNoteList = new NoteList([new Note('C'), new Note('E', '', 4)])
-  expect(noteList.search().scales().exact().length).toBe(0)
-  expect(noteList.search(true).chords().exact().length).toBe(0)
-  expect(noteList.chords().supersets().includes('major')).toBe(true)
-  expect(noteList.scales().subsets().length).toBe(0)
+  expect(noteList.search(true, 'exact', 'scales').length).toBe(0)
+  expect(noteList.search(true, 'exact', 'chords').length).toBe(0)
+  expect(noteList.supersets().chords().includes('major')).toBe(true)
+  expect(noteList.subsets().scales().length).toBe(0)
   expect(() => mixedNoteList.search()).toThrow()
 })

@@ -191,44 +191,54 @@ To find a chord from a NoteList, see the [search](#search) section.
 
 ### Search
 
-There are two ways to search for chords or scales using kamasi. To search with intervals, use the top-level `search()` function:
+There are two ways to search for chords or scales using kamasi. To search with intervals, use the top-level `search()` function. It supports arguments or chaining:
+
+```js
+search('P1 M3 P5 M7', true, 'exact', 'chord') // 'major seventh'
+search('P1 M3 P5 M7').exact().chord() // 'major seventh'
+```
+
+If you want to search using notes rather than intervals, the same interface is available from the notelist class:
+
+```js
+notes('C E G').search(true, 'exact', 'chord') // 'major'
+notes('C D E F G A B').subsets().chords() // [ 'major', 'major sixth', ... ]
+notes('C Eb G').supersets().scales() // [ 'minor', 'minor harmonic', ... ]
+```
+
+Note that `scale()` and `chord()` returns `NoteList`, allowing you to find sub and supersets of scales and chords:
+
+```js
+scale('C minor').supersets().scales() // [ 'minor', 'chromatic', ... ]
+scale('C minor').subsets().chords() // [ 'minor', 'minor seventh', ... ]
+chord('C7').subsets().chords() // [ 'major' ]
+chord('C dim').supersets().scales() // [ 'chromatic', 'blues hexatonic', ... ]
+```
+
+The function definitions are:
 
  * **search**(_intervals_, _enharmonic_) Find scales and chords from a space separated list of (enharmonic) intervals
 
-If you want to search based on notes, use `_notelist_.**search**()`, `_notelist_.**chords**()`, or `_notelist_.**scales**()`:
+If you want to search based on notes, use notelist:
 
- * _notelist_.**search**([_enharmonic_[, _type_]]) Find scales and chords from a notelist
- * _notelist_.**chords**([_enharmonic_]) Find chords from a notelist
- * _notelist_.**scales**([_enharmonic_]) Find scales from a notelist
+ * _notelist_.**exact**([_enharmonic_]) Find scales and chords from a notelist
+ * _notelist_.**subsets**([_enharmonic_]) Find chords from a notelist
+ * _notelist_.**supersets**([_enharmonic_]) Find scales from a notelist
 
 All of these functions will return an object with functions you can use to narrow the search. The search itself is performed lazily.
 
-The top level of the search object contains two functions:
-
- * **chords**() Narrow search object down to chords
- * **scales**() Narrow search object down to scales
-
-The search is further specifed by one of four functions:
+The top level lets you choose one of four functions:
 
  * **exact**() Scale/chord has the exact same intervals as search object
  * **subsets**() Scale/chord contains only intervals in the search object
  * **supersets**() Scale/chord contains all intervals in the search object
  * **all**() Scale/chord is either a subset or a superset
 
-Examples:
+The second level contains four functions:
 
-```js
-search('P1 M3 P5 M7').chords().exact() // [ 'major seventh' ]
-notes('C E G').chords().exact() // [ 'major' ]
-notes('C D E F G A B').chords().subsets() // [ 'major', 'major sixth', ... ]
-notes('C Eb G').scales().supersets() // [ 'minor', 'minor harmonic', ... ]
-```
+ * **chord**() Narrow search object down to a single chord
+ * **scale**() Narrow search object down to scales scale
+ * **chords**() Narrow search object down to chords
+ * **scales**() Narrow search object down to scales
 
-Note that `scale()` and `chord()` returns `NoteList`, allowing you to find sub and supersets of scales and chords:
-
-```js
-scale('C minor').scales().supersets() // [ 'minor', 'chromatic', ... ]
-scale('C minor').chords().subsets() // [ 'minor', 'minor seventh', ... ]
-chord('C7').chords().subsets() // [ 'major' ]
-chord('C dim').scales().supersets() // [ 'chromatic', 'blues hexatonic', ... ]
-```
+If multiple chords/scales match, the singlular form will return the first. This may or may not be the best match.
