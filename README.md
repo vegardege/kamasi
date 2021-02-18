@@ -6,23 +6,35 @@ Music theory library for node and browsers.
 
 ## Quick Intro
 
-If you want to start exploring `kamasi`, the easiest way is to use the functions `interval()`, `note()`, `notes()`, `scale()`, `chord()`, and `search()`. They all accept a single string as an input, and return an object with all functions listed in the [reference](#reference). When using the library for development, you probably want to use the class constructors for better performance.
+To explore Kamasi, start with the functions `interval()`, `note()`, `notes()`, `scale()`, `chord()`, and `search()`. They all accept a string input, and return an object with the functions listed in the [reference](#reference).
 
 Here are a few examples of what you can do:
 
 ```js
-note('F#').transpose('P5').toString() // 'C#'
-note('Cbb5').simplify().toString() // 'A#4'
-note('A3').intervalTo('Db5').simpleTerm().toString() // 'd4'
+// Transpose or find interval between notes
+note('G').intervalTo('Cb').toString() // 'd4'
+note('G4').transpose('d4').toString() // 'Cb5'
 
-search('P1 m3 P5').chords().exact() // [ 'minor' ]
-notes('F Bb C').chords().supersets() // [ 'add fourth', 'suspended fourth' ]
+// Lookup a chord or a scale
+scale('Dm').toString() // 'D E F G A Bb C'
+chord('F4 dim').toString() // 'F4 Ab4 Cb5'
 
-scale('F4 blues minor').toString() // 'F4 Ab4 Bb4 Db5 Eb5'
-scale('D hirajoshi').chords().subsets() // [ 'minor', 'suspended second' ]
+// Use operations on custom or known note lists
+notes('Fbb4 B##4 Cb5').simplify().sort().toString() // 'D#4 B4 C#5'
+scale('Dm').add('C#').transpose('m2').toString() // 'Eb F Gb Ab Bb Cb Db D'
 
-chord('Bb suspended jazz').toString() // 'Bb F Ab C'
-chord('A minor').add('F#').chords().exact() // [ 'minor sixth' ]
+// Reverses lookup from intervals or notes
+search('P1 m3 P5').exact().chord() // 'minor'
+notes('F Gb A Bb C').supersets().scales() // [ 'chromatic', 'major double harmonic', ...]
+scale('C minor').subsets().chords() // [ 'minor', 'minor seventh', ... ]
+
+// Use nesting and chaining to make a query as complex as you want
+chord('D4 minor')
+  .add('C#5')
+  .add(note('C#5').transpose('m3'))
+  .add(note('C#5').transpose(interval('m3').add('m3')))
+  .exact()
+  .chord() // 'minor-major eleventh'
 ```
 
 ## Reference
@@ -91,12 +103,13 @@ note('D#').intervalTo('A').toString() // 'd5'
 note('Eb5').transpose('-A5').toString() // 'Abb4'
 ```
 
-Kamasi uses chaining to help you perform several actions in one line. If you're unhappy with the 'Abb4' return value of the last line, it can be simplified:
+You can uses chaining to perform several actions in one line. If you're unhappy with the 'Abb4' return value of the last line, it can be simplified:
 
 ```js
 note('Eb5').transpose('-A5')
            .simplify()
-           .toString() // 'G4'
+           .toPitchClass()
+           .toString() // 'G'
 ```
 
 Constructors:
@@ -132,11 +145,11 @@ notes('C4 D#4 Ab4 D5').transpose('-m6').toString() // 'E3 F##3 C4 F#4'
 Chaining still works for the lists:
 
 ```js
-notes('E4 C Abb').toPitches(4)
+notes('Abb E4 C').toPitches(4)
                  .simplify()
-                 .remove('G4')
+                 .remove('C4')
                  .sort()
-                 .toString() // 'C4 E4'
+                 .toString() // 'E4 G4'
 ```
 
 Constructors:
@@ -155,9 +168,9 @@ Methods:
  * _notelist_.**includesAll**(_notelist_[, _enharmonic_]) True if list contains all (enharmonic) notes
  * _notelist_.**sort**() Return a sorted copy of the list
  * _notelist_.**root**() Return the root note of the list
- * _notelist_.**search**([_enharmonic_[, _type_]]) See [search](#search)
- * _notelist_.**chords**([_enharmonic_]) See [search](#search)
- * _notelist_.**scales**([_enharmonic_]) See [search](#search)
+ * _notelist_.**search**([_enharmonic_[, _searchType_[, _patternType_]]]) See [search](#search)
+ * _notelist_.**subsets**([_enharmonic_]) See [search](#search)
+ * _notelist_.**supersets**([_enharmonic_]) See [search](#search)
  * _notelist_.**isEmpty**() True if list is empty
  * _notelist_.**isMixed**() True if list is mix of pitches and pitch classes
  * _notelist_.**isPitches**() True if list is only specific pitches
@@ -171,6 +184,16 @@ Methods:
 
 A scale is just a NoteList, but you can create it using a known name:
 
+```js
+scale('E augmented').toString() // 'E G G# B B# D#'
+```
+
+It returns a `NoteList` object, so all methods in the last section can be used:
+
+```js
+scale('Bb blues minor').transpose('d5').simplify().toString() // 'E G A C D'
+```
+
  * NoteList.**fromScale**(_tonic_, _name_) Create a NoteList from a tonic note and a scale name
  * **scale**(_name_) Create a NoteList from a scale name string
 
@@ -181,6 +204,16 @@ To find a scale from a NoteList, see the [search](#search) section.
 ### Chords
 
 A chord is just a NoteList, but you can create it using a known name:
+
+```js
+chord('A# dom7').toString() // 'A# C## E# G#'
+```
+
+It returns a `NoteList` object, so all methods in the last section can be used:
+
+```js
+chord('F minor').transpose('M2').includesAll(['G', 'Bb', 'D']) // true
+```
 
  * NoteList.**fromChord**(_tonic_, _name_) Create a NoteList from a tonic note and a chord name
  * **chord**(_name_) Create a NoteList from a chord name string
@@ -232,7 +265,6 @@ The top level lets you choose one of four functions:
  * **exact**() Scale/chord has the exact same intervals as search object
  * **subsets**() Scale/chord contains only intervals in the search object
  * **supersets**() Scale/chord contains all intervals in the search object
- * **all**() Scale/chord is either a subset or a superset
 
 The second level contains four functions:
 
