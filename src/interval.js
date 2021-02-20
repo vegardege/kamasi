@@ -80,7 +80,7 @@ export class Interval {
    */
   static fromString(string) {
     try {
-      const [, dir, qual, number] = string.match(INTERVAL_REGEX)
+      const [, dir, qual, number] = string.match(/^([+-]?)([PMm]|[A]+|[d]+)([0-9]*)$/)
       return new Interval(qual, parseInt(number, 10), dir || '+')
     } catch (e) {
       throw new Error(`'${string}' is not a valid interval`)
@@ -288,11 +288,8 @@ function invertQuality(quality) {
   }
 }
 
-const QUALITY_REGEX = '^[PMm]|[A]+|[d]+$'
-const INTERVAL_REGEX = '^([+-]?)([PMm]|[A]+|[d]+)([0-9]*)$'
-
 function validateInterval(quality, number, direction) {
-  if (!quality.match(QUALITY_REGEX)) {
+  if (!quality.match(/^[PMm]|[A]+|[d]+$/)) {
     throw new Error(`quality must be one of: P, M, m, A, d}`)
   }
   if (!Number.isInteger(number) || number < 1) {

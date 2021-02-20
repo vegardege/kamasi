@@ -3,7 +3,7 @@ import { Note } from './note.js'
 import { SCALES, SCALE_ALIAS } from '../data/scales.js'
 import { CHORDS, CHORD_ALIAS } from '../data/chords.js'
 import { ensureType } from './utils.js'
-import { chordSearch, search as _search } from './search.js'
+import { search as _search } from './search.js'
 
 /**
  * A note list is an ordered sequence of notes. The notes can be
@@ -305,7 +305,7 @@ export const notes = NoteList.fromString
  */
 export function scale(string) {
   //eslint-disable-next-line
-  const [, tonic, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*(.*)')
+  const [, tonic, name] = string.match(/^([a-gA-G][b#]*-?[0-9]?)\s*(.*)$/)
   return NoteList.fromScale(tonic, name.trim())
 }
 
@@ -314,6 +314,6 @@ export function scale(string) {
  */
 export function chord(string) {
   //eslint-disable-next-line
-  const [, tonic, name] = string.match('^([a-gA-G][b#]*-?[0-9]?)\s*(.*)')
+  const [, tonic, name] = string.match(/^([a-gA-G][b#]*-?[0-9]?)\s*(.*)$/)
   return NoteList.fromChord(tonic, name.trim())
 }
