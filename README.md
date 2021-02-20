@@ -29,12 +29,12 @@ notes('F Gb A Bb C').supersets().scales() // [ 'chromatic', 'major double harmon
 scale('C minor').subsets().chords() // [ 'minor', 'minor seventh', ... ]
 
 // Use nesting and chaining to make a query as complex as you want
+scale('A minor').includesAll(chord('Asus4')) // true
 chord('D4 minor')
   .add('C#5')
   .add(note('C#5').transpose('m3'))
-  .add(note('C#5').transpose(interval('m3').add('m3')))
   .exact()
-  .chord() // 'minor-major eleventh'
+  .chord() // 'minor-major ninth'
 ```
 
 ## Reference
