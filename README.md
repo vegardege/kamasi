@@ -60,7 +60,7 @@ You can use chaining to combine different actions:
 
 ```js
 Interval.fromSteps(4, 7)
-        .add('M6')
+        .add('M7')
         .simpleTerm()
         .frequencyRatio() // 1.4142135623730951
 ```
