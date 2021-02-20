@@ -9,6 +9,8 @@ test('create note list', () => {
 
 test('create invalid note list', () => {
   expect(() => NoteList.fromString('C #')).toThrow() // Invalid string
+  expect(() => new NoteList('C')).toThrow() // Wrong combination of commands
+  expect(() => new NoteList(['C'], ['P1'])).toThrow() // Wrong combination of commands
 })
 
 test('create chord', () => {
