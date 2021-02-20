@@ -31,7 +31,6 @@ const searchFunctions = {
   'exact': (a, b) => a === b,
   'sub': (a, b) => (~a & b) === 0,
   'sup': (a, b) => (a & ~b) === 0,
-  'all': (a, b) => ((~a & b) === 0) | ((a & ~b) === 0),
 }
 
 /**
@@ -101,7 +100,7 @@ function searcher(type, intervals, filter, enharmonic) {
  */
 export function search(intervals, enharmonic=true, searchType=undefined, patternType=undefined) {
   intervals = typeof intervals === 'string' ? intervals.split(' ') : intervals
-  
+
   const result = {
     'exact': () => {
       return {
