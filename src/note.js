@@ -59,7 +59,7 @@ export class Note {
    */
   static fromString(string) {
     try {
-      const [, root, acc, oct] = string.match(/^([a-gA-G])(#*|b*)(-?[0-9]?)$/)
+      const [, root, acc, oct] = string.match(/^([A-G])(#*|b*)(-?[0-9]?)$/)
       return new Note(root, acc, parseInt(oct, 10))
     } catch (e) {
       throw new Error(`'${string}' is not a valid note`)
