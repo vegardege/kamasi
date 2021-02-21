@@ -16,8 +16,8 @@ note('G').intervalTo('Cb').toString() // 'd4'
 note('G4').transpose('d4').toString() // 'Cb5'
 
 // Lookup a chord or a scale
-scale('Dm').toString() // 'D E F G A Bb C'
 chord('F4 dim').toString() // 'F4 Ab4 Cb5'
+scale('D minor').toString() // 'D E F G A Bb C'
 
 // Use operations on custom or known note lists
 notes('Fbb4 B##4 Cb5').simplify().sort().toString() // 'D#4 B4 C#5'
@@ -26,10 +26,10 @@ scale('Dm').add('C#').transpose('m2').toString() // 'Eb F Gb Ab Bb Cb Db D'
 // Reverses lookup from intervals or notes
 search('P1 m3 P5').exact().chord() // 'minor'
 notes('F Gb A Bb C').supersets().scales() // [ 'chromatic', 'major double harmonic', ...]
-scale('C minor').subsets().chords() // [ 'minor', 'minor seventh', ... ]
+scale('minor').subsets().chords() // [ 'minor', 'minor seventh', ... ]
 
 // Use nesting and chaining to make a query as complex as you want
-scale('A minor').includesAll(chord('Asus4')) // true
+scale('minor').includesAll(chord('sus4')) // true
 chord('D4 minor')
   .add('C#5')
   .add(note('C#5').transpose('m3'))
@@ -197,6 +197,12 @@ scale('Bb blues minor').transpose('d5').simplify().toString() // 'E G A C D'
  * NoteList.**fromScale**(_tonic_, _name_) Create a NoteList from a tonic note and a scale name
  * **scale**(_name_) Create a NoteList from a scale name string
 
+If you only care about the intervals, you can skip the tonic note. 'C' will be selected by default:
+
+```js
+scale('ionian').exact().scales() // [ 'major', 'ionian' ]
+```
+
 These functions both return a NoteList, allowing normal use.
 
 To find a scale from a NoteList, see the [search](#search) section.
@@ -217,6 +223,12 @@ chord('F minor').transpose('M2').includesAll(['G', 'Bb', 'D']) // true
 
  * NoteList.**fromChord**(_tonic_, _name_) Create a NoteList from a tonic note and a chord name
  * **chord**(_name_) Create a NoteList from a chord name string
+
+If you only care about the intervals, you can skip the tonic note. 'C' will be selected by default:
+
+```js
+chord('sus4').supersets().chords() // [ 'add fourth', 'suspended fourth' ]
+```
 
 These functions both return a NoteList, allowing normal use.
 
@@ -242,10 +254,10 @@ notes('C Eb G').supersets().scales() // [ 'minor', 'minor harmonic', ... ]
 Note that `scale()` and `chord()` returns `NoteList`, allowing you to find sub and supersets of scales and chords:
 
 ```js
-scale('C minor').supersets().scales() // [ 'minor', 'chromatic', ... ]
-scale('C minor').subsets().chords() // [ 'minor', 'minor seventh', ... ]
-chord('C7').subsets().chords() // [ 'major' ]
-chord('C dim').supersets().scales() // [ 'chromatic', 'blues hexatonic', ... ]
+scale('minor').supersets().scales() // [ 'minor', 'chromatic', ... ]
+scale('minor').subsets().chords() // [ 'minor', 'minor seventh', ... ]
+chord('7').subsets().chords() // [ 'major' ]
+chord('dim').supersets().scales() // [ 'chromatic', 'blues hexatonic', ... ]
 ```
 
 The function definitions are:

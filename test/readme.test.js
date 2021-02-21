@@ -5,8 +5,8 @@ test('quick start', () => {
   // Transpose or find interval between notes
   expect(note('G').intervalTo('Cb').toString()).toBe('d4')
   expect(note('G4').transpose('d4').toString()).toBe('Cb5')
-  expect(scale('Dm').toString()).toBe('D E F G A Bb C')
   expect(chord('F4 dim').toString()).toBe('F4 Ab4 Cb5')
+  expect(scale('D minor').toString()).toBe('D E F G A Bb C')
 
   // Use operations on custom or known note lists
   expect(notes('Fbb4 B##4 Cb5').simplify().sort().toString()).toBe('D#4 B4 C#5')
@@ -16,11 +16,11 @@ test('quick start', () => {
   expect(search('P1 m3 P5').exact().chord()).toBe('minor')
   expect(notes('F Gb A Bb C').supersets().scales()).toContain('chromatic')
   expect(notes('F Gb A Bb C').supersets().scales()).toContain('major double harmonic')
-  expect(scale('C minor').subsets().chords()).toContain('minor')
-  expect(scale('C minor').subsets().chords()).toContain('minor seventh')
+  expect(scale('minor').subsets().chords()).toContain('minor')
+  expect(scale('minor').subsets().chords()).toContain('minor seventh')
   
   // Use nesting and chaining to make a query as complex as you want
-  expect(scale('A minor').includesAll(chord('Asus4'))).toBe(true)
+  expect(scale('minor').includesAll(chord('sus4'))).toBe(true)
   expect(chord('D4 minor')
           .add('C#5')
           .add(note('C#5').transpose('m3'))
@@ -65,12 +65,18 @@ test('scales', () => {
   expect(scale('E augmented').toString()).toBe('E G G# B B# D#')
 
   expect(scale('Bb blues minor').transpose('d5').simplify().toString()).toBe('E G A C D')
+
+  expect(scale('ionian').exact().scales()).toContain('major')
+  expect(scale('ionian').exact().scales()).toContain('ionian')
 })
 
 test('chords', () => {
   expect(chord('A# dom7').toString()).toBe('A# C## E# G#')
 
   expect(chord('F minor').transpose('M2').includesAll(['G', 'Bb', 'D'])).toBe(true)
+
+  expect(chord('sus4').supersets().chords()).toContain('add fourth')
+  expect(chord('sus4').supersets().chords()).toContain('suspended fourth')
 })
 
 test('search', () => {
@@ -83,11 +89,11 @@ test('search', () => {
   expect(notes('C Eb G').supersets().scales()).toContain('minor')
   expect(notes('C Eb G').supersets().scales()).toContain('minor harmonic')
 
-  expect(scale('C minor').supersets().scales()).toContain('minor')
-  expect(scale('C minor').supersets().scales()).toContain('chromatic')
-  expect(scale('C minor').subsets().chords()).toContain('minor')
-  expect(scale('C minor').subsets().chords()).toContain('minor seventh')
-  expect(chord('C7').subsets().chords()).toContain('major')
-  expect(chord('C dim').supersets().scales()).toContain('chromatic')
-  expect(chord('C dim').supersets().scales()).toContain('blues hexatonic')
+  expect(scale('minor').supersets().scales()).toContain('minor')
+  expect(scale('minor').supersets().scales()).toContain('chromatic')
+  expect(scale('minor').subsets().chords()).toContain('minor')
+  expect(scale('minor').subsets().chords()).toContain('minor seventh')
+  expect(chord('7').subsets().chords()).toContain('major')
+  expect(chord('dim').supersets().scales()).toContain('chromatic')
+  expect(chord('dim').supersets().scales()).toContain('blues hexatonic')
 })
