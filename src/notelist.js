@@ -305,8 +305,8 @@ export const notes = NoteList.fromString
  */
 export function scale(string) {
   //eslint-disable-next-line
-  const [, tonic, name] = string.match(/^([a-gA-G][b#]*-?[0-9]?)\s*(.*)$/)
-  return NoteList.fromScale(tonic, name.trim())
+  const [, tonic, name] = string.match(/^([a-gA-G][b#]*-?[0-9]?)?\s*(.*)$/)
+  return NoteList.fromScale(tonic || 'C', name.trim())
 }
 
 /**
@@ -314,6 +314,6 @@ export function scale(string) {
  */
 export function chord(string) {
   //eslint-disable-next-line
-  const [, tonic, name] = string.match(/^([a-gA-G][b#]*-?[0-9]?)\s*(.*)$/)
-  return NoteList.fromChord(tonic, name.trim())
+  const [, tonic, name] = string.match(/^([a-gA-G][b#]*-?[0-9]?)?\s*(.*)$/)
+  return NoteList.fromChord(tonic || 'C', name.trim())
 }
