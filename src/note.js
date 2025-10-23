@@ -1,5 +1,5 @@
-import { Interval } from './interval.js'
-import { ensureType, mod } from './utils.js'
+import { Interval } from '#src/interval.js'
+import { ensureType, mod } from '#src/utils.js'
 
 /**
  * A note represents a specific pitch or a general pitch class.
@@ -61,7 +61,7 @@ export class Note {
     try {
       const [, root, acc, oct] = string.match(/^([A-G])(#*|b*)(-?[0-9]?)$/)
       return new Note(root, acc, parseInt(oct, 10))
-    } catch (e) {
+    } catch {
       throw new Error(`'${string}' is not a valid note`)
     }
   }
@@ -150,7 +150,7 @@ export class Note {
    * Will fail for pitch classes.
    */
   frequency() {
-    return 440 * Math.pow(2, -this.distance('A4') / 12)
+    return 440 * 2 ** (-this.distance('A4') / 12)
   }
 
   /**
@@ -270,7 +270,7 @@ Note.compare = (a, b) => (a.octave || -Infinity) - (b.octave || -Infinity)
  * @param {Note} b Second note
  */
 Note.octaveDiff = (a, b) => {
-  if (a.isPitchClass() != b.isPitchClass()) {
+  if (a.isPitchClass() !== b.isPitchClass()) {
     throw new Error("Can't compare a pitch and a pitch class")
   }
   if (a.isPitchClass()) {

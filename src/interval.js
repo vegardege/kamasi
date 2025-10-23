@@ -1,5 +1,5 @@
-import { DIATONIC, CHROMATIC } from '../data/intervals.js'
-import { ensureType, mod } from './utils.js'
+import { CHROMATIC, DIATONIC } from '#data/intervals.js'
+import { ensureType, mod } from '#src/utils.js'
 
 /**
  * An _interval_ is the difference between two pitches or pitch classes.
@@ -53,7 +53,7 @@ export class Interval {
     
     this.quality = quality
     this.number = number
-    this.sign = sign == '+' ? 1 : -1
+    this.sign = sign === '+' ? 1 : -1
 
     // Diatonic steps represents how many note letters two notes differ by.
     // We subtract one from the number to avoid the annoying 1-indexing.
@@ -82,7 +82,7 @@ export class Interval {
     try {
       const [, dir, qual, number] = string.match(/^([+-]?)([PMm]|[A]+|[d]+)([0-9]*)$/)
       return new Interval(qual, parseInt(number, 10), dir || '+')
-    } catch (e) {
+    } catch {
       throw new Error(`'${string}' is not a valid interval`)
     }
   }
@@ -181,7 +181,7 @@ export class Interval {
    * @see {@link https://en.wikipedia.org/wiki/Interval_ratio}
    */
   frequencyRatio() {
-    return Math.pow(2, this.chromaticSteps / 12)
+    return 2 ** (this.chromaticSteps / 12)
   }
 
   /**
@@ -228,7 +228,7 @@ export class Interval {
    */
   isEnharmonic(interval) {
     interval = ensureType(interval, Interval)
-    return this.chromaticSteps == interval.chromaticSteps
+    return this.chromaticSteps === interval.chromaticSteps
   }
 
   /**
@@ -245,15 +245,15 @@ export class Interval {
  * This function finds the semitone diff based on type (P/M) and quality.
  */
 function qualityToSemitoneDiff(type, quality) {
-  if (type == 'P') {
-    if (quality == 'P') return 0
-    if (quality[0] == 'A') return quality.length
-    if (quality[0] == 'd') return -quality.length
-  } else if (type == 'M') {
-    if (quality == 'M') return 0
-    if (quality == 'm') return -1
-    if (quality[0] == 'A') return quality.length
-    if (quality[0] == 'd') return -quality.length - 1
+  if (type === 'P') {
+    if (quality === 'P') return 0
+    if (quality[0] === 'A') return quality.length
+    if (quality[0] === 'd') return -quality.length
+  } else if (type === 'M') {
+    if (quality === 'M') return 0
+    if (quality === 'm') return -1
+    if (quality[0] === 'A') return quality.length
+    if (quality[0] === 'd') return -quality.length - 1
   }
 }
 
@@ -263,13 +263,13 @@ function qualityToSemitoneDiff(type, quality) {
  * This function finds the quality based on type (P/M) and semitone diff.
  */
 function semitoneDiffToQuality(type, semitoneDiff) {
-  if (type == 'P') {
-    if (semitoneDiff == 0) return 'P'
+  if (type === 'P') {
+    if (semitoneDiff === 0) return 'P'
     if (semitoneDiff > 0) return 'A'.repeat(semitoneDiff)
     if (semitoneDiff < 0) return 'd'.repeat(-semitoneDiff)
-  } else if (type == 'M') {
-    if (semitoneDiff == 0) return 'M'
-    if (semitoneDiff == -1) return 'm'
+  } else if (type === 'M') {
+    if (semitoneDiff === 0) return 'M'
+    if (semitoneDiff === -1) return 'm'
     if (semitoneDiff > 0) return 'A'.repeat(semitoneDiff)
     if (semitoneDiff < -1) return 'd'.repeat(-semitoneDiff - 1)
   }
@@ -300,9 +300,9 @@ function validateInterval(quality, number, direction) {
   }
   // Check if quality and number are compatible
   const [mainType] = DIATONIC[mod(number - 1, DIATONIC.length)]
-  if ((mainType == 'P' && quality == 'M')
-   || (mainType == 'P' && quality == 'm')
-   || (mainType == 'M' && quality == 'P')) {
+  if ((mainType === 'P' && quality === 'M')
+   || (mainType === 'P' && quality === 'm')
+   || (mainType === 'M' && quality === 'P')) {
      throw new Error(`${quality}${number} is not a valid interval`)
    }
 }

@@ -1,4 +1,4 @@
-const { NoteList, Note, chord, scale } = require('../dist/kamasi.js')
+import { NoteList, Note, chord, scale } from '#src/index.js';
 
 test('create note list', () => {
   expect(new NoteList().toString()).toBe('')

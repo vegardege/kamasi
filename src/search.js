@@ -1,6 +1,6 @@
-import { INTERVAL_BITMASK, INTERVAL_BITMASK_ENHARMONIC } from '../data/intervals.js'
-import { CHORDS } from '../data/chords.js'
-import { SCALES } from '../data/scales.js'
+import { INTERVAL_BITMASK, INTERVAL_BITMASK_ENHARMONIC } from '#data/intervals.js'
+import { CHORDS } from '#data/chords.js'
+import { SCALES } from '#data/scales.js'
 
 /**
  * The search function works by creating and bitmasks for all scales and

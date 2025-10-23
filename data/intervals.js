@@ -5,7 +5,7 @@
  * interval modifies the note letter of a note.
  */
 export const DIATONIC = [
-  ['P', 0], ['M', 2], ['M', 4], ['P', 5], ['P', 7], ['M', 9], ['M', 11]
+  ['P', 0], ['M', 2], ['M', 4], ['P', 5], ['P', 7], ['M', 9], ['M', 11],
 ]
 
 /**
@@ -15,7 +15,7 @@ export const DIATONIC = [
  */
 export const CHROMATIC = [
   ['P', 1], ['m', 2], ['M', 2], ['m', 3], ['M', 3], ['P', 4],
-  ['A', 4], ['P', 5], ['m', 6], ['M', 6], ['m', 7], ['M', 7]
+  ['A', 4], ['P', 5], ['m', 6], ['M', 6], ['m', 7], ['M', 7],
 ]
 
 /**

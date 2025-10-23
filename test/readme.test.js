@@ -1,5 +1,5 @@
 // Test README.md commands to ensure they run correctly
-const { Interval, interval, note, notes, chord, scale, search } = require('../dist/kamasi.js')
+import { Interval, interval, note, notes, chord, scale, search } from '#src/index.js';
 
 test('quick start', () => {
   // Transpose or find interval between notes
@@ -33,7 +33,7 @@ test('intervals', () => {
   expect(Interval.fromSteps(4, 7)
           .add('M7')
           .simpleTerm()
-          .frequencyRatio()).toBeCloseTo(1.4142135623730951)
+          .frequencyRatio()).toBeCloseTo(Math.SQRT2)
 })
 
 test('notes', () => {
