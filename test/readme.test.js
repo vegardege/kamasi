@@ -80,10 +80,10 @@ test('chords', () => {
 })
 
 test('search', () => {
-  expect(search('P1 M3 P5 M7', true, 'exact', 'chord')).toBe('major seventh')
+  expect(search('P1 M3 P5 M7', true).exact().chord()).toBe('major seventh')
   expect(search('P1 M3 P5 M7').exact().chord()).toBe('major seventh')
 
-  expect(notes('C E G').search(true, 'exact', 'chord')).toBe('major')
+  expect(notes('C E G').search(true).exact().chord()).toBe('major')
   expect(notes('C D E F G A B').subsets().chords()).toContain('major')
   expect(notes('C D E F G A B').subsets().chords()).toContain('major sixth')
   expect(notes('C Eb G').supersets().scales()).toContain('minor')

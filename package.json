@@ -1,6 +1,6 @@
 {
   "name": "kamasi",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Music theory library for working with notes, intervals, scales, and chords",
   "keywords": [
     "music",

@@ -3,7 +3,7 @@ import type { IntervalNotation } from '#data/intervals.js'
 import { SCALES, SCALE_ALIAS } from '#data/scales.js'
 import { Interval } from '#src/interval.js'
 import { Note } from '#src/note.js'
-import { search as _search } from '#src/search.js'
+import { search as _search, type SearchResult, type PatternResult } from '#src/search.js'
 import { ensureType } from '#src/utils.js'
 
 /**
@@ -190,11 +190,12 @@ export class NoteList {
    * sets as well as exact search.
    *
    * @param enharmonic If true, search won't differentiate between enharmonic intervals
+   *
+   * @example
+   * notes('C E G').search().exact().chord()      // 'major'
+   * notes('C E G').search().supersets().scales() // All scales containing C, E, G
    */
-  search(enharmonic?: boolean): ReturnType<typeof _search>
-  search(enharmonic: boolean, searchType: Parameters<typeof _search>[2]): ReturnType<typeof _search>
-  search(enharmonic: boolean, searchType: Parameters<typeof _search>[2], patternType: Parameters<typeof _search>[3]): ReturnType<typeof _search>
-  search(enharmonic = true, searchType?: Parameters<typeof _search>[2], patternType?: Parameters<typeof _search>[3]): ReturnType<typeof _search> {
+  search(enharmonic = true): SearchResult {
     if (this.intervals === undefined) {
       throw new Error('This note list is a mix of pitches and pitch ' +
         'classes, and can not be used to search. Convert the list ' +
@@ -204,37 +205,44 @@ export class NoteList {
     const intervals = enharmonic ? this.intervals.map(i => i.simplify())
                                  : this.intervals
 
-    return _search(intervals.map(i => i.toString()) as IntervalNotation[],
-                   enharmonic,
-                   searchType as any,
-                   patternType as any) as any
+    return _search(intervals.map(i => i.toString()) as IntervalNotation[], enharmonic)
   }
 
   /**
    * Search for scales/chords with the exact notes from this notelist
    *
    * @param enharmonic If true, search won't differentiate between enharmonic intervals
+   *
+   * @example
+   * notes('C E G').exact().chord()  // 'major'
+   * notes('C E G').exact().chords() // ['major']
    */
-  exact(enharmonic: boolean = true) {
-    return this.search(enharmonic, 'exact')
+  exact(enharmonic = true): PatternResult {
+    return this.search(enharmonic).exact()
   }
 
   /**
    * Search for scales/chords including the notes from this notelist
    *
    * @param enharmonic If true, search won't differentiate between enharmonic intervals
+   *
+   * @example
+   * notes('C E').supersets().scales() // All scales containing C and E
    */
-  supersets(enharmonic: boolean = true) {
-    return this.search(enharmonic, 'supersets')
+  supersets(enharmonic = true): PatternResult {
+    return this.search(enharmonic).supersets()
   }
 
   /**
    * Search for scales/chords containing only notes from this notelist
    *
    * @param enharmonic If true, search won't differentiate between enharmonic intervals
+   *
+   * @example
+   * notes('C D E F G A B').subsets().chords() // All chords using only notes from C major scale
    */
-  subsets(enharmonic: boolean = true) {
-    return this.search(enharmonic, 'subsets')
+  subsets(enharmonic = true): PatternResult {
+    return this.search(enharmonic).subsets()
   }
 
   /**
