@@ -1,5 +1,5 @@
-import { Interval } from '#src/interval.js'
-import { ensureType, mod } from '#src/utils.js'
+import { Interval } from "#src/interval.js";
+import { ensureType, mod } from "#src/utils.js";
 
 /**
  * A note represents a specific pitch or a general pitch class.
@@ -28,11 +28,11 @@ import { ensureType, mod } from '#src/utils.js'
  * @see {@link https://en.wikipedia.org/wiki/Musical_note}
  */
 export class Note {
-  readonly letter: string
-  readonly accidentals: string
-  readonly octave: number
-  readonly diatonicOffset: number
-  readonly chromaticOffset: number
+  readonly letter: NoteLetter;
+  readonly accidentals: string;
+  readonly octave: number;
+  readonly diatonicOffset: number;
+  readonly chromaticOffset: number;
 
   /**
    * Create a note from note letter, accidentals, and an optional octave.
@@ -41,18 +41,18 @@ export class Note {
    * @param accidentals A sequence of '#' or 'b' modifying the letter
    * @param octave Number for a specific pitch, NaN for pitch class
    */
-  constructor(letter: string, accidentals: string = '', octave: number = NaN) {
-    validateNote(letter, accidentals, octave)
+  constructor(letter: string, accidentals: string = "", octave: number = NaN) {
+    validateNote(letter, accidentals, octave);
 
-    this.letter = letter.toUpperCase()
-    this.accidentals = accidentals
-    this.octave = octave
+    this.letter = letter.toUpperCase() as NoteLetter;
+    this.accidentals = accidentals;
+    this.octave = octave;
 
     // Offset from C (pitch class or in note's octave)
     // Stored to simplify the math of transposing a note
-    this.diatonicOffset = NOTE_LETTERS.indexOf(this.letter as any)
-    this.chromaticOffset = DEFAULT_NOTE.indexOf(this.letter as any)
-                         + accToNum(this.accidentals)
+    this.diatonicOffset = NOTE_LETTERS.indexOf(this.letter);
+    this.chromaticOffset =
+      DEFAULT_NOTE.indexOf(this.letter) + accToNum(this.accidentals);
   }
 
   /**
@@ -64,12 +64,12 @@ export class Note {
    */
   static fromString(string: string): Note {
     try {
-      const match = string.match(/^([A-G])(#*|b*)(-?[0-9]?)$/)
-      if (!match) throw new Error()
-      const [, root, acc, oct] = match
-      return new Note(root!, acc, parseInt(oct!, 10))
+      const match = string.match(/^([A-G])(#*|b*)(-?[0-9]?)$/);
+      if (!match) throw new Error();
+      const [, root, acc, oct] = match;
+      return new Note(root!, acc, parseInt(oct!, 10));
     } catch {
-      throw new Error(`'${string}' is not a valid note`)
+      throw new Error(`'${string}' is not a valid note`);
     }
   }
 
@@ -84,25 +84,27 @@ export class Note {
    * @see {@link https://en.wikipedia.org/wiki/Transposition_(music)}
    */
   transpose(interval: Interval | string | number): Note {
-    const intervalObj = typeof interval === 'number' ? Interval.fromSemitones(interval)
-                                          : ensureType(interval, Interval)
+    const intervalObj =
+      typeof interval === "number"
+        ? Interval.fromSemitones(interval)
+        : ensureType(interval, Interval);
 
     // New letter and octave are determined by interval number alone.
     // E.g. a P5 will move us four diatonic steps up in pitch.
-    const diatonicTarget = this.diatonicOffset + intervalObj.diatonicSteps
-    const newLetter = NOTE_LETTERS[mod(diatonicTarget, 7)]!
+    const diatonicTarget = this.diatonicOffset + intervalObj.diatonicSteps;
+    const newLetter = NOTE_LETTERS[mod(diatonicTarget, 7)]!;
 
-    const octaveDiff = Math.floor(diatonicTarget / 7)
-    const newOctave = this.octave + octaveDiff
+    const octaveDiff = Math.floor(diatonicTarget / 7);
+    const newOctave = this.octave + octaveDiff;
 
     // Accidentals are a bit harder. We need to calculate how many semitones
     // the interval spans, and how many semitones were covered by the
     // letter/octave movement. Accidentals compensate for the difference.
-    const chromaticTarget = this.chromaticOffset + intervalObj.chromaticSteps
-    const chromaticMoved = DEFAULT_NOTE.indexOf(newLetter) + 12 * octaveDiff
-    const newAccidentals = numToAcc(chromaticTarget - chromaticMoved)
+    const chromaticTarget = this.chromaticOffset + intervalObj.chromaticSteps;
+    const chromaticMoved = DEFAULT_NOTE.indexOf(newLetter) + 12 * octaveDiff;
+    const newAccidentals = numToAcc(chromaticTarget - chromaticMoved);
 
-    return new Note(newLetter, newAccidentals, newOctave)
+    return new Note(newLetter, newAccidentals, newOctave);
   }
 
   /**
@@ -113,10 +115,10 @@ export class Note {
    * @param note Note to compare to OR Full scientific pitch notation for note
    */
   distance(note: Note | string): number {
-    note = ensureType(note, Note)
-    const octaveDiff = Note.octaveDiff(this, note)
+    note = ensureType(note, Note);
+    const octaveDiff = Note.octaveDiff(this, note);
 
-    return note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff
+    return note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff;
   }
 
   /**
@@ -127,13 +129,13 @@ export class Note {
    * @param note Note to compare to OR Full scientific pitch notation for note
    */
   intervalTo(note: Note | string): Interval {
-    note = ensureType(note, Note)
-    const octaveDiff = Note.octaveDiff(this, note)
+    note = ensureType(note, Note);
+    const octaveDiff = Note.octaveDiff(this, note);
 
     return Interval.fromSteps(
       note.diatonicOffset - this.diatonicOffset + 7 * octaveDiff,
-      note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff
-    )
+      note.chromaticOffset - this.chromaticOffset + 12 * octaveDiff,
+    );
   }
 
   /**
@@ -144,8 +146,8 @@ export class Note {
    * @param note Note to compare to OR Full scientific pitch notation for note
    */
   intervalFrom(note: Note | string): Interval {
-    note = ensureType(note, Note)
-    return note.intervalTo(this)
+    note = ensureType(note, Note);
+    return note.intervalTo(this);
   }
 
   /**
@@ -153,7 +155,7 @@ export class Note {
    * Will fail for pitch classes.
    */
   frequency(): number {
-    return 440 * 2 ** (-this.distance('A4') / 12)
+    return 440 * 2 ** (-this.distance("A4") / 12);
   }
 
   /**
@@ -161,8 +163,8 @@ export class Note {
    * Will fail for pitch classes.
    */
   midi(): number {
-    const midi = 60 - this.distance('C4')
-    return midi > 0 && midi <= 127 ? midi : NaN
+    const midi = 60 - this.distance("C4");
+    return midi > 0 && midi <= 127 ? midi : NaN;
   }
 
   /**
@@ -170,12 +172,12 @@ export class Note {
    * Arbitrarily chooses '#' over 'b' to be deterministic.
    */
   simplify(): Note {
-    const octave = this.octave + Math.floor(this.chromaticOffset / 12)
-    const noteStr = DEFAULT_NOTE[mod(this.chromaticOffset, 12)]
-    if (!noteStr) throw new Error('Invalid chromatic offset')
-    const [root, acc] = noteStr
+    const octave = this.octave + Math.floor(this.chromaticOffset / 12);
+    const noteStr = DEFAULT_NOTE[mod(this.chromaticOffset, 12)];
+    if (!noteStr) throw new Error("Invalid chromatic offset");
+    const [root, acc] = noteStr;
 
-    return new Note(root!, acc || '', octave || NaN)
+    return new Note(root!, acc || "", octave || NaN);
   }
 
   /**
@@ -184,11 +186,13 @@ export class Note {
    * @param note Note to compare to OR Full scientific pitch notation for note
    */
   isEqual(note: Note | string): boolean {
-    note = ensureType(note, Note)
-    return (this.letter === note.letter)
-        && (this.accidentals === note.accidentals)
-        && ((this.isPitchClass() && note.isPitchClass())
-         || (this.octave === note.octave))
+    note = ensureType(note, Note);
+    return (
+      this.letter === note.letter &&
+      this.accidentals === note.accidentals &&
+      ((this.isPitchClass() && note.isPitchClass()) ||
+        this.octave === note.octave)
+    );
   }
 
   /**
@@ -199,23 +203,24 @@ export class Note {
    * @see {@link https://en.wikipedia.org/wiki/Enharmonic}
    */
   isEnharmonic(note: Note | string): boolean {
-    note = ensureType(note, Note)
-    return this.isPitchClass() === note.isPitchClass()
-        && this.distance(note) === 0
+    note = ensureType(note, Note);
+    return (
+      this.isPitchClass() === note.isPitchClass() && this.distance(note) === 0
+    );
   }
 
   /**
    * True if the note is a pitch (C#4), false if  it's a pitch class (C#)
    */
   isPitch(): boolean {
-    return Number.isInteger(this.octave)
+    return Number.isInteger(this.octave);
   }
 
   /**
    * True if the note is a pitch class (C#), false if it's a pitch (C#4)
    */
   isPitchClass(): boolean {
-    return !this.isPitch()
+    return !this.isPitch();
   }
 
   /**
@@ -225,28 +230,29 @@ export class Note {
    * @param octave Octave the pitch should belong to
    */
   toPitch(octave: number): Note {
-    return new Note(this.letter, this.accidentals, octave)
+    return new Note(this.letter, this.accidentals, octave);
   }
 
   /**
    * Convert a pitch to a pitch class by removing the octave
    */
   toPitchClass(): Note {
-    if (this.isPitchClass()) return this
-    return new Note(this.letter, this.accidentals)
+    if (this.isPitchClass()) return this;
+    return new Note(this.letter, this.accidentals);
   }
 
   toString(): string {
-    return `${this.letter}${this.accidentals}${this.octave || ''}`
+    return `${this.letter}${this.accidentals}${this.octave || ""}`;
   }
 
   /**
    * Use this comparator if you want to sort notes. Pitch classes are sorted
    * before all pitches, then they are sorted by octave, pitch, and letter.
    */
-  static compare = (a: Note, b: Note): number => (a.octave || -Infinity) - (b.octave || -Infinity)
-                        || a.chromaticOffset - b.chromaticOffset
-                        || a.diatonicOffset - b.diatonicOffset
+  static compare = (a: Note, b: Note): number =>
+    (a.octave || -Infinity) - (b.octave || -Infinity) ||
+    a.chromaticOffset - b.chromaticOffset ||
+    a.diatonicOffset - b.diatonicOffset;
 
   /**
    * Find the octave difference between two notes. This is easy for pitches.
@@ -260,45 +266,65 @@ export class Note {
    */
   static octaveDiff = (a: Note, b: Note): number => {
     if (a.isPitchClass() !== b.isPitchClass()) {
-      throw new Error("Can't compare a pitch and a pitch class")
+      throw new Error("Can't compare a pitch and a pitch class");
     }
     if (a.isPitchClass()) {
-      return a.chromaticOffset > b.chromaticOffset ? 1 : 0
+      return a.chromaticOffset > b.chromaticOffset ? 1 : 0;
     } else {
-      return b.octave - a.octave
+      return b.octave - a.octave;
     }
-  }
+  };
 }
 
 /**
  * The 7 note letters indexed by diatonic offset from C
  */
-const NOTE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'] as const
+const NOTE_LETTERS = ["C", "D", "E", "F", "G", "A", "B"] as const;
+type NoteLetter = (typeof NOTE_LETTERS)[number];
 
 /**
  * The default note indexed by semitone offset from C. Note that all
  * enharmonic notes are equally valid, these were chosen to be simple
  * and make lookup deterministic.
  */
-const DEFAULT_NOTE = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#',
-                      'G', 'G#', 'A', 'A#', 'B'] as const
+const DEFAULT_NOTE = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+] as const;
 
-function validateNote(letter: string, accidentals: string, octave: number): void {
-  if (!NOTE_LETTERS.includes(letter.toUpperCase() as any)) {
-    throw new Error(`letter must be one of ${NOTE_LETTERS.join(', ')}`)
+function validateNote(
+  letter: string,
+  accidentals: string,
+  octave: number,
+): void {
+  if (!NOTE_LETTERS.includes(letter.toUpperCase() as NoteLetter)) {
+    throw new Error(`letter must be one of ${NOTE_LETTERS.join(", ")}`);
   }
-  if (accidentals.replaceAll('#', '').length &&
-      accidentals.replaceAll('b', '').length) {
-        throw new Error(`accidentals can only be '#'s or 'b's`)
+  if (
+    accidentals.replaceAll("#", "").length &&
+    accidentals.replaceAll("b", "").length
+  ) {
+    throw new Error(`accidentals can only be '#'s or 'b's`);
   }
   if (!Number.isNaN(octave) && !Number.isInteger(octave)) {
-    throw new Error('octave must be a valid number or NaN')
+    throw new Error("octave must be a valid number or NaN");
   }
 }
 
 // Accidentals helper functions
-const accToNum = (a: string): number => a[0] === 'b' ? -a.length : a.length
-const numToAcc = (n: number): string => n > 0 ? '#'.repeat(n) : 'b'.repeat(-n)
+const accToNum = (a: string): number => (a[0] === "b" ? -a.length : a.length);
+const numToAcc = (n: number): string =>
+  n > 0 ? "#".repeat(n) : "b".repeat(-n);
 
 // Shortcut for creating a note with scientific pitch notation
-export const note = Note.fromString
+export const note = Note.fromString;

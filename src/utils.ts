@@ -4,11 +4,14 @@
  *
  * This function converts the string representation to `cls` if necessary.
  */
-export function ensureType<T>(object: T | string, cls: { fromString(str: string): T }): T {
+export function ensureType<T>(
+  object: T | string,
+  cls: { fromString(str: string): T },
+): T {
   if (typeof object === "string") {
-    return cls.fromString(object)
+    return cls.fromString(object);
   }
-  return object
+  return object;
 }
 
 /**
@@ -20,6 +23,10 @@ export function ensureType<T>(object: T | string, cls: { fromString(str: string)
  *
  * @see {@link https://en.wikipedia.org/wiki/Modulo_operation#Modulo_with_offset}
  */
-export function mod(dividend: number, divisor: number, offset: number = 0): number {
-  return dividend - divisor * Math.floor((dividend - offset) / divisor)
+export function mod(
+  dividend: number,
+  divisor: number,
+  offset: number = 0,
+): number {
+  return dividend - divisor * Math.floor((dividend - offset) / divisor);
 }

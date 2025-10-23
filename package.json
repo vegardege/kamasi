@@ -68,7 +68,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "biome lint"
+    "lint": "biome lint",
+    "format": "biome format --write"
   },
   "repository": {
     "type": "git",

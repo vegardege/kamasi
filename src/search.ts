@@ -1,15 +1,19 @@
-import { INTERVAL_BITMASK, INTERVAL_BITMASK_ENHARMONIC, type IntervalNotation } from '#data/intervals.js'
-import { CHORDS } from '#data/chords.js'
-import { SCALES } from '#data/scales.js'
+import { CHORDS } from "#data/chords.js";
+import {
+  INTERVAL_BITMASK,
+  INTERVAL_BITMASK_ENHARMONIC,
+  type IntervalNotation,
+} from "#data/intervals.js";
+import { SCALES } from "#data/scales.js";
 
 type IndexEntry = {
-  name: string
-  bitmask: number
-}
+  name: string;
+  bitmask: number;
+};
 
-type IndexType = 'chords' | 'scales'
-type EnharmonicType = 'exact' | 'enharmonic'
-type SearchFilter = 'exact' | 'sub' | 'sup'
+type IndexType = "chords" | "scales";
+type EnharmonicType = "exact" | "enharmonic";
+type SearchFilter = "exact" | "sub" | "sup";
 
 /**
  * The search function works by creating and bitmasks for all scales and
@@ -19,15 +23,15 @@ type SearchFilter = 'exact' | 'sub' | 'sup'
  * won't use the search function.
  */
 const index: Record<IndexType, Record<EnharmonicType, IndexEntry[]>> = {
-  'chords': {
-    'exact': [],
-    'enharmonic': [],
+  chords: {
+    exact: [],
+    enharmonic: [],
   },
-  'scales': {
-    'exact': [],
-    'enharmonic': [],
+  scales: {
+    exact: [],
+    enharmonic: [],
   },
-}
+};
 
 /**
  * Four search functions are currently supported:
@@ -36,28 +40,29 @@ const index: Record<IndexType, Record<EnharmonicType, IndexEntry[]>> = {
  *  'sup': Match if scale/chord is a superset of given intervals
  *  'all': Match if scale/chord is a subset or a superset
  */
-const searchFunctions: Record<SearchFilter, (a: number, b: number) => boolean> = {
-  'exact': (a, b) => a === b,
-  'sub': (a, b) => (~a & b) === 0,
-  'sup': (a, b) => (a & ~b) === 0,
-}
+const searchFunctions: Record<SearchFilter, (a: number, b: number) => boolean> =
+  {
+    exact: (a, b) => a === b,
+    sub: (a, b) => (~a & b) === 0,
+    sup: (a, b) => (a & ~b) === 0,
+  };
 
 /**
  * Lazily build index the first time it's requested
  */
 function loadIndex(type: IndexType, enharmonic: boolean): IndexEntry[] {
-  const db = type === 'chords' ? CHORDS : SCALES
-  const enharmonicType: EnharmonicType = enharmonic ? 'enharmonic' : 'exact'
+  const db = type === "chords" ? CHORDS : SCALES;
+  const enharmonicType: EnharmonicType = enharmonic ? "enharmonic" : "exact";
 
   if (index[type][enharmonicType].length === 0) {
     for (const name in db) {
       index[type][enharmonicType].push({
-        'name': name,
-        'bitmask': bitmask(db[name]!, enharmonic),
-      })
+        name: name,
+        bitmask: bitmask(db[name]!, enharmonic),
+      });
     }
   }
-  return index[type][enharmonicType]
+  return index[type][enharmonicType];
 }
 
 /**
@@ -66,10 +71,12 @@ function loadIndex(type: IndexType, enharmonic: boolean): IndexEntry[] {
  * @param intervals List of intervals
  * @param enharmonic If true, bitmask will be identical for enharmonic intervals
  */
-function bitmask(intervals: readonly IntervalNotation[], enharmonic: boolean = true): number {
-  const mask = enharmonic ? INTERVAL_BITMASK_ENHARMONIC : INTERVAL_BITMASK
-  return intervals.reduce(
-    (bitmask, cur) => bitmask | (mask[cur] ?? 0), 0)
+function bitmask(
+  intervals: readonly IntervalNotation[],
+  enharmonic: boolean = true,
+): number {
+  const mask = enharmonic ? INTERVAL_BITMASK_ENHARMONIC : INTERVAL_BITMASK;
+  return intervals.reduce((bitmask, cur) => bitmask | (mask[cur] ?? 0), 0);
 }
 
 /**
@@ -79,30 +86,35 @@ function bitmask(intervals: readonly IntervalNotation[], enharmonic: boolean = t
  * @param filter Filter function ('exact', 'sub', 'sup', 'all')
  * @param enharmonic If true, bitmask will be identical for enharmonic intervals
  */
-function searcher(type: IndexType, intervals: readonly IntervalNotation[], filter: SearchFilter, enharmonic: boolean): string[] {
-  const needle = bitmask(intervals, enharmonic)
-  const haystack = loadIndex(type, enharmonic)
-  const match = searchFunctions[filter]
+function searcher(
+  type: IndexType,
+  intervals: readonly IntervalNotation[],
+  filter: SearchFilter,
+  enharmonic: boolean,
+): string[] {
+  const needle = bitmask(intervals, enharmonic);
+  const haystack = loadIndex(type, enharmonic);
+  const match = searchFunctions[filter];
 
-  return haystack.filter(
-    candidate => match(needle, candidate.bitmask)
-  ).map(
-    candidate => candidate.name
-  ) || []
+  return (
+    haystack
+      .filter((candidate) => match(needle, candidate.bitmask))
+      .map((candidate) => candidate.name) || []
+  );
 }
 
 export type SearchResult = {
-  exact: () => PatternResult
-  supersets: () => PatternResult
-  subsets: () => PatternResult
-}
+  exact: () => PatternResult;
+  supersets: () => PatternResult;
+  subsets: () => PatternResult;
+};
 
 export type PatternResult = {
-  chord: () => string | undefined
-  scale: () => string | undefined
-  chords: () => string[]
-  scales: () => string[]
-}
+  chord: () => string | undefined;
+  scale: () => string | undefined;
+  chords: () => string[];
+  scales: () => string[];
+};
 
 /**
  * Search for chords or scales containing a specified set of intervals.
@@ -118,30 +130,31 @@ export type PatternResult = {
  */
 export function search(
   intervals: readonly IntervalNotation[] | string,
-  enharmonic = true
+  enharmonic = true,
 ): SearchResult {
-  const intervalArray = typeof intervals === 'string'
-    ? intervals.split(' ') as IntervalNotation[]
-    : intervals
+  const intervalArray =
+    typeof intervals === "string"
+      ? (intervals.split(" ") as IntervalNotation[])
+      : intervals;
 
   return {
     exact: () => ({
-      chord: () => searcher('chords', intervalArray, 'exact', enharmonic)[0],
-      scale: () => searcher('scales', intervalArray, 'exact', enharmonic)[0],
-      chords: () => searcher('chords', intervalArray, 'exact', enharmonic),
-      scales: () => searcher('scales', intervalArray, 'exact', enharmonic),
+      chord: () => searcher("chords", intervalArray, "exact", enharmonic)[0],
+      scale: () => searcher("scales", intervalArray, "exact", enharmonic)[0],
+      chords: () => searcher("chords", intervalArray, "exact", enharmonic),
+      scales: () => searcher("scales", intervalArray, "exact", enharmonic),
     }),
     supersets: () => ({
-      chord: () => searcher('chords', intervalArray, 'sup', enharmonic)[0],
-      scale: () => searcher('scales', intervalArray, 'sup', enharmonic)[0],
-      chords: () => searcher('chords', intervalArray, 'sup', enharmonic),
-      scales: () => searcher('scales', intervalArray, 'sup', enharmonic),
+      chord: () => searcher("chords", intervalArray, "sup", enharmonic)[0],
+      scale: () => searcher("scales", intervalArray, "sup", enharmonic)[0],
+      chords: () => searcher("chords", intervalArray, "sup", enharmonic),
+      scales: () => searcher("scales", intervalArray, "sup", enharmonic),
     }),
     subsets: () => ({
-      chord: () => searcher('chords', intervalArray, 'sup', enharmonic)[0],
-      scale: () => searcher('scales', intervalArray, 'sup', enharmonic)[0],
-      chords: () => searcher('chords', intervalArray, 'sub', enharmonic),
-      scales: () => searcher('scales', intervalArray, 'sub', enharmonic),
+      chord: () => searcher("chords", intervalArray, "sup", enharmonic)[0],
+      scale: () => searcher("scales", intervalArray, "sup", enharmonic)[0],
+      chords: () => searcher("chords", intervalArray, "sub", enharmonic),
+      scales: () => searcher("scales", intervalArray, "sub", enharmonic),
     }),
-  }
+  };
 }

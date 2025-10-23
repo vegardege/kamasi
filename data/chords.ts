@@ -1,4 +1,5 @@
 import type { IntervalNotation } from '#data/intervals.js'
+
 /**
  * Chord database sourced from Wikipedia.
  * 

@@ -1,10 +1,14 @@
-import { CHORDS, CHORD_ALIAS } from '#data/chords.js'
-import type { IntervalNotation } from '#data/intervals.js'
-import { SCALES, SCALE_ALIAS } from '#data/scales.js'
-import { Interval } from '#src/interval.js'
-import { Note } from '#src/note.js'
-import { search as _search, type SearchResult, type PatternResult } from '#src/search.js'
-import { ensureType } from '#src/utils.js'
+import { CHORD_ALIAS, CHORDS } from "#data/chords.js";
+import type { IntervalNotation } from "#data/intervals.js";
+import { SCALE_ALIAS, SCALES } from "#data/scales.js";
+import { Interval } from "#src/interval.js";
+import { Note } from "#src/note.js";
+import {
+  search as _search,
+  type PatternResult,
+  type SearchResult,
+} from "#src/search.js";
+import { ensureType } from "#src/utils.js";
 
 /**
  * A note list is an ordered sequence of notes. The notes can be
@@ -15,8 +19,8 @@ import { ensureType } from '#src/utils.js'
  * melody.
  */
 export class NoteList {
-  readonly notes: Note[]
-  readonly intervals?: Interval[]
+  readonly notes: Note[];
+  readonly intervals?: Interval[];
 
   /**
    * Create a new note list, using a list of Notes or strings on scientific
@@ -28,25 +32,30 @@ export class NoteList {
    * @param root The first note of the note list OR A list of valid notes
    * @param intervals A list of intervals from root note. Can only be used if root is a single note.
    */
-  constructor(root: (Note | string)[] | Note | string = [], intervals: readonly IntervalNotation[] | (Interval | string)[] = []) {
+  constructor(
+    root: (Note | string)[] | Note | string = [],
+    intervals: readonly IntervalNotation[] | (Interval | string)[] = [],
+  ) {
     if (Array.isArray(root) && intervals.length === 0) {
-      this.notes = root.map(n => ensureType(n, Note))
+      this.notes = root.map((n) => ensureType(n, Note));
 
       // There are no intervals between pitches and pitch classes, so
       // intervals can't be calculated. The list will still work, but
       // can't be used for search or other functions requiring intervals.
-      this.intervals = this.isEmpty() ? [] :
-                       this.isMixed() ? undefined :
-                       this.notes.map(n => this.notes[0]!.intervalTo(n))
-
+      this.intervals = this.isEmpty()
+        ? []
+        : this.isMixed()
+          ? undefined
+          : this.notes.map((n) => this.notes[0]!.intervalTo(n));
     } else if (intervals.length > 0) {
-      const rootNote = ensureType(root as Note | string, Note)
-      this.notes = intervals.map(i => rootNote.transpose(i))
-      this.intervals = intervals.map(i => ensureType(i, Interval))
-
+      const rootNote = ensureType(root as Note | string, Note);
+      this.notes = intervals.map((i) => rootNote.transpose(i));
+      this.intervals = intervals.map((i) => ensureType(i, Interval));
     } else {
-      throw new Error('NoteList must be created with a root note and a ' +
-                      'list of intervals, or as a list of notes')
+      throw new Error(
+        "NoteList must be created with a root note and a " +
+          "list of intervals, or as a list of notes",
+      );
     }
   }
 
@@ -57,9 +66,9 @@ export class NoteList {
    */
   static fromString(string: string): NoteList {
     try {
-      return new NoteList(string.split(' '))
+      return new NoteList(string.split(" "));
     } catch {
-      throw new Error(`'${string}' is not a valid note list`)
+      throw new Error(`'${string}' is not a valid note list`);
     }
   }
 
@@ -70,14 +79,14 @@ export class NoteList {
    * @param name Name of scale
    */
   static fromScale(tonic: Note | string, name: string): NoteList {
-    const tonicNote = ensureType(tonic, Note)
+    const tonicNote = ensureType(tonic, Note);
     if (name in SCALES) {
-      return new NoteList(tonicNote, SCALES[name]!)
+      return new NoteList(tonicNote, SCALES[name]!);
     } else if (name in SCALE_ALIAS) {
-      const scaleName = SCALE_ALIAS[name]!
-      return new NoteList(tonicNote, SCALES[scaleName]!)
+      const scaleName = SCALE_ALIAS[name]!;
+      return new NoteList(tonicNote, SCALES[scaleName]!);
     } else {
-      throw new Error(`The scale ${name} is not known`)
+      throw new Error(`The scale ${name} is not known`);
     }
   }
 
@@ -88,14 +97,14 @@ export class NoteList {
    * @param name Name of chord
    */
   static fromChord(tonic: Note | string, name: string): NoteList {
-    const tonicNote = ensureType(tonic, Note)
+    const tonicNote = ensureType(tonic, Note);
     if (name in CHORDS) {
-      return new NoteList(tonicNote, CHORDS[name]!)
+      return new NoteList(tonicNote, CHORDS[name]!);
     } else if (name in CHORD_ALIAS) {
-      const chordName = CHORD_ALIAS[name]!
-      return new NoteList(tonicNote, CHORDS[chordName]!)
+      const chordName = CHORD_ALIAS[name]!;
+      return new NoteList(tonicNote, CHORDS[chordName]!);
     } else {
-      throw new Error(`The chord ${name} is not known`)
+      throw new Error(`The chord ${name} is not known`);
     }
   }
 
@@ -105,14 +114,14 @@ export class NoteList {
    * @param interval Interval object OR Shorthand interval notation (e.g. P5)
    */
   transpose(interval: Interval | string): NoteList {
-    return new NoteList(this.notes.map(n => n.transpose(interval)))
+    return new NoteList(this.notes.map((n) => n.transpose(interval)));
   }
 
   /**
    * Reduce accidentals as much as possible for each note in the list.
    */
   simplify(): NoteList {
-    return new NoteList(this.notes.map(n => n.simplify()))
+    return new NoteList(this.notes.map((n) => n.simplify()));
   }
 
   /**
@@ -121,8 +130,8 @@ export class NoteList {
    * @param note Note to add to list
    */
   add(note: Note | string): NoteList {
-    const noteObj = ensureType(note, Note)
-    return new NoteList(this.notes.concat(noteObj))
+    const noteObj = ensureType(note, Note);
+    return new NoteList(this.notes.concat(noteObj));
   }
 
   /**
@@ -132,10 +141,11 @@ export class NoteList {
    * @param enharmonic If true, removes all enharmonic notes
    */
   remove(note: Note | string, enharmonic: boolean = false): NoteList {
-    const noteObj = ensureType(note, Note)
-    const filter = enharmonic ? (n: Note) => !n.isEnharmonic(noteObj)
-                              : (n: Note) => !n.isEqual(noteObj)
-    return new NoteList(this.notes.filter(filter))
+    const noteObj = ensureType(note, Note);
+    const filter = enharmonic
+      ? (n: Note) => !n.isEnharmonic(noteObj)
+      : (n: Note) => !n.isEqual(noteObj);
+    return new NoteList(this.notes.filter(filter));
   }
 
   /**
@@ -145,9 +155,10 @@ export class NoteList {
    * @param enharmonic If true, toggles all enharmonic notes
    */
   toggle(note: Note | string, enharmonic: boolean = false): NoteList {
-    const noteObj = ensureType(note, Note)
-    return this.includes(noteObj, enharmonic) ? this.remove(noteObj, enharmonic)
-                                              : this.add(noteObj)
+    const noteObj = ensureType(note, Note);
+    return this.includes(noteObj, enharmonic)
+      ? this.remove(noteObj, enharmonic)
+      : this.add(noteObj);
   }
 
   /**
@@ -156,17 +167,21 @@ export class NoteList {
    * @param note Note to look for OR Full scientific pitch notation for note
    */
   includes(note: Note | string, enharmonic: boolean = false): boolean {
-    const noteObj = ensureType(note, Note)
-    return enharmonic ? this.notes.some(n => n.isEnharmonic(noteObj))
-                      : this.notes.some(n => n.isEqual(noteObj))
+    const noteObj = ensureType(note, Note);
+    return enharmonic
+      ? this.notes.some((n) => n.isEnharmonic(noteObj))
+      : this.notes.some((n) => n.isEqual(noteObj));
   }
 
   /**
    * Check if note list contains all the notes in `notes`.
    */
-  includesAll(notes: NoteList | (Note | string)[], enharmonic: boolean = false): boolean {
-    const noteArray = notes instanceof NoteList ? notes.notes : notes
-    return noteArray.every(n => this.includes(n, enharmonic))
+  includesAll(
+    notes: NoteList | (Note | string)[],
+    enharmonic: boolean = false,
+  ): boolean {
+    const noteArray = notes instanceof NoteList ? notes.notes : notes;
+    return noteArray.every((n) => this.includes(n, enharmonic));
   }
 
   /**
@@ -174,7 +189,7 @@ export class NoteList {
    */
   sort(): NoteList {
     // .slice(0) copies the array to avoid mutating the original
-    return new NoteList(this.notes.slice(0).sort(Note.compare))
+    return new NoteList(this.notes.slice(0).sort(Note.compare));
   }
 
   /**
@@ -182,7 +197,7 @@ export class NoteList {
    * to be the lowest pitch, as a notelist does not need to be ascending.
    */
   root(): Note | undefined {
-    return this.notes[0]
+    return this.notes[0];
   }
 
   /**
@@ -197,15 +212,21 @@ export class NoteList {
    */
   search(enharmonic = true): SearchResult {
     if (this.intervals === undefined) {
-      throw new Error('This note list is a mix of pitches and pitch ' +
-        'classes, and can not be used to search. Convert the list ' +
-        'using .toPitches(octave) or .toPitchClasses() to search.')
+      throw new Error(
+        "This note list is a mix of pitches and pitch " +
+          "classes, and can not be used to search. Convert the list " +
+          "using .toPitches(octave) or .toPitchClasses() to search.",
+      );
     }
 
-    const intervals = enharmonic ? this.intervals.map(i => i.simplify())
-                                 : this.intervals
+    const intervals = enharmonic
+      ? this.intervals.map((i) => i.simplify())
+      : this.intervals;
 
-    return _search(intervals.map(i => i.toString()) as IntervalNotation[], enharmonic)
+    return _search(
+      intervals.map((i) => i.toString()) as IntervalNotation[],
+      enharmonic,
+    );
   }
 
   /**
@@ -218,7 +239,7 @@ export class NoteList {
    * notes('C E G').exact().chords() // ['major']
    */
   exact(enharmonic = true): PatternResult {
-    return this.search(enharmonic).exact()
+    return this.search(enharmonic).exact();
   }
 
   /**
@@ -230,7 +251,7 @@ export class NoteList {
    * notes('C E').supersets().scales() // All scales containing C and E
    */
   supersets(enharmonic = true): PatternResult {
-    return this.search(enharmonic).supersets()
+    return this.search(enharmonic).supersets();
   }
 
   /**
@@ -242,14 +263,14 @@ export class NoteList {
    * notes('C D E F G A B').subsets().chords() // All chords using only notes from C major scale
    */
   subsets(enharmonic = true): PatternResult {
-    return this.search(enharmonic).subsets()
+    return this.search(enharmonic).subsets();
   }
 
   /**
    * Check if the notelist is empty
    */
   isEmpty(): boolean {
-    return this.notes.length === 0
+    return this.notes.length === 0;
   }
 
   /**
@@ -258,24 +279,24 @@ export class NoteList {
    * search or convert to a chord or scale.
    */
   isMixed(): boolean {
-    const firstNote = this.notes[0]
-    if (!firstNote) return false
-    const rootIsPitch = firstNote.isPitch()
-    return this.notes.some(n => n.isPitch() !== rootIsPitch)
+    const firstNote = this.notes[0];
+    if (!firstNote) return false;
+    const rootIsPitch = firstNote.isPitch();
+    return this.notes.some((n) => n.isPitch() !== rootIsPitch);
   }
 
   /**
    * True if all notes in the notelist are pitches (e.g. C#4, not C#)
    */
   isPitches(): boolean {
-    return this.notes.every(n => n.isPitch())
+    return this.notes.every((n) => n.isPitch());
   }
 
   /**
    * True if all notes in the notelist are pitch classes (e.g. C#, not C#4)
    */
   isPitchClasses(): boolean {
-    return this.notes.every(n => n.isPitchClass())
+    return this.notes.every((n) => n.isPitchClass());
   }
 
   /**
@@ -285,44 +306,44 @@ export class NoteList {
    * @param octave Octave of notes
    */
   toPitches(octave: number): NoteList {
-    return new NoteList(this.notes.map(n => n.toPitch(octave)))
+    return new NoteList(this.notes.map((n) => n.toPitch(octave)));
   }
 
   /**
    * Convert all notes in the list to a pitch class
    */
   toPitchClasses(): NoteList {
-    return new NoteList(this.notes.map(n => n.toPitchClass()))
+    return new NoteList(this.notes.map((n) => n.toPitchClass()));
   }
 
   toStringArray(): string[] {
-    return this.notes.map(n => n.toString())
+    return this.notes.map((n) => n.toString());
   }
 
   toString(): string {
-    return this.toStringArray().join(' ')
+    return this.toStringArray().join(" ");
   }
 }
 
 // Shortcut for creating a note list from space separated notes
-export const notes = NoteList.fromString
+export const notes = NoteList.fromString;
 
 /**
  * Create a NoteList from a scale tonic and name
  */
 export function scale(string: string): NoteList {
-  const match = string.match(/^([A-G][b#]*-?[0-9]?)?\s*(.*)$/)
-  if (!match) throw new Error(`'${string}' is not a valid scale`)
-  const [, tonic, name] = match
-  return NoteList.fromScale(tonic || 'C', name!.trim())
+  const match = string.match(/^([A-G][b#]*-?[0-9]?)?\s*(.*)$/);
+  if (!match) throw new Error(`'${string}' is not a valid scale`);
+  const [, tonic, name] = match;
+  return NoteList.fromScale(tonic || "C", name!.trim());
 }
 
 /**
  * Create a NoteList from a chord tonic and name
  */
 export function chord(string: string): NoteList {
-  const match = string.match(/^([A-G][b#]*-?[0-9]?)?\s*(.*)$/)
-  if (!match) throw new Error(`'${string}' is not a valid chord`)
-  const [, tonic, name] = match
-  return NoteList.fromChord(tonic || 'C', name!.trim())
+  const match = string.match(/^([A-G][b#]*-?[0-9]?)?\s*(.*)$/);
+  if (!match) throw new Error(`'${string}' is not a valid chord`);
+  const [, tonic, name] = match;
+  return NoteList.fromChord(tonic || "C", name!.trim());
 }
