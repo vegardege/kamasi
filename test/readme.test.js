@@ -1,5 +1,5 @@
 // Test README.md commands to ensure they run correctly
-import { Interval, interval, note, notes, chord, scale, search } from '#src/index.js';
+import { Interval, interval, note, notes, chord, scale, search } from '#src/index.ts';
 
 test('quick start', () => {
   // Transpose or find interval between notes

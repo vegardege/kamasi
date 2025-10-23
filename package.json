@@ -1,26 +1,70 @@
 {
   "name": "kamasi",
   "version": "0.1.0",
-  "description": "Music theory library",
+  "description": "Music theory library for working with notes, intervals, scales, and chords",
+  "keywords": [
+    "music",
+    "music-theory",
+    "midi",
+    "scale",
+    "chord",
+    "interval",
+    "note",
+    "pitch",
+    "harmony",
+    "transpose"
+  ],
   "author": "Vegard Egeland",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "imports": {
     "#src/*": "./src/*",
     "#data/*": "./data/*"
   },
   "exports": {
-    ".": "./src/index.js",
-    "./interval": "./src/interval.js",
-    "./note": "./src/note.js",
-    "./notelist": "./src/notelist.js",
-    "./search": "./src/search.js",
-    "./data/intervals": "./data/intervals.js",
-    "./data/scales": "./data/scales.js",
-    "./data/chords": "./data/chords.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./interval": {
+      "types": "./dist/interval.d.ts",
+      "default": "./dist/interval.js"
+    },
+    "./note": {
+      "types": "./dist/note.d.ts",
+      "default": "./dist/note.js"
+    },
+    "./notelist": {
+      "types": "./dist/notelist.d.ts",
+      "default": "./dist/notelist.js"
+    },
+    "./search": {
+      "types": "./dist/search.d.ts",
+      "default": "./dist/search.js"
+    },
+    "./data/intervals": {
+      "types": "./dist/intervals.d.ts",
+      "default": "./dist/intervals.js"
+    },
+    "./data/scales": {
+      "types": "./dist/scales.d.ts",
+      "default": "./dist/scales.js"
+    },
+    "./data/chords": {
+      "types": "./dist/chords.d.ts",
+      "default": "./dist/chords.js"
+    }
   },
   "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -39,6 +83,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.7",
+    "@types/node": "^24.9.1",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.1"
   }
 }

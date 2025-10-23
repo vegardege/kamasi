@@ -1,4 +1,4 @@
-import { NoteList, Note, chord, scale } from '#src/index.js';
+import { NoteList, Note, chord, scale } from '#src/index.ts';
 
 test('create note list', () => {
   expect(new NoteList().toString()).toBe('')
