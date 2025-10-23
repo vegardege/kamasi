@@ -1,4 +1,4 @@
-const { Note, Interval } = require('../dist/kamasi.js')
+import { Note, Interval } from '#src/index.js';
 
 test('create note with letter, accidentals, and octave', () => {
   expect(new Note('C').toString()).toBe('C')

@@ -1,4 +1,4 @@
-const { Interval } = require('../dist/kamasi.js')
+import { Interval } from '#src/index.js';
 
 test('create interval with quality, number, and direction', () => {
   expect(new Interval('P', 1).toString()).toBe('P1')

@@ -1,9 +1,9 @@
-import { Interval } from './interval.js'
-import { Note } from './note.js'
-import { SCALES, SCALE_ALIAS } from '../data/scales.js'
-import { CHORDS, CHORD_ALIAS } from '../data/chords.js'
-import { ensureType } from './utils.js'
-import { search as _search } from './search.js'
+import { Interval } from '#src/interval.js'
+import { Note } from '#src/note.js'
+import { SCALES, SCALE_ALIAS } from '#data/scales.js'
+import { CHORDS, CHORD_ALIAS } from '#data/chords.js'
+import { ensureType } from '#src/utils.js'
+import { search as _search } from '#src/search.js'
 
 /**
  * A note list is an ordered sequence of notes. The notes can be
@@ -29,7 +29,7 @@ export class NoteList {
    */
   constructor(root=[], intervals=[]) {
 
-    if (root instanceof Array && intervals.length === 0) {
+    if (Array.isArray(root) && intervals.length === 0) {
       this.notes = root.map(n => ensureType(n, Note))
 
       // There are no intervals between pitches and pitch classes, so
@@ -58,7 +58,7 @@ export class NoteList {
   static fromString(string) {
     try {
       return new NoteList(string.split(' '))
-    } catch (e) {
+    } catch {
       throw new Error(`'${string}' is not a valid note list`)
     }
   }
@@ -304,7 +304,6 @@ export const notes = NoteList.fromString
  * Create a NoteList from a scale tonic and name
  */
 export function scale(string) {
-  //eslint-disable-next-line
   const [, tonic, name] = string.match(/^([A-G][b#]*-?[0-9]?)?\s*(.*)$/)
   return NoteList.fromScale(tonic || 'C', name.trim())
 }
@@ -313,7 +312,6 @@ export function scale(string) {
  * Create a NoteList from a chord tonic and name
  */
 export function chord(string) {
-  //eslint-disable-next-line
   const [, tonic, name] = string.match(/^([A-G][b#]*-?[0-9]?)?\s*(.*)$/)
   return NoteList.fromChord(tonic || 'C', name.trim())
 }
