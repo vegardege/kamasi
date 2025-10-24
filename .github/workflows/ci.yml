@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - uses: biomejs/setup-biome@v2
+        with:
+          version: "2.2.7"
+      - name: Run Biome
+        run: biome ci .
+
+  test:
+    name: Test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22, 24]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: CI
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          
+      - name: CI
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          test -f dist/src/index.js || (echo "Missing dist/src/index.js" && exit 1)
+          test -f dist/src/index.d.ts || (echo "Missing dist/src/index.d.ts" && exit 1)
+          test -f dist/data/chords.js || (echo "Missing dist/data/chords.js" && exit 1)
+          echo "✓ Build output verified"
+
+  typecheck:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: CI
+        run: npm ci
+
+      - name: Check Types
+        run: npx tsc --noEmit
