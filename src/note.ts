@@ -103,7 +103,9 @@ export class Note {
    */
   static fromMidi(midi: number): Note {
     if (!Number.isInteger(midi) || midi < 0 || midi > 127) {
-      throw new Error(`MIDI number must be an integer between 0 and 127, got ${midi}`);
+      throw new Error(
+        `MIDI number must be an integer between 0 and 127, got ${midi}`,
+      );
     }
     return new Note("C", "", 4).transpose(midi - 60).simplify();
   }
