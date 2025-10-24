@@ -1,6 +1,17 @@
 # Kamasi
 
+[![Lint, Test, Type Check, Build](https://github.com/vegardege/kamasi/actions/workflows/ci.yml/badge.svg)](https://github.com/vegardege/kamasi/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/kamasi)](https://www.npmjs.com/package/kamasi)
+
 Music theory library for node and browsers.
+
+## Installation
+
+To install `kamasi`, run:
+
+```bash
+npm install kamasi
+```
 
 ## Quick Intro
 
@@ -108,7 +119,7 @@ Note.fromMidi(60).toString(); // 'C4'
 Note.fromFrequency(440).toString(); // 'A4'
 ```
 
-A key feature is the ability to [transpose](https://en.wikipedia.org/wiki/Transposition_(music)) notes using intervals. The reverse operation is also supported, allowing you to find the interval between two notes:
+A key feature is the ability to [transpose](<https://en.wikipedia.org/wiki/Transposition_(music)>) notes using intervals. The reverse operation is also supported, allowing you to find the interval between two notes:
 
 ```js
 note("C").transpose("P5").toString(); // 'G'
@@ -172,9 +183,14 @@ notes("Abb E4 C")
 
 Constructors:
 
+- **notes**(_notes_) Create a NoteList from a list of space separated notes
+- **chord**(_name_) Create a NoteList from a chord name string
+- **scale**(_name_) Create a NoteList from a scale name string
 - **new NoteList**(_notes_) Create a NoteList from an array of notes
 - NoteList.**fromString**(_string_) Create a NoteList from a space separated list of notes
 - NoteList.**fromIntervals**(_root_, _intervals_) Create a NoteList from a root note and array of intervals
+- NoteList.**fromChord**(_tonic_, _name_) Create a NoteList from a tonic note and a chord name
+- NoteList.**fromScale**(_tonic_, _name_) Create a NoteList from a tonic note and a scale name
 
 Methods:
 
@@ -213,9 +229,6 @@ It returns a `NoteList` object, so all methods in the last section can be used:
 scale("Bb man gong").transpose("d5").simplify().toString(); // 'E G A C D'
 ```
 
-- NoteList.**fromScale**(_tonic_, _name_) Create a NoteList from a tonic note and a scale name
-- **scale**(_name_) Create a NoteList from a scale name string
-
 If you only care about the intervals, you can skip the tonic note. 'C' will be selected by default:
 
 ```js
@@ -239,9 +252,6 @@ It returns a `NoteList` object, so all methods in the last section can be used:
 ```js
 chord("F minor").transpose("M2").includesAll(["G", "Bb", "D"]); // true
 ```
-
-- NoteList.**fromChord**(_tonic_, _name_) Create a NoteList from a tonic note and a chord name
-- **chord**(_name_) Create a NoteList from a chord name string
 
 If you only care about the intervals, you can skip the tonic note. 'C' will be selected by default:
 
@@ -299,7 +309,7 @@ The top level lets you choose one of four functions:
 The second level contains four functions:
 
 - **chord**() Narrow search object down to a single chord
-- **scale**() Narrow search object down to scales scale
+- **scale**() Narrow search object down to a single scale
 - **chords**() Narrow search object down to chords
 - **scales**() Narrow search object down to scales
 
