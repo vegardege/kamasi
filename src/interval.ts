@@ -145,6 +145,20 @@ export class Interval {
   }
 
   /**
+   * Check if a string is valid interval notation without throwing.
+   *
+   * @param notation String to validate
+   */
+  static isValidInterval(notation: string): boolean {
+    try {
+      Interval.fromString(notation);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Find the interval with the same number of diatonic and chromatic steps as
    * the two underlying intervals combined. Not guaranteed to have a result.
    *

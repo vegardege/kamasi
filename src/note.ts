@@ -124,6 +124,20 @@ export class Note {
   }
 
   /**
+   * Check if a string is valid scientific pitch notation without throwing.
+   *
+   * @param notation String to validate
+   */
+  static isValidNote(notation: string): boolean {
+    try {
+      Note.fromString(notation);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Move the note up or down in pitch by the specified interval.
    *
    * Returns a new note. Pitch classes will be transposed to pitch classes,

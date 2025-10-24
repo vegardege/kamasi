@@ -76,6 +76,7 @@ Constructors:
 - Interval.**fromString**(_string_) – Create from [shorthand notation](https://en.wikipedia.org/wiki/Interval_%28music%29#Shorthand_notation)
 - Interval.**fromSemitones**(_semitones_) – Create interval spanning the specified number of semitones
 - Interval.**fromSteps**(_diatonicSteps_, _semitones_) – Create interval spanning specified number of steps (not guaranteed to have a valid answer)
+- Interval.**isValidInterval**(_string_) – Check if a string is valid interval notation (returns boolean, doesn't throw)
 
 Methods:
 
@@ -131,6 +132,7 @@ Constructors:
 - Note.**fromString**(_string_) Create a note from its [scientific pitch notation](https://en.wikipedia.org/wiki/Scientific_pitch_notation)
 - Note.**fromMidi**(_number_) Create a note from a MIDI number (0-127, where 60 = C4)
 - Note.**fromFrequency**(_hz_) Create a note from a frequency in Hz (A4 = 440Hz)
+- Note.**isValidNote**(_string_) Check if a string is valid scientific pitch notation (returns boolean, doesn't throw)
 
 Methods:
 

@@ -37,6 +37,19 @@ test("create invalid interval", () => {
   expect(() => Interval.fromString("P2")).toThrowError(); // Invalid combination
 });
 
+test("validate interval without throwing", () => {
+  expect(Interval.isValidInterval("P5")).toBe(true);
+  expect(Interval.isValidInterval("M3")).toBe(true);
+  expect(Interval.isValidInterval("-m7")).toBe(true);
+  expect(Interval.isValidInterval("A4")).toBe(true);
+  expect(Interval.isValidInterval("dd15")).toBe(true);
+  expect(Interval.isValidInterval("big")).toBe(false);
+  expect(Interval.isValidInterval("P2")).toBe(false);
+  expect(Interval.isValidInterval("X5")).toBe(false);
+  expect(Interval.isValidInterval("M")).toBe(false);
+  expect(Interval.isValidInterval("")).toBe(false);
+});
+
 test("calculate diatonic and chromatic steps", () => {
   const steps = (q, a, s) => {
     const i = new Interval(q, a, s);

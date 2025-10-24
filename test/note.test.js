@@ -21,6 +21,19 @@ test("create invalid note", () => {
   expect(() => Note.fromString("D#b")).toThrowError(); // Invalid accidentals
 });
 
+test("validate note without throwing", () => {
+  expect(Note.isValidNote("C#4")).toBe(true);
+  expect(Note.isValidNote("Gb")).toBe(true);
+  expect(Note.isValidNote("A####-1")).toBe(true);
+  expect(Note.isValidNote("F##")).toBe(true);
+  expect(Note.isValidNote("Bbb5")).toBe(true);
+  expect(Note.isValidNote("big")).toBe(false);
+  expect(Note.isValidNote("D#b")).toBe(false);
+  expect(Note.isValidNote("H4")).toBe(false);
+  expect(Note.isValidNote("C#x")).toBe(false);
+  expect(Note.isValidNote("")).toBe(false);
+});
+
 test("create note from MIDI number", () => {
   expect(Note.fromMidi(60).toString()).toBe("C4");
   expect(Note.fromMidi(69).toString()).toBe("A4");
