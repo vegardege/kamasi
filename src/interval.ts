@@ -1,5 +1,9 @@
-import { CHROMATIC, DIATONIC, type IntervalQuality } from "#data/intervals.js";
-import { ensureType, mod } from "#src/utils.js";
+import {
+  CHROMATIC,
+  DIATONIC,
+  type IntervalQuality,
+} from "../data/intervals.js";
+import { ensureType, mod } from "./utils.js";
 
 /**
  * An _interval_ is the difference between two pitches or pitch classes.

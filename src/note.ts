@@ -1,5 +1,5 @@
-import { Interval } from "#src/interval.js";
-import { ensureType, mod } from "#src/utils.js";
+import { Interval } from "./interval.js";
+import { ensureType, mod } from "./utils.js";
 
 // The 7 note letters indexed by diatonic offset from C
 const NOTE_LETTERS = ["C", "D", "E", "F", "G", "A", "B"] as const;

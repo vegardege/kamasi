@@ -1,10 +1,10 @@
-import { CHORDS } from "#data/chords.js";
+import { CHORDS } from "../data/chords.js";
 import {
   INTERVAL_BITMASK,
   INTERVAL_BITMASK_ENHARMONIC,
   type IntervalNotation,
-} from "#data/intervals.js";
-import { SCALES } from "#data/scales.js";
+} from "../data/intervals.js";
+import { SCALES } from "../data/scales.js";
 
 type IndexEntry = {
   name: string;

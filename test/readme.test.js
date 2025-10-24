@@ -8,7 +8,7 @@ import {
   notes,
   scale,
   search,
-} from "#src/index.ts";
+} from "../src/index.js";
 
 test("quick start", () => {
   // Transpose or find interval between notes

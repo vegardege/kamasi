@@ -1,4 +1,4 @@
-import { Interval, Note } from "#src/index.ts";
+import { Interval, Note } from "../src/index.js";
 
 test("create note with letter, accidentals, and octave", () => {
   expect(new Note("C").toString()).toBe("C");

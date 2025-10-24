@@ -1,14 +1,14 @@
-import { CHORD_ALIAS, CHORDS } from "#data/chords.js";
-import type { IntervalNotation } from "#data/intervals.js";
-import { SCALE_ALIAS, SCALES } from "#data/scales.js";
-import { Interval } from "#src/interval.js";
-import { Note } from "#src/note.js";
+import { CHORD_ALIAS, CHORDS } from "../data/chords.js";
+import type { IntervalNotation } from "../data/intervals.js";
+import { SCALE_ALIAS, SCALES } from "../data/scales.js";
+import { Interval } from "./interval.js";
+import { Note } from "./note.js";
 import {
   search as _search,
   type PatternResult,
   type SearchResult,
-} from "#src/search.js";
-import { ensureType } from "#src/utils.js";
+} from "./search.js";
+import { ensureType } from "./utils.js";
 
 /**
  * A note list is an ordered sequence of notes. The notes can be

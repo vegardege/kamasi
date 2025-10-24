@@ -1,4 +1,4 @@
-import type { IntervalNotation } from '#data/intervals.js'
+import type { IntervalNotation } from './intervals.js'
 
 /**
  * Chord database sourced from Wikipedia.

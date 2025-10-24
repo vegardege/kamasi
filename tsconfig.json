@@ -5,19 +5,19 @@
     "lib": ["ES2022"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "verbatimModuleSyntax": true,
 
     // Emit
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "dist",
     "removeComments": false,
 
     // Interop Constraints
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
 
     // Type Checking
     "strict": true,
@@ -27,18 +27,11 @@
     "noUncheckedIndexedAccess": true,
 
     // Skip type checking of declaration files
-    "skipLibCheck": true,
-
-    // Path mapping for subpath imports
-    "paths": {
-      "#src/*": ["./src/*"],
-      "#data/*": ["./data/*"]
-    }
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*",
-    "data/**/*",
-    "test/**/*"
+    "data/**/*"
   ],
   "exclude": [
     "node_modules",
