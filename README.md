@@ -100,6 +100,13 @@ note("Fbb").isEnharmonic("D#"); // true
 note("C#4").frequency(); // 277.1826309768721
 ```
 
+You can also create notes from MIDI numbers or frequencies:
+
+```js
+Note.fromMidi(60).toString(); // 'C4'
+Note.fromFrequency(440).toString(); // 'A4'
+```
+
 A key feature is the ability to [transpose](https://en.wikipedia.org/wiki/Transposition_(music)) notes using intervals. The reverse operation is also supported, allowing you to find the interval between two notes:
 
 ```js
@@ -122,6 +129,8 @@ Constructors:
 
 - **new Note**(_letter_, _accidentals_[, _octave_]) Create a new pitch (with octave) or pitch class
 - Note.**fromString**(_string_) Create a note from its [scientific pitch notation](https://en.wikipedia.org/wiki/Scientific_pitch_notation)
+- Note.**fromMidi**(_number_) Create a note from a MIDI number (0-127, where 60 = C4)
+- Note.**fromFrequency**(_hz_) Create a note from a frequency in Hz (A4 = 440Hz)
 
 Methods:
 

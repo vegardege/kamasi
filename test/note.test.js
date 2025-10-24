@@ -21,6 +21,51 @@ test("create invalid note", () => {
   expect(() => Note.fromString("D#b")).toThrowError(); // Invalid accidentals
 });
 
+test("create note from MIDI number", () => {
+  expect(Note.fromMidi(60).toString()).toBe("C4");
+  expect(Note.fromMidi(69).toString()).toBe("A4");
+  expect(Note.fromMidi(72).toString()).toBe("C5");
+  expect(Note.fromMidi(0).toString()).toBe("C-1");
+  expect(Note.fromMidi(127).toString()).toBe("G9");
+  expect(Note.fromMidi(61).toString()).toBe("C#4");
+});
+
+test("create note from invalid MIDI number", () => {
+  expect(() => Note.fromMidi(-1)).toThrowError();
+  expect(() => Note.fromMidi(128)).toThrowError();
+  expect(() => Note.fromMidi(60.5)).toThrowError();
+  expect(() => Note.fromMidi(NaN)).toThrowError();
+});
+
+test("create note from frequency", () => {
+  expect(Note.fromFrequency(440).toString()).toBe("A4");
+  expect(Note.fromFrequency(261.63).toString()).toBe("C4");
+  expect(Note.fromFrequency(880).toString()).toBe("A5");
+  expect(Note.fromFrequency(220).toString()).toBe("A3");
+  expect(Note.fromFrequency(523.25).toString()).toBe("C5");
+});
+
+test("create note from invalid frequency", () => {
+  expect(() => Note.fromFrequency(0)).toThrowError();
+  expect(() => Note.fromFrequency(-440)).toThrowError();
+  expect(() => Note.fromFrequency(NaN)).toThrowError();
+  expect(() => Note.fromFrequency(Infinity)).toThrowError();
+});
+
+test("midi and frequency conversions are reversible", () => {
+  // MIDI -> Note -> MIDI
+  expect(Note.fromMidi(0).midi()).toBe(0);
+  expect(Note.fromMidi(60).midi()).toBe(60);
+  expect(Note.fromMidi(69).midi()).toBe(69);
+  expect(Note.fromMidi(72).midi()).toBe(72);
+  expect(Note.fromMidi(127).midi()).toBe(127);
+
+  // Frequency -> Note -> Frequency (within rounding tolerance)
+  expect(Note.fromFrequency(440).frequency()).toBeCloseTo(440, 1);
+  expect(Note.fromFrequency(261.63).frequency()).toBeCloseTo(261.63, 1);
+  expect(Note.fromFrequency(880).frequency()).toBeCloseTo(880, 1);
+});
+
 test("calcuate diatonic and chromatic offset", () => {
   const offset = (n, a, o) => {
     n = new Note(n, a, o);

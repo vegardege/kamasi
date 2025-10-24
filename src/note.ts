@@ -96,6 +96,34 @@ export class Note {
   }
 
   /**
+   * Create a note from a MIDI number (0-127).
+   * Uses C4 = 60 as the reference.
+   *
+   * @param midi MIDI number (0-127)
+   */
+  static fromMidi(midi: number): Note {
+    if (!Number.isInteger(midi) || midi < 0 || midi > 127) {
+      throw new Error(`MIDI number must be an integer between 0 and 127, got ${midi}`);
+    }
+    return new Note("C", "", 4).transpose(midi - 60).simplify();
+  }
+
+  /**
+   * Create a note from a frequency in Hz.
+   * Uses A4 = 440 Hz as the reference in 12-tone equal temperament.
+   * Returns the closest note to the given frequency.
+   *
+   * @param frequency Frequency in Hz (must be positive)
+   */
+  static fromFrequency(frequency: number): Note {
+    if (!Number.isFinite(frequency) || frequency <= 0) {
+      throw new Error(`Frequency must be a positive number, got ${frequency}`);
+    }
+    const semitones = Math.round(12 * Math.log2(frequency / 440));
+    return new Note("A", "", 4).transpose(semitones).simplify();
+  }
+
+  /**
    * Move the note up or down in pitch by the specified interval.
    *
    * Returns a new note. Pitch classes will be transposed to pitch classes,
@@ -218,7 +246,7 @@ export class Note {
    */
   midi(): number {
     const midi = 60 - this.distance("C4");
-    return midi > 0 && midi <= 127 ? midi : NaN;
+    return midi >= 0 && midi <= 127 ? midi : NaN;
   }
 
   /**

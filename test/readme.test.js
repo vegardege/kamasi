@@ -3,6 +3,7 @@ import {
   chord,
   Interval,
   interval,
+  Note,
   note,
   notes,
   scale,
@@ -55,6 +56,9 @@ test("notes", () => {
   expect(note("Fbb").simplify().toString()).toBe("D#");
   expect(note("Fbb").isEnharmonic("D#")).toBe(true);
   expect(note("C#4").frequency()).toBeCloseTo(277.1826309768721);
+
+  expect(Note.fromMidi(60).toString()).toBe("C4");
+  expect(Note.fromFrequency(440).toString()).toBe("A4");
 
   expect(note("C").transpose("P5").toString()).toBe("G");
   expect(note("D#").intervalTo("A").toString()).toBe("d5");
