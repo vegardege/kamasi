@@ -100,7 +100,7 @@ note("Fbb").isEnharmonic("D#"); // true
 note("C#4").frequency(); // 277.1826309768721
 ```
 
-A key feature is the ability to [transpose](<](https://en.wikipedia.org/wiki/Transposition_(music))>) notes using intervals. The reverse operation is also supported, allowing you to find the interval between two notes:
+A key feature is the ability to [transpose](https://en.wikipedia.org/wiki/Transposition_(music)) notes using intervals. The reverse operation is also supported, allowing you to find the interval between two notes:
 
 ```js
 note("C").transpose("P5").toString(); // 'G'
@@ -108,7 +108,7 @@ note("D#").intervalTo("A").toString(); // 'd5'
 note("Eb5").transpose("-A5").toString(); // 'Abb4'
 ```
 
-You can uses chaining to perform several actions in one line. If you just need the pitch class, and find 'Abb4' confusing, it can be simplified:
+You can use chaining to perform several actions in one line. If you just need the pitch class, and find 'Abb4' confusing, it can be simplified:
 
 ```js
 note("Eb5")
@@ -176,7 +176,7 @@ Methods:
 - _notelist_.**includesAll**(_notelist_[, _enharmonic_]) True if list contains all (enharmonic) notes
 - _notelist_.**sort**() Return a sorted copy of the list
 - _notelist_.**root**() Return the root note of the list
-- _notelist_.**search**([_enharmonic_[, _searchType_[, _patternType_]]]) See [search](#search)
+- _notelist_.**search**([_enharmonic_]) See [search](#search)
 - _notelist_.**subsets**([_enharmonic_]) See [search](#search)
 - _notelist_.**supersets**([_enharmonic_]) See [search](#search)
 - _notelist_.**isEmpty**() True if list is empty
@@ -244,17 +244,16 @@ To find a chord from a NoteList, see the [search](#search) section.
 
 ### Search
 
-There are two ways to search for chords or scales using kamasi. To search with intervals, use the top-level `search()` function. It supports arguments or chaining:
+There are two ways to search for chords or scales using kamasi. To search with intervals, use the top-level `search()` function with chaining:
 
 ```js
-search("P1 M3 P5 M7", true, "exact", "chord"); // 'major seventh'
 search("P1 M3 P5 M7").exact().chord(); // 'major seventh'
 ```
 
 If you want to search using notes rather than intervals, the same interface is available from the notelist class:
 
 ```js
-notes("C E G").search(true, "exact", "chord"); // 'major'
+notes("C E G").search().exact().chord(); // 'major'
 notes("C D E F G A B").subsets().chords(); // [ 'major', 'major sixth', ... ]
 notes("C Eb G").supersets().scales(); // [ 'minor', 'minor harmonic', ... ]
 ```

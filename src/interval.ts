@@ -1,4 +1,8 @@
-import { CHROMATIC, DIATONIC } from "#data/intervals.js";
+import {
+  CHROMATIC,
+  DIATONIC,
+  type IntervalQuality,
+} from "#data/intervals.js";
 import { ensureType, mod } from "#src/utils.js";
 
 /**

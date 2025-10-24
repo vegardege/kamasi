@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "exclude": ["data/**", "**/*.test.ts", "test/**/*"],
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "readme": "README.md",
+  "navigationLinks": {
+    "GitHub": "https://github.com/vegardege/kamasi"
+  },
+  "plugin": [],
+  "name": "Kamasi",
+  "includeVersion": true,
+  "sort": ["kind", "source-order"],
+  "categorizeByGroup": true,
+  "treatWarningsAsErrors": false
+}

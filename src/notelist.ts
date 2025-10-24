@@ -61,7 +61,7 @@ export class NoteList {
    */
   static fromIntervals(
     root: Note | string,
-    intervals: (Interval | string)[],
+    intervals: readonly (Interval | string)[],
   ): NoteList {
     const rootNote = ensureType(root, Note);
     const intervalObjects = intervals.map((i) => ensureType(i, Interval));
