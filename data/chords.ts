@@ -60,7 +60,7 @@ const ELEVENTH: Record<string, IntervalNotation[]> = {
 }
 
 const THIRTEENTH: Record<string, IntervalNotation[]> = {
-  'dominant thirtheenth':       NINTH['dominant ninth']!.concat('M13'),
+  'dominant thirteenth':        NINTH['dominant ninth']!.concat('M13'),
   'thirteenth':                 ELEVENTH['eleventh']!.concat('M13'),
   'major thirteenth':           ELEVENTH['major eleventh']!.concat('M13'),
   'minor thirteenth':           ELEVENTH['minor eleventh']!.concat('M13'),

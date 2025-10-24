@@ -161,8 +161,9 @@ notes("Abb E4 C")
 
 Constructors:
 
-- **new NoteLists**(_root_[, _intervals]) Create a NoteList from a list of notes or a root note and intervals
+- **new NoteList**(_notes_) Create a NoteList from an array of notes
 - NoteList.**fromString**(_string_) Create a NoteList from a space separated list of notes
+- NoteList.**fromIntervals**(_root_, _intervals_) Create a NoteList from a root note and array of intervals
 
 Methods:
 
@@ -198,7 +199,7 @@ scale("E augmented").toString(); // 'E G G# B B# D#'
 It returns a `NoteList` object, so all methods in the last section can be used:
 
 ```js
-scale("Bb blues minor").transpose("d5").simplify().toString(); // 'E G A C D'
+scale("Bb man gong").transpose("d5").simplify().toString(); // 'E G A C D'
 ```
 
 - NoteList.**fromScale**(_tonic_, _name_) Create a NoteList from a tonic note and a scale name

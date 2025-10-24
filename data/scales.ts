@@ -2,8 +2,8 @@ import type { IntervalNotation } from '#data/intervals.js'
 
 /**
  * Scale database sourced from Wikipedia.
- * 
- * Feel free to add chords, but please add a source and try to group related
+ *
+ * Feel free to add scales, but please add a source and try to group related
  * scales when possible.
  * 
  * Sources:
@@ -37,8 +37,7 @@ export const SCALES: Readonly<Record<string, readonly IntervalNotation[]>> = {
                      'A4', 'P5', 'm6', 'M6', 'm7', 'M7'],
 
   // Blues scales
-  'blues major':      ['P1', 'M2', 'P4', 'P5', 'M6'],
-  'blues minor':      ['P1', 'm3', 'P4', 'm6', 'm7'],
+  'blues major':      ['P1', 'M2', 'm3', 'M3', 'P5', 'M6'],
   'blues hexatonic':  ['P1', 'm3', 'P4', 'd5', 'P5', 'm7'],
   'blues heptatonic': ['P1', 'M2', 'm3', 'P4', 'd5', 'M6', 'm7'],
   'blues nonatonic':  ['P1', 'M2', 'm3', 'M3', 'P4', 'P5', 'M6', 'm7', 'M7'],
@@ -48,6 +47,8 @@ export const SCALES: Readonly<Record<string, readonly IntervalNotation[]>> = {
   'pentatonic minor':    ['P1', 'm3', 'P4', 'P5', 'm7'],
   'pentatonic egyptian': ['P1', 'M2', 'P4', 'P5', 'm7'],
   'pentatonic japanese': ['P1', 'm2', 'P4', 'P5', 'm6'],
+  'pentatonic ritsusen': ['P1', 'M2', 'P4', 'P5', 'M6'],
+  'pentatonic man gong': ['P1', 'm3', 'P4', 'm6', 'm7'],
   'hirajoshi':           ['P1', 'M2', 'm3', 'P5', 'm6'],
   'insen':               ['P1', 'm2', 'P4', 'P5', 'm7'],
   'iwato':               ['P1', 'm2', 'P4', 'd5', 'm7'],
@@ -55,7 +56,7 @@ export const SCALES: Readonly<Record<string, readonly IntervalNotation[]>> = {
   // Jazz (modes of major scale)
   'ionian':     ['P1', 'M2', 'M3', 'P4', 'P5', 'M6', 'M7'],
   'dorian':     ['P1', 'M2', 'm3', 'P4', 'P5', 'M6', 'm7'],
-  'phygrian':   ['P1', 'm2', 'm3', 'P4', 'P5', 'm6', 'm7'],
+  'phrygian':   ['P1', 'm2', 'm3', 'P4', 'P5', 'm6', 'm7'],
   'lydian':     ['P1', 'M2', 'M3', 'A4', 'P5', 'M6', 'M7'],
   'mixolydian': ['P1', 'M2', 'M3', 'P4', 'P5', 'M6', 'm7'],
   'aeolian':    ['P1', 'M2', 'm3', 'P4', 'P5', 'm6', 'm7'],
@@ -99,7 +100,7 @@ export const SCALES: Readonly<Record<string, readonly IntervalNotation[]>> = {
   'lydian augmented dominant': ['P1', 'M2', 'M3', 'A4', 'A5', 'M6', 'm7'],
   'lydian dominant b6':        ['P1', 'M2', 'M3', 'A4', 'P5', 'm6', 'm7'],
   'major locrian':             ['P1', 'M2', 'M3', 'P4', 'd5', 'm6','m7'],
-  'half-diminshed b4':         ['P1', 'M2', 'm3', 'd4', 'd5', 'm6', 'm7'],
+  'half-diminished b4':        ['P1', 'M2', 'm3', 'd4', 'd5', 'm6', 'm7'],
   'superlocrian bb3':          ['P1', 'm2', 'd3', 'd4', 'd5', 'm6', 'm7'],
 
   // Persian scales
@@ -156,9 +157,11 @@ export const SCALE_ALIAS: Readonly<Record<string, string>> = {
   'in': 'pentatonic japanese',
   'sakura': 'pentatonic japanese',
 
-  'man gong': 'blues minor',
-  'ritsusen': 'blues major',
-  'ritsu': 'blues major',
+  'man gong': 'pentatonic man gong',
+  'ritsusen': 'pentatonic ritsusen',
+  'ritsu': 'pentatonic ritsusen',
+
+  'blues minor': 'blues hexatonic',
 
   'mayamalavagowla': 'major double harmonic',
   'bhairav raga': 'major double harmonic',
@@ -167,7 +170,7 @@ export const SCALE_ALIAS: Readonly<Record<string, string>> = {
   'flamenco': 'major double harmonic',
   'major gypsy': 'major double harmonic',
 
-  'phygrian #6': 'dorian b2',
+  'phrygian #6': 'dorian b2',
   'lydian #5': 'lydian augmented',
   'acoustic': 'lydian dominant',
   'lydian b5': 'lydian dominant',

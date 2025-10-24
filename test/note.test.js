@@ -85,6 +85,28 @@ test("calculate interval between two notes", () => {
   expect(() => new Note("C", "#").intervalTo("D4").toString()).toThrow();
 });
 
+test("calculate interval from another note", () => {
+  // intervalFrom(x) is the inverse: find interval from x to this note
+  expect(new Note("C").intervalFrom("G").toString()).toBe("P4");
+  expect(new Note("E", "", 4).intervalFrom("C4").toString()).toBe("M3");
+  expect(new Note("A", "", 5).intervalFrom("C5").toString()).toBe("M6");
+  expect(new Note("F", "#", 4).intervalFrom("B3").toString()).toBe("P5");
+  expect(new Note("G").intervalFrom("C").toString()).toBe("P5");
+});
+
+test("calculate octave difference between notes", () => {
+  // Pitch class: wraps up if first note is higher
+  expect(Note.octaveDiff(new Note("D"), new Note("C"))).toBe(1);
+  expect(Note.octaveDiff(new Note("C"), new Note("D"))).toBe(0);
+  expect(Note.octaveDiff(new Note("B"), new Note("C"))).toBe(1);
+  // Pitch: simple octave subtraction
+  expect(Note.octaveDiff(new Note("C", "", 4), new Note("C", "", 5))).toBe(1);
+  expect(Note.octaveDiff(new Note("A", "", 3), new Note("G", "", 5))).toBe(2);
+  // Mixed types should throw
+  expect(() => Note.octaveDiff(new Note("C"), new Note("C", "", 4))).toThrow();
+  expect(() => Note.octaveDiff(new Note("D", "", 5), new Note("E"))).toThrow();
+});
+
 test("calculate frequency and midi of note", () => {
   expect(new Note("C", "", 4).frequency()).toBeCloseTo(261.6256, 3);
   expect(new Note("B", "", 7).frequency()).toBeCloseTo(3951.066, 2);

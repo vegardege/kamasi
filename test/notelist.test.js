@@ -8,10 +8,23 @@ test("create note list", () => {
   expect(NoteList.fromString("G4 A4 B4").toString()).toBe("G4 A4 B4");
 });
 
+test("create note list from intervals", () => {
+  expect(NoteList.fromIntervals("C", ["P1", "M3", "P5"]).toString()).toBe(
+    "C E G",
+  );
+  expect(NoteList.fromIntervals("D4", ["P1", "m3", "P5"]).toString()).toBe(
+    "D4 F4 A4",
+  );
+  expect(
+    NoteList.fromIntervals("Bb", ["P1", "M2", "M3", "P5"]).toString(),
+  ).toBe("Bb C D F");
+});
+
 test("create invalid note list", () => {
   expect(() => NoteList.fromString("C #")).toThrow(); // Invalid string
-  expect(() => new NoteList("C")).toThrow(); // Wrong combination of commands
-  expect(() => new NoteList(["C"], ["P1"])).toThrow(); // Wrong combination of commands
+  expect(() => new NoteList(["X"])).toThrow(); // Invalid note letter
+  expect(() => NoteList.fromIntervals("C", ["X"])).toThrow(); // Invalid interval
+  expect(() => NoteList.fromIntervals("X", ["P1"])).toThrow(); // Invalid root
 });
 
 test("create chord", () => {
@@ -38,6 +51,15 @@ test("create invalid scale", () => {
   expect(() => scale({ tonic: "C" })).toThrow(); // Invalid type
   expect(() => NoteList.fromScale("x", "major")).toThrow(); // Invalid note
   expect(() => NoteList.fromScale("C", "xxxxx")).toThrow(); // Invalid name
+});
+
+test("scale and chord aliases work", () => {
+  expect(scale("C maj").toString()).toBe(scale("C major").toString());
+  expect(scale("C m").toString()).toBe(scale("C minor").toString());
+  expect(scale("C ionian").toString()).toBe(scale("C major").toString());
+  expect(chord("Dm7").toString()).toBe(chord("D minor seventh").toString());
+  expect(chord("CM7").toString()).toBe(chord("C major seventh").toString());
+  expect(chord("C").toString()).toBe(chord("C major").toString());
 });
 
 test("transpose note list", () => {
@@ -112,6 +134,15 @@ test("check pitches and pitch classes", () => {
   expect(mixedNoteList.isMixed()).toBe(true);
   expect(mixedNoteList.toPitches(4).toString()).toBe("D#4 Ab4");
   expect(mixedNoteList.toPitchClasses().toString()).toBe("D# Ab");
+});
+
+test("convert note list to string array", () => {
+  expect(NoteList.fromString("C E G").toStringArray()).toEqual(["C", "E", "G"]);
+  expect(NoteList.fromString("F#4 Ab5").toStringArray()).toEqual([
+    "F#4",
+    "Ab5",
+  ]);
+  expect(new NoteList([]).toStringArray()).toEqual([]);
 });
 
 test("search for scale/chord", () => {

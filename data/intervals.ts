@@ -63,7 +63,7 @@ export const INTERVAL_BITMASK: Readonly<Record<IntervalNotation, number>> = {
  * enharmonic intervals. The value for each interval is its semitone
  * difference from the tonic.
  *
- * We could easliy calculate this on the spot, but the lookup table
+ * We could easily calculate this on the spot, but the lookup table
  * is static, unchangeable and faster for indexing the database.
  */
 export const INTERVAL_BITMASK_ENHARMONIC: Readonly<Record<IntervalNotation, number>> = {

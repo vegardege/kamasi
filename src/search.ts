@@ -16,11 +16,13 @@ type EnharmonicType = "exact" | "enharmonic";
 type SearchFilter = "exact" | "sub" | "sup";
 
 /**
- * The search function works by creating and bitmasks for all scales and
+ * Lazy-loaded search index for scales and chords.
+ *
+ * The search function works by creating bitmasks for all scales and
  * chords, then comparing these with the bitmask of a note list.
  *
- * The index is built lazily, to prevent overhead for users who
- * won't use the search function.
+ * The index is built lazily to prevent overhead for users who
+ * don't use the search function.
  */
 const index: Record<IndexType, Record<EnharmonicType, IndexEntry[]>> = {
   chords: {
@@ -103,12 +105,20 @@ function searcher(
   );
 }
 
+/**
+ * Result object with filter methods for searching scales and chords.
+ * Use exact(), supersets(), or subsets() to specify the search type.
+ */
 export type SearchResult = {
   exact: () => PatternResult;
   supersets: () => PatternResult;
   subsets: () => PatternResult;
 };
 
+/**
+ * Result object with methods to retrieve matching chords or scales.
+ * Use singular methods to get first match, plural to get all matches.
+ */
 export type PatternResult = {
   chord: () => string | undefined;
   scale: () => string | undefined;
@@ -151,8 +161,8 @@ export function search(
       scales: () => searcher("scales", intervalArray, "sup", enharmonic),
     }),
     subsets: () => ({
-      chord: () => searcher("chords", intervalArray, "sup", enharmonic)[0],
-      scale: () => searcher("scales", intervalArray, "sup", enharmonic)[0],
+      chord: () => searcher("chords", intervalArray, "sub", enharmonic)[0],
+      scale: () => searcher("scales", intervalArray, "sub", enharmonic)[0],
       chords: () => searcher("chords", intervalArray, "sub", enharmonic),
       scales: () => searcher("scales", intervalArray, "sub", enharmonic),
     }),

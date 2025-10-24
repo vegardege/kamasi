@@ -1,4 +1,4 @@
-import { CHROMATIC, DIATONIC, type IntervalQuality } from "#data/intervals.js";
+import { CHROMATIC, DIATONIC } from "#data/intervals.js";
 import { ensureType, mod } from "#src/utils.js";
 
 /**
@@ -79,18 +79,18 @@ export class Interval {
   /**
    * Create an interval with the specified short hand notation.
    *
-   * @param string Interval short hand notation
+   * @param notation Interval short hand notation
    *
    * @see {@link https://en.wikipedia.org/wiki/Interval_%28music%29#Shorthand_notation}
    */
-  static fromString(string: string): Interval {
+  static fromString(notation: string): Interval {
     try {
-      const match = string.match(/^([+-]?)([PMm]|[A]+|[d]+)([0-9]*)$/);
+      const match = notation.match(/^([+-]?)([PMm]|[A]+|[d]+)([0-9]*)$/);
       if (!match) throw new Error();
       const [, dir, qual, number] = match;
       return new Interval(qual!, parseInt(number!, 10), dir || "+");
     } catch {
-      throw new Error(`'${string}' is not a valid interval`);
+      throw new Error(`'${notation}' is not a valid interval`);
     }
   }
 
@@ -116,9 +116,9 @@ export class Interval {
   }
 
   /**
-   * Finds the interval spanning a certain number of whole and semitones,
-   * if it exists. This is a one-to-one mapping, but not guaranteed to have
-   * an answer.
+   * Finds the interval spanning a certain number of diatonic steps and
+   * semitones, if it exists. This is a one-to-one mapping, but not guaranteed
+   * to have an answer.
    *
    * @param diatonicSteps Desired number of diatonic steps
    * @param semitones Desired number of semitones
@@ -186,7 +186,8 @@ export class Interval {
   }
 
   /**
-   * Frequency ratio in 12-tone equal temperament
+   * Frequency ratio in 12-tone equal temperament.
+   *
    * @see {@link https://en.wikipedia.org/wiki/Interval_ratio}
    */
   frequencyRatio(): number {
@@ -194,7 +195,8 @@ export class Interval {
   }
 
   /**
-   * Cents in 12-tone equal temperament
+   * Cents in 12-tone equal temperament.
+   *
    * @see {@link https://en.wikipedia.org/wiki/Cent_(music)}
    */
   cents(): number {
@@ -241,7 +243,7 @@ export class Interval {
   }
 
   /**
-   * Interval in short hand form.
+   * Convert interval to short hand notation (e.g. 'M3', '-P5').
    */
   toString(): string {
     return `${this.sign === -1 ? "-" : ""}${this.quality}${this.number}`;
@@ -290,7 +292,7 @@ function semitoneDiffToQuality(
 }
 
 /**
- * Quality inverts according to a simple table
+ * Quality inverts according to a simple table.
  */
 function invertQuality(quality: string): string {
   switch (quality[0]) {
@@ -309,6 +311,10 @@ function invertQuality(quality: string): string {
   }
 }
 
+/**
+ * Validate interval constructor parameters.
+ * Throws an error if quality, number, or direction are invalid.
+ */
 function validateInterval(
   quality: string,
   number: number,

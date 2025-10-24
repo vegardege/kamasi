@@ -78,7 +78,7 @@ test("notelist", () => {
 test("scales", () => {
   expect(scale("E augmented").toString()).toBe("E G G# B B# D#");
 
-  expect(scale("Bb blues minor").transpose("d5").simplify().toString()).toBe(
+  expect(scale("Bb man gong").transpose("d5").simplify().toString()).toBe(
     "E G A C D",
   );
 
