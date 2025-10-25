@@ -3,15 +3,23 @@
 [![Lint, Test, Type Check, Build](https://github.com/vegardege/kamasi/actions/workflows/ci.yml/badge.svg)](https://github.com/vegardege/kamasi/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/kamasi)](https://www.npmjs.com/package/kamasi)
 
-Music theory library for node and browsers.
+A lightweight, zero-dependency TypeScript library for music theory. Work with notes, intervals, scales, and chords using an intuitive, chainable API. Perfect for music applications, algorithmic composition, or learning music theory programmatically.
 
 ## Installation
 
-To install `kamasi`, run:
+Kamasi requires Node.js 18 or higher.
 
 ```bash
 npm install kamasi
 ```
+
+Then import the library in your code:
+
+```js
+import { note, notes, chord, scale, search } from "kamasi";
+```
+
+For TypeScript projects, type definitions are included automatically.
 
 ## Quick Intro
 
