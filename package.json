@@ -83,11 +83,10 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.7",
-    "@types/node": "^24.9.1",
-    "@vitest/coverage-v8": "^4.0.1",
-    "typedoc": "^0.28.14",
+    "@biomejs/biome": "^2.4.5",
+    "@vitest/coverage-v8": "^4.0.18",
+    "typedoc": "^0.28.17",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.1"
+    "vitest": "^4.0.18"
   }
 }
