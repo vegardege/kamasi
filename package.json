@@ -18,10 +18,6 @@
   "type": "module",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -56,11 +52,18 @@
       "default": "./dist/data/chords.js"
     }
   },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "vitest",
+    "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "check": "biome check .",
     "check:fix": "biome check . --write",
@@ -71,6 +74,13 @@
     "docs": "typedoc",
     "docs:watch": "typedoc --watch"
   },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.5",
+    "@vitest/coverage-v8": "^4.0.18",
+    "typedoc": "^0.28.17",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vegardege/kamasi.git"
@@ -78,15 +88,5 @@
   "bugs": {
     "url": "https://github.com/vegardege/kamasi/issues"
   },
-  "homepage": "https://github.com/vegardege/kamasi#readme",
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.4.5",
-    "@vitest/coverage-v8": "^4.0.18",
-    "typedoc": "^0.28.17",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
-  }
+  "homepage": "https://github.com/vegardege/kamasi#readme"
 }
